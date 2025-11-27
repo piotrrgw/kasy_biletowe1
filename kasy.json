@@ -1,5 +1,6 @@
-{
-  "ALEKSANDRÓW KUJAWSKI": {
+[
+  {
+    "stacja": "ALEKSANDRÓW KUJAWSKI",
     "epa": 5021,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -12,7 +13,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "BABIAK": {
+  {
+    "stacja": "BABIAK",
     "epa": 5023,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -25,7 +27,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "BĘDZIN MIASTO": {
+  {
+    "stacja": "BĘDZIN MIASTO",
     "epa": 4031,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "07:10-14:40",
@@ -38,7 +41,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "BIAŁYSTOK": {
+  {
+    "stacja": "BIAŁYSTOK",
     "epa": 6,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "05:45-20:50",
@@ -51,7 +55,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "BIAŁYSTOK ZIELONA WZGÓRZA": {
+  {
+    "stacja": "BIAŁYSTOK ZIELONA WZGÓRZA",
     "epa": 6623,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -64,7 +69,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "BRZEG": {
+  {
+    "stacja": "BRZEG",
     "epa": 11,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:30-19:45",
@@ -77,7 +83,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "BYDGOSZCZ GŁOWNA": {
+  {
+    "stacja": "BYDGOSZCZ GŁOWNA",
+    "epa": 14,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "6:10-21:00",
+    "godziny.sob": "6:10-21:00",
+    "godziny.nd": "6:10-21:00",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "BYDGOSZCZ GŁOWNA",
     "epa": 14,
     "przewoznik": "ARRIVA RP",
     "godziny.pn_pt": "5:45-18:45",
@@ -90,7 +111,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "BYDGOSZCZ LEŚNA": {
+  {
+    "stacja": "BYDGOSZCZ LEŚNA",
     "epa": 5075,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -103,7 +125,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "BYDGOSZCZ WSCHÓD": {
+  {
+    "stacja": "BYDGOSZCZ WSCHÓD",
     "epa": 501,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -116,7 +139,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "CHEŁMŻA": {
+  {
+    "stacja": "CHEŁMŻA",
     "epa": 5089,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -129,7 +153,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "CHOSZCZNO": {
+  {
+    "stacja": "CHOSZCZNO",
     "epa": 19,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -142,7 +167,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "CIECHANÓW": {
+  {
+    "stacja": "CIECHANÓW",
     "epa": 20,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -155,7 +181,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "CZĘSTOCHOWA OSOBOWA": {
+  {
+    "stacja": "CZĘSTOCHOWA OSOBOWA",
+    "epa": 26,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:40-21:00",
+    "godziny.sob": "5:40-21:00",
+    "godziny.nd": "5:40-21:00",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "CZĘSTOCHOWA OSOBOWA",
     "epa": 26,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "5:30-21:00",
@@ -168,7 +209,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "CZĘSTOCHOWA STRADOM": {
+  {
+    "stacja": "CZĘSTOCHOWA STRADOM",
     "epa": 4085,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "5:45-20:45",
@@ -181,7 +223,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "CZYŻEW": {
+  {
+    "stacja": "CZYŻEW",
     "epa": 28,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -194,7 +237,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "DĄBROWA GÓRNICZA": {
+  {
+    "stacja": "DĄBROWA GÓRNICZA",
     "epa": 30,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "6:30-18:00",
@@ -207,7 +251,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "DĄBROWA GÓRNICZA ZĄBKOWICE": {
+  {
+    "stacja": "DĄBROWA GÓRNICZA ZĄBKOWICE",
     "epa": 4095,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -220,7 +265,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "DĘBLIN": {
+  {
+    "stacja": "DĘBLIN",
     "epa": 32,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -233,7 +279,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "DOBIEGNIEW": {
+  {
+    "stacja": "DOBIEGNIEW",
     "epa": 8094,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -246,7 +293,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "DZIAŁDOWO": {
+  {
+    "stacja": "DZIAŁDOWO",
     "epa": 402,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "6:00-15:30",
@@ -259,7 +307,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GDAŃSK GŁOWNY": {
+  {
+    "stacja": "GDAŃSK GŁOWNY",
+    "epa": 40,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:30-20:15",
+    "godziny.sob": "5:30-20:15",
+    "godziny.nd": "5:30-20:15",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "GDAŃSK GŁOWNY",
     "epa": 40,
     "przewoznik": "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE",
     "godziny.pn_pt": "6:00-20:00",
@@ -272,7 +335,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GDAŃSK OLIWA": {
+  {
+    "stacja": "GDAŃSK OLIWA",
     "epa": 5150,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "6:00-17:20",
@@ -285,7 +349,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GDAŃSK WRZESZCZ": {
+  {
+    "stacja": "GDAŃSK WRZESZCZ",
+    "epa": 5162,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "7:15-18:35",
+    "godziny.sob": "7:15-18:35",
+    "godziny.nd": "7:15-18:35",
+    "przerwy.pn_pt": "9:20-9:35; 14:15-14:30",
+    "przerwy.sob": "9:20-9:35; 14:15-14:30",
+    "przerwy.nd": "9:20-9:35; 14:15-14:30",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "GDAŃSK WRZESZCZ",
     "epa": 5162,
     "przewoznik": "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE",
     "godziny.pn_pt": "6:00-19:00",
@@ -298,7 +377,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GDYNIA GŁOWNA": {
+  {
+    "stacja": "GDYNIA GŁOWNA",
+    "epa": 41,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:15-20:20",
+    "godziny.sob": "5:15-20:20",
+    "godziny.nd": "5:15-20:20",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "GDYNIA GŁOWNA",
     "epa": 41,
     "przewoznik": "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE",
     "godziny.pn_pt": "6:00-20:00",
@@ -311,7 +405,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GLIWICE": {
+  {
+    "stacja": "GLIWICE",
+    "epa": 43,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:10-20:45",
+    "godziny.sob": "5:10-20:45",
+    "godziny.nd": "5:10-20:45",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "GLIWICE",
     "epa": 43,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "5:15-20:40",
@@ -324,7 +433,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GNIEZNO": {
+  {
+    "stacja": "GNIEZNO",
     "epa": 45,
     "przewoznik": "KOLEJE WIELKOPOLSKIE",
     "godziny.pn_pt": "6:00-19:30",
@@ -337,7 +447,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GORZÓW WIELKOPOLSKI": {
+  {
+    "stacja": "GORZÓW WIELKOPOLSKI",
     "epa": 46,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "6:00-19:30",
@@ -350,7 +461,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GORZÓW WIELKOPOLSKI WSCHODNI": {
+  {
+    "stacja": "GORZÓW WIELKOPOLSKI WSCHODNI",
     "epa": 8122,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -363,7 +475,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GOSTYNIN": {
+  {
+    "stacja": "GOSTYNIN",
     "epa": 1137,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -376,7 +489,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GRABOWNO WIELKIE": {
+  {
+    "stacja": "GRABOWNO WIELKIE",
     "epa": 6140,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -389,7 +503,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "GRUDZIĄDZ": {
+  {
+    "stacja": "GRUDZIĄDZ",
     "epa": 48,
     "przewoznik": "ARRIVA RP",
     "godziny.pn_pt": "7:00-15:30",
@@ -402,7 +517,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "IŁAWA GŁOWNA": {
+  {
+    "stacja": "IŁAWA GŁOWNA",
+    "epa": 53,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "6:15-17:40",
+    "godziny.sob": "6:15-17:40",
+    "godziny.nd": "6:15-17:40",
+    "przerwy.pn_pt": "9:30-9:45; 13:30-13:45",
+    "przerwy.sob": "9:30-9:45; 13:30-13:45",
+    "przerwy.nd": "9:30-9:45; 13:30-13:45",
+    "uwagi": "Uwaga!! Kasa nieczynna do odwołania z powodu awarii",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "IŁAWA GŁOWNA",
     "epa": 53,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:30-17:30",
@@ -415,7 +545,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "INOWROCŁAW": {
+  {
+    "stacja": "INOWROCŁAW",
     "epa": 54,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:40-18:00",
@@ -428,7 +559,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "INOWROCŁAW RĄBINEK": {
+  {
+    "stacja": "INOWROCŁAW RĄBINEK",
     "epa": 5230,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -441,7 +573,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "JAROCIN": {
+  {
+    "stacja": "JAROCIN",
     "epa": 56,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:00-20:00",
@@ -454,7 +587,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "JAWORZNO SZCZAKOWA": {
+  {
+    "stacja": "JAWORZNO SZCZAKOWA",
     "epa": 60,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -467,7 +601,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KALISZ": {
+  {
+    "stacja": "KALISZ",
     "epa": 65,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "7:00-19:00",
@@ -480,7 +615,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KATOWICE": {
+  {
+    "stacja": "KATOWICE",
+    "epa": 71,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "Całodobowo",
+    "godziny.sob": "Całodobowo",
+    "godziny.nd": "Całodobowo",
+    "przerwy.pn_pt": "00:30-00:45",
+    "przerwy.sob": "00:30-00:45",
+    "przerwy.nd": "00:30-00:45",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "KATOWICE",
     "epa": 71,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "5:15-22:00",
@@ -493,7 +643,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KOLUSZKI": {
+  {
+    "stacja": "KOLUSZKI",
     "epa": 76,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -506,7 +657,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KOŁO": {
+  {
+    "stacja": "KOŁO",
     "epa": 77,
     "przewoznik": "KOLEJE WIELKOPOLSKIE",
     "godziny.pn_pt": "6:40-14:10",
@@ -519,7 +671,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KONIN": {
+  {
+    "stacja": "KONIN",
     "epa": 79,
     "przewoznik": "KOLEJE WIELKOPOLSKIE",
     "godziny.pn_pt": "6:00-21:30",
@@ -532,7 +685,36 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KRAKÓW GŁOWNY": {
+  {
+    "stacja": "KRAKÓW GŁOWNY",
+    "epa": 85,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "Całodobowo",
+    "godziny.sob": "Całodobowo",
+    "godziny.nd": "Całodobowo",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "KRAKÓW GŁOWNY",
+    "epa": 85,
+    "przewoznik": "POLREGIO",
+    "godziny.pn_pt": "7:00-18:30",
+    "godziny.sob": "7:00-18:30",
+    "godziny.nd": "7:00-18:30",
+    "przerwy.pn_pt": "9:40-10:00; 14:40-15:00",
+    "przerwy.sob": "9:40-10:00; 14:40-15:00",
+    "przerwy.nd": "9:40-10:00; 14:40-15:00",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "KRAKÓW GŁOWNY",
     "epa": 85,
     "przewoznik": "KOLEJE MAŁOPOLSKIE",
     "godziny.pn_pt": "7:15-16:15",
@@ -545,7 +727,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KRAKÓW PŁASZÓW": {
+  {
+    "stacja": "KRAKÓW PŁASZÓW",
     "epa": 86,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "6:15-17:40",
@@ -558,7 +741,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KROTOSZYN": {
+  {
+    "stacja": "KROTOSZYN",
     "epa": 88,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -571,7 +755,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KRZESZOWICE": {
+  {
+    "stacja": "KRZESZOWICE",
     "epa": 3145,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "6:00-16:00",
@@ -584,7 +769,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KRZYŻ": {
+  {
+    "stacja": "KRZYŻ",
     "epa": 90,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -597,7 +783,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KUTNO": {
+  {
+    "stacja": "KUTNO",
     "epa": 94,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "5:15-21:35",
@@ -610,7 +797,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "KWIDZYN": {
+  {
+    "stacja": "KWIDZYN",
     "epa": 5321,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -623,7 +811,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "LEGIONOWO": {
+  {
+    "stacja": "LEGIONOWO",
     "epa": 428,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "7:00-18;00",
@@ -636,7 +825,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "LUBLIN GŁÓWNY": {
+  {
+    "stacja": "LUBLIN GŁÓWNY",
+    "epa": 103,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:30-20:30",
+    "godziny.sob": "5:30-20:30",
+    "godziny.nd": "5:30-20:30",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "LUBLIN GŁÓWNY",
     "epa": 103,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "9:10-17:30",
@@ -649,7 +853,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "LUBLIN ZACHODNI": {
+  {
+    "stacja": "LUBLIN ZACHODNI",
     "epa": 295,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -662,7 +867,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "LUBLINIEC": {
+  {
+    "stacja": "LUBLINIEC",
     "epa": 104,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "6:30-18:00",
@@ -675,7 +881,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁAPY": {
+  {
+    "stacja": "ŁAPY",
     "epa": 108,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -688,7 +895,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁASK": {
+  {
+    "stacja": "ŁASK",
     "epa": 1248,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -701,7 +909,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁĘCZYCA": {
+  {
+    "stacja": "ŁĘCZYCA",
     "epa": 1254,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -714,7 +923,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁOCHÓW": {
+  {
+    "stacja": "ŁOCHÓW",
     "epa": 1255,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "5:40-16:10",
@@ -727,7 +937,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁOWICZ GŁÓWNY": {
+  {
+    "stacja": "ŁOWICZ GŁÓWNY",
     "epa": 110,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "6:00-20:35",
@@ -740,7 +951,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁÓDŹ CHOJNY": {
+  {
+    "stacja": "ŁÓDŹ CHOJNY",
     "epa": 111,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -753,7 +965,36 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁÓDŹ FABRYCZNA": {
+  {
+    "stacja": "ŁÓDŹ FABRYCZNA",
+    "epa": 112,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:30-19:35",
+    "godziny.sob": "5:30-19:35",
+    "godziny.nd": "5:30-19:35",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "ŁÓDŹ FABRYCZNA",
+    "epa": 112,
+    "przewoznik": "POLREGIO",
+    "godziny.pn_pt": "6:30-17:30",
+    "godziny.sob": "6:30-17:30",
+    "godziny.nd": "6:30-17:30",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "ŁÓDŹ FABRYCZNA",
     "epa": 112,
     "przewoznik": "ŁÓDZKA KOLEJ AGLOMERACYJNA",
     "godziny.pn_pt": "6:30-18:00",
@@ -766,7 +1007,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁÓDŹ KALISKA": {
+  {
+    "stacja": "ŁÓDŹ KALISKA",
+    "epa": 113,
+    "przewoznik": "POLREGIO",
+    "godziny.pn_pt": "6:40-17:40",
+    "godziny.sob": "6:40-17:40",
+    "godziny.nd": "6:40-17:40",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "ŁÓDŹ KALISKA",
     "epa": 113,
     "przewoznik": "ŁÓDZKA KOLEJ AGLOMERACYJNA",
     "godziny.pn_pt": "6:35-17:50",
@@ -779,7 +1035,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁÓDŹ WIDZEW": {
+  {
+    "stacja": "ŁÓDŹ WIDZEW",
     "epa": 114,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "5:40-19:40",
@@ -792,7 +1049,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŁÓDŹ ŻABIENIEC": {
+  {
+    "stacja": "ŁÓDŹ ŻABIENIEC",
     "epa": 1262,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -805,7 +1063,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "MALBORK": {
+  {
+    "stacja": "MALBORK",
     "epa": 117,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "5:55-20:40",
@@ -818,7 +1077,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "MAŁKINIA": {
+  {
+    "stacja": "MAŁKINIA",
     "epa": 119,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "5:30-21:30",
@@ -831,7 +1091,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "MIECHÓW": {
+  {
+    "stacja": "MIECHÓW",
     "epa": 3173,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -844,7 +1105,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "MILICZ": {
+  {
+    "stacja": "MILICZ",
     "epa": 6270,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -857,7 +1119,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "MŁAWA": {
+  {
+    "stacja": "MŁAWA",
     "epa": 422,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -870,7 +1133,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "MOGILNO": {
+  {
+    "stacja": "MOGILNO",
     "epa": 126,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:55-16:45",
@@ -883,7 +1147,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "MYSŁOWICE": {
+  {
+    "stacja": "MYSŁOWICE",
     "epa": 4222,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -896,7 +1161,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "MYSZKÓW": {
+  {
+    "stacja": "MYSZKÓW",
     "epa": 4228,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "5:15-20:35",
@@ -909,7 +1175,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "NAKŁO NAD NOTECIĄ": {
+  {
+    "stacja": "NAKŁO NAD NOTECIĄ",
     "epa": 512,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -922,7 +1189,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "NAŁĘCZÓW": {
+  {
+    "stacja": "NAŁĘCZÓW",
     "epa": 130,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -935,7 +1203,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "NIDZICA": {
+  {
+    "stacja": "NIDZICA",
     "epa": 418,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -948,7 +1217,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "NOWE DREZDENKO": {
+  {
+    "stacja": "NOWE DREZDENKO",
     "epa": 8253,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -961,7 +1231,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "NOWY DWÓR MAZOWIECKI": {
+  {
+    "stacja": "NOWY DWÓR MAZOWIECKI",
     "epa": 1309,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "5:20-17:30",
@@ -974,7 +1245,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OLEŚNICA RATAJE": {
+  {
+    "stacja": "OLEŚNICA RATAJE",
     "epa": 6311,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -987,7 +1259,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OLSZTYN GŁÓWNY": {
+  {
+    "stacja": "OLSZTYN GŁÓWNY",
+    "epa": 140,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:05-20:00",
+    "godziny.sob": "5:05-20:00",
+    "godziny.nd": "5:05-20:00",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "OLSZTYN GŁÓWNY",
     "epa": 140,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:40-21:00",
@@ -1000,7 +1287,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OLSZTYN ZACHODNI": {
+  {
+    "stacja": "OLSZTYN ZACHODNI",
     "epa": 5442,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1013,7 +1301,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OLSZTYNEK": {
+  {
+    "stacja": "OLSZTYNEK",
     "epa": 5440,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1026,7 +1315,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OŁAWA": {
+  {
+    "stacja": "OŁAWA",
     "epa": 6314,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1039,7 +1329,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OPOCZNO POŁUDNIE": {
+  {
+    "stacja": "OPOCZNO POŁUDNIE",
     "epa": 2172,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1052,7 +1343,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OPOLE GŁÓWNE": {
+  {
+    "stacja": "OPOLE GŁÓWNE",
+    "epa": 141,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "6:15-21:40",
+    "godziny.sob": "6:15-21:40",
+    "godziny.nd": "6:15-21:40",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "OPOLE GŁÓWNE",
     "epa": 141,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:55-20:30",
@@ -1065,7 +1371,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OSTRÓW WLKP.": {
+  {
+    "stacja": "OSTRÓW WLKP.",
     "epa": 145,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "6:00-20:00",
@@ -1078,7 +1385,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OTWOCK": {
+  {
+    "stacja": "OTWOCK",
     "epa": 147,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "6:00-19:30",
@@ -1091,7 +1399,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "OZORKÓW": {
+  {
+    "stacja": "OZORKÓW",
     "epa": 1333,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1104,7 +1413,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "PABIANICE": {
+  {
+    "stacja": "PABIANICE",
     "epa": 148,
     "przewoznik": "ŁÓDZKA KOLEJ AGLOMERACYJNA",
     "godziny.pn_pt": "6:00-18:00",
@@ -1117,7 +1427,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "PILAWA": {
+  {
+    "stacja": "PILAWA",
     "epa": 150,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -1130,7 +1441,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "PIŁA GŁÓWNA": {
+  {
+    "stacja": "PIŁA GŁÓWNA",
     "epa": 151,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:00-20:00",
@@ -1143,7 +1455,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "PIOTRKÓW KUJAWSKI": {
+  {
+    "stacja": "PIOTRKÓW KUJAWSKI",
     "epa": 5481,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1156,7 +1469,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "PIOTRKÓW TRYBUNALSKI": {
+  {
+    "stacja": "PIOTRKÓW TRYBUNALSKI",
     "epa": 153,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "6:15-20:35",
@@ -1169,7 +1483,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "PLESZEW": {
+  {
+    "stacja": "PLESZEW",
     "epa": 155,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "6:30-14:30",
@@ -1182,7 +1497,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "PŁOCK": {
+  {
+    "stacja": "PŁOCK",
     "epa": 156,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1195,7 +1511,36 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "POZNAŃ GŁÓWNY": {
+  {
+    "stacja": "POZNAŃ GŁÓWNY",
+    "epa": 159,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "Całodobowo",
+    "godziny.sob": "Całodobowo",
+    "godziny.nd": "Całodobowo",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "POZNAŃ GŁÓWNY",
+    "epa": 159,
+    "przewoznik": "POLREGIO",
+    "godziny.pn_pt": "5:10-21:20",
+    "godziny.sob": "5:10-21:20",
+    "godziny.nd": "5:45-21:20",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "POZNAŃ GŁÓWNY",
     "epa": 159,
     "przewoznik": "KOLEJE WIELKOPOLSKIE",
     "godziny.pn_pt": "5:40-21:10",
@@ -1208,7 +1553,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "PRABUTY": {
+  {
+    "stacja": "PRABUTY",
     "epa": 160,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1221,7 +1567,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "PUŁAWY MIASTO": {
+  {
+    "stacja": "PUŁAWY MIASTO",
     "epa": 166,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "7:15-14:40",
@@ -1234,7 +1581,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "RADOMSKO": {
+  {
+    "stacja": "RADOMSKO",
     "epa": 170,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "6:10-19:10",
@@ -1247,7 +1595,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SIERADZ": {
+  {
+    "stacja": "SIERADZ",
     "epa": 183,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1260,7 +1609,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SIERPC": {
+  {
+    "stacja": "SIERPC",
     "epa": 184,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1273,7 +1623,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SKIERNIEWICE": {
+  {
+    "stacja": "SKIERNIEWICE",
     "epa": 186,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "5:15-21:35",
@@ -1286,7 +1637,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SŁUPCA": {
+  {
+    "stacja": "SŁUPCA",
     "epa": 7457,
     "przewoznik": "KOLEJE WIELKOPOLSKIE",
     "godziny.pn_pt": "5:10-16:30",
@@ -1299,7 +1651,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SOCHACZEW": {
+  {
+    "stacja": "SOCHACZEW",
     "epa": 701,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -1312,7 +1665,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SOLEC KUJAWSKI": {
+  {
+    "stacja": "SOLEC KUJAWSKI",
     "epa": 5576,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:40-16:00",
@@ -1325,7 +1679,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SOPOT": {
+  {
+    "stacja": "SOPOT",
+    "epa": 190,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "6:05-20:00",
+    "godziny.sob": "6:05-20:00",
+    "godziny.nd": "6:05-20:00",
+    "przerwy.pn_pt": "9:00-9:15; 11:30-11:45; 15:00-15:15; 17:05-17:20",
+    "przerwy.sob": "9:00-9:15; 11:30-11:45; 15:00-15:15; 17:05-17:20",
+    "przerwy.nd": "9:00-9:15; 11:30-11:45; 15:00-15:15; 17:05-17:20",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "SOPOT",
     "epa": 190,
     "przewoznik": "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE",
     "godziny.pn_pt": "6:00-20:00",
@@ -1338,7 +1707,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SOSNOWIEC GŁÓWNY": {
+  {
+    "stacja": "SOSNOWIEC GŁÓWNY",
+    "epa": 191,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:40-21:15",
+    "godziny.sob": "5:40-21:15",
+    "godziny.nd": "5:40-21:15",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "SOSNOWIEC GŁÓWNY",
     "epa": 191,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "6:00-21:30",
@@ -1351,7 +1735,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SOSNOWIEC POŁUDNIOWY": {
+  {
+    "stacja": "SOSNOWIEC POŁUDNIOWY",
     "epa": 4315,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1364,7 +1749,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "STARGARD": {
+  {
+    "stacja": "STARGARD",
     "epa": 198,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "7:00-18:30",
@@ -1377,7 +1763,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "STAWIGUDA": {
+  {
+    "stacja": "STAWIGUDA",
     "epa": 5589,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1390,7 +1777,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "STRZELCE OPOLSKIE": {
+  {
+    "stacja": "STRZELCE OPOLSKIE",
     "epa": 718,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1403,7 +1791,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SWARZĘDZ": {
+  {
+    "stacja": "SWARZĘDZ",
     "epa": 521,
     "przewoznik": "KOLEJE WIELKOPOLSKIE",
     "godziny.pn_pt": "6:10-16:00",
@@ -1416,7 +1805,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SZAMOTUŁY": {
+  {
+    "stacja": "SZAMOTUŁY",
     "epa": 199,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:30-18:40",
@@ -1429,7 +1819,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SZCZECIN DĄBIE": {
+  {
+    "stacja": "SZCZECIN DĄBIE",
     "epa": 200,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "6:15-17:40",
@@ -1442,7 +1833,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SZCZECIN GŁOWNY": {
+  {
+    "stacja": "SZCZECIN GŁOWNY",
+    "epa": 201,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:25-20:20",
+    "godziny.sob": "5:25-20:20",
+    "godziny.nd": "5:25-20:20",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "SZCZECIN GŁOWNY",
     "epa": 201,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "8:00-19:30",
@@ -1455,7 +1861,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SZEPIETOWO": {
+  {
+    "stacja": "SZEPIETOWO",
     "epa": 208,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1468,7 +1875,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "SZTUM": {
+  {
+    "stacja": "SZTUM",
     "epa": 5619,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1481,7 +1889,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŚRODA WIELKOPOLSKA": {
+  {
+    "stacja": "ŚRODA WIELKOPOLSKA",
     "epa": 212,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:00-18:00",
@@ -1494,7 +1903,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "TCZEW": {
+  {
+    "stacja": "TCZEW",
+    "epa": 221,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:55-20:10",
+    "godziny.sob": "5:55-20:10",
+    "godziny.nd": "5:55-20:10",
+    "przerwy.pn_pt": "9:20-9:35",
+    "przerwy.sob": "9:20-9:35",
+    "przerwy.nd": "9:20-9:35",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "TCZEW",
     "epa": 221,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "6:10-18:10",
@@ -1507,7 +1931,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "TŁUSZCZ": {
+  {
+    "stacja": "TŁUSZCZ",
     "epa": 224,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -1520,7 +1945,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "TOMASZÓW MAZOWIECKI": {
+  {
+    "stacja": "TOMASZÓW MAZOWIECKI",
     "epa": 225,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1533,7 +1959,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "TORUŃ GŁÓWNY": {
+  {
+    "stacja": "TORUŃ GŁÓWNY",
+    "epa": 226,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "6:15-20:40",
+    "godziny.sob": "6:15-20:40",
+    "godziny.nd": "6:15-20:40",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "TORUŃ GŁÓWNY",
     "epa": 226,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:40-17:35",
@@ -1546,7 +1987,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "TORUŃ WSCHODNI": {
+  {
+    "stacja": "TORUŃ WSCHODNI",
     "epa": 227,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:50-17:35",
@@ -1559,7 +2001,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "TRZCIANKA": {
+  {
+    "stacja": "TRZCIANKA",
     "epa": 8409,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1572,7 +2015,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "TRZEBINIA": {
+  {
+    "stacja": "TRZEBINIA",
     "epa": 228,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1585,7 +2029,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "TWARDOGÓRA": {
+  {
+    "stacja": "TWARDOGÓRA",
     "epa": 6482,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1598,7 +2043,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WARSZAWA CENTRALNA": {
+  {
+    "stacja": "WARSZAWA CENTRALNA",
     "epa": 242,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "Całodobowo",
@@ -1611,7 +2057,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WARSZAWA GDAŃSKA": {
+  {
+    "stacja": "WARSZAWA GDAŃSKA",
     "epa": 243,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -1624,7 +2071,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WARSZAWA ŚRÓDMIEŚCIE": {
+  {
+    "stacja": "WARSZAWA ŚRÓDMIEŚCIE",
     "epa": 1502,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -1637,7 +2085,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WARSZAWA WSCHODNIA": {
+  {
+    "stacja": "WARSZAWA WSCHODNIA",
+    "epa": 244,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "Całodobowo",
+    "godziny.sob": "Całodobowo",
+    "godziny.nd": "Całodobowo",
+    "przerwy.pn_pt": "00:00-00:30",
+    "przerwy.sob": "00:00-00:30",
+    "przerwy.nd": "00:00-00:30",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "WARSZAWA WSCHODNIA",
     "epa": 244,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -1650,7 +2113,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WARSZAWA ZACHODNIA": {
+  {
+    "stacja": "WARSZAWA ZACHODNIA",
+    "epa": 404,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "12:00-20:55",
+    "godziny.sob": "12:00-20:55",
+    "godziny.nd": "12:00-20:55",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "WARSZAWA ZACHODNIA",
     "epa": 404,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -1663,7 +2141,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WIELEŃ": {
+  {
+    "stacja": "WIELEŃ",
     "epa": 8435,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1676,7 +2155,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WŁOCŁAWEK": {
+  {
+    "stacja": "WŁOCŁAWEK",
     "epa": 245,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "6:45-20:30",
@@ -1689,7 +2169,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WŁOSZCZOWA PÓŁNOC": {
+  {
+    "stacja": "WŁOSZCZOWA PÓŁNOC",
     "epa": 2286,
     "przewoznik": "PKP INTERCITY",
     "godziny.pn_pt": "7:15-16:40",
@@ -1702,7 +2183,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WOŁOMIN": {
+  {
+    "stacja": "WOŁOMIN",
     "epa": 1529,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "6:00-17:40",
@@ -1715,7 +2197,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WROCŁAW GŁOWNY": {
+  {
+    "stacja": "WROCŁAW GŁOWNY",
+    "epa": 248,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "Całodobowo",
+    "godziny.sob": "Całodobowo",
+    "godziny.nd": "Całodobowo",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "WROCŁAW GŁOWNY",
     "epa": 248,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "5:30-21:30",
@@ -1728,7 +2225,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WROCŁAW MIKOŁAJÓW": {
+  {
+    "stacja": "WROCŁAW MIKOŁAJÓW",
     "epa": 6514,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1741,7 +2239,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WROCŁAW NADODRZE": {
+  {
+    "stacja": "WROCŁAW NADODRZE",
     "epa": 6516,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1754,7 +2253,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WRONKI": {
+  {
+    "stacja": "WRONKI",
     "epa": 249,
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "6:00-18:00",
@@ -1767,7 +2267,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WRZEŚNIA": {
+  {
+    "stacja": "WRZEŚNIA",
     "epa": 250,
     "przewoznik": "KOLEJE WIELKOPOLSKIE",
     "godziny.pn_pt": "5:10-20:30",
@@ -1780,7 +2281,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "WYRZYSK OSIEK": {
+  {
+    "stacja": "WYRZYSK OSIEK",
     "epa": 8447,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1793,7 +2295,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ZABRZE": {
+  {
+    "stacja": "ZABRZE",
+    "epa": 251,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:10-20:45",
+    "godziny.sob": "5:10-20:45",
+    "godziny.nd": "5:10-20:45",
+    "przerwy.pn_pt": "9:10-9:25",
+    "przerwy.sob": "9:10-9:25",
+    "przerwy.nd": "9:10-9:25",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "ZABRZE",
     "epa": 251,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "6:00-21:30",
@@ -1806,7 +2323,22 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ZAWIERCIE": {
+  {
+    "stacja": "ZAWIERCIE",
+    "epa": 258,
+    "przewoznik": "PKP INTERCITY",
+    "godziny.pn_pt": "5:40-20:45",
+    "godziny.sob": "5:40-20:45",
+    "godziny.nd": "5:40-20:45",
+    "przerwy.pn_pt": "10:00-10:30; 16:10-16:40",
+    "przerwy.sob": "10:00-10:30; 16:10-16:40",
+    "przerwy.nd": "10:00-10:30; 16:10-16:40",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "ZAWIERCIE",
     "epa": 258,
     "przewoznik": "KOLEJE ŚLĄSKIE",
     "godziny.pn_pt": "5:15-20:35",
@@ -1819,7 +2351,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ZDUŃSKA WOLA": {
+  {
+    "stacja": "ZDUŃSKA WOLA",
     "epa": 260,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1832,7 +2365,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ZGIERZ": {
+  {
+    "stacja": "ZGIERZ",
     "epa": 702,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1845,7 +2379,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ZWIERZYN": {
+  {
+    "stacja": "ZWIERZYN",
     "epa": 8365,
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1858,7 +2393,8 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   },
-  "ŻYRARDÓW": {
+  {
+    "stacja": "ŻYRARDÓW",
     "epa": 1566,
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -1871,4 +2407,4 @@
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
   }
-}
+]
