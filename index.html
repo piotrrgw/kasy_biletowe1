@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Asystent Kas Biletowych</title>
     <style>
+        /* --- Zmienne CSS --- */
         :root {
             --primary: #0056b3;
             --bg: #f4f4f9;
@@ -19,6 +20,7 @@
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
+        /* --- Globalne style i reset --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
@@ -27,7 +29,7 @@
             color: var(--text); 
             margin: 0; 
             padding: 15px; 
-            padding-bottom: 40px; 
+            padding-bottom: 60px; /* Miejsce na stopkę */
         }
 
         .container { 
@@ -44,19 +46,14 @@
             letter-spacing: -0.5px;
         }
 
-        /* Status sieci i Daty */
+        /* --- Status sieci i Daty --- */
         .top-info-bar {
             display: flex;
             flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
         }
-
-        .network-msg {
-            text-align: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
+        .network-msg { text-align: center; font-size: 0.8rem; font-weight: bold; }
         .msg-online { color: var(--open); }
         .msg-offline { color: var(--closed); }
 
@@ -72,11 +69,7 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             line-height: 1.4;
         }
-        .time-display {
-            color: var(--primary);
-            font-weight: 800;
-            margin-left: 10px;
-        }
+        .time-display { color: var(--primary); font-weight: 800; margin-left: 10px; }
         .holiday-tag {
             background-color: var(--holiday);
             color: white;
@@ -89,7 +82,7 @@
             white-space: nowrap;
         }
 
-        /* Panel Sterowania */
+        /* --- Panel Sterowania --- */
         .controls {
             background: var(--white);
             padding: 20px;
@@ -97,7 +90,6 @@
             box-shadow: var(--shadow);
             margin-bottom: 25px;
         }
-
         button {
             width: 100%;
             padding: 14px;
@@ -113,9 +105,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         button:active { transform: scale(0.98); background-color: #004494; }
-
         label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
-        
         select {
             width: 100%;
             padding: 12px;
@@ -130,7 +120,7 @@
             background-size: 1em;
         }
 
-        /* GŁÓWNY BOX STATUSU */
+        /* --- GŁÓWNY BOX STATUSU --- */
         #mainStatusBox {
             display: none;
             text-align: center;
@@ -149,7 +139,7 @@
         .bg-break { background: linear-gradient(135deg, var(--break), #d39e00); color: #212529 !important; text-shadow: none !important; }
         .bg-closed { background: linear-gradient(135deg, var(--closed), #bd2130); }
 
-        /* Kafelki Przewoźników */
+        /* --- Kafelki Przewoźników --- */
         .details-container { display: none; }
         
         .card {
@@ -160,7 +150,6 @@
             overflow: hidden;
             border-left: 6px solid #ccc;
         }
-
         .card-header {
             padding: 15px;
             background: #f8f9fa;
@@ -198,11 +187,7 @@
         }
         .notes-section strong { font-style: normal; font-weight: 700; margin-right: 5px; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         th, td {
             padding: 12px 15px;
             text-align: left;
@@ -238,6 +223,23 @@
             background: #fff;
             border-top: 1px solid #f8f9fa;
         }
+        
+        /* --- STOPKA --- */
+        .page-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            font-size: 0.8rem;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.15);
+        }
+        .page-footer a { color: #ccc; text-decoration: none; }
+        .page-footer a:hover { color: var(--white); }
+
 
         @media (max-width: 370px) {
             h1 { font-size: 1.4rem; }
@@ -269,6 +271,10 @@
 
     <div id="detailsList" class="details-container"></div>
 </div>
+
+<footer class="page-footer">
+    Autorzy: **Piotr M 🚂** (Dane & Wizja) i **Gemini** (Kod & Implementacja)
+</footer>
 
 <script>
     // ================= KONFIGURACJA =================
@@ -325,7 +331,7 @@
         return null;
     }
 
-    // ================= UNIWERSALNA FUNKCJA TRANSFORMACJI DANYCH (ULEPSZENIE) =================
+    // ================= UNIWERSALNA FUNKCJA TRANSFORMACJI DANYCH =================
     function transformData(data) {
         if (!Array.isArray(data)) return data;
 
@@ -338,7 +344,7 @@
                 const parts = key.split('.');
                 let current = newItem;
 
-                // Nawigacja i budowanie hierarchii (godziny.pn_pt -> godziny: {pn_pt: ...})
+                // Budowanie hierarchii (godziny.pn_pt -> godziny: {pn_pt: ...})
                 for (let i = 0; i < parts.length; i++) {
                     const part = parts[i];
                     if (i === parts.length - 1) {
@@ -352,12 +358,10 @@
                 }
             });
 
-            // Dodatkowe czyszczenie i standaryzacja (jak w parseFlatData)
+            // Standaryzacja kluczowych pól
             newItem.przewoznik = String(newItem.przewoznik || 'BRAK').toUpperCase();
             newItem.epa = newItem.epa || 'Brak';
             newItem.uwagi = (newItem.uwagi && String(newItem.uwagi).toLowerCase() !== 'nan') ? newItem.uwagi : '';
-
-            // Konwersja daty meta na string
             if (newItem.meta && newItem.meta.data) {
                 newItem.meta.data = String(newItem.meta.data);
             }
@@ -377,7 +381,6 @@
             if(!res.ok) throw new Error("Błąd HTTP");
             const json = await res.json();
             
-            // Używamy nowej, uniwersalnej funkcji do transformacji danych
             const processedData = transformData(json);
             
             localStorage.setItem(STORAGE_KEY, JSON.stringify(processedData));
@@ -392,7 +395,6 @@
             const cached = localStorage.getItem(STORAGE_KEY);
             if(cached) {
                 bazaDanych = JSON.parse(cached);
-                // Upewniamy się, że wczytane dane z pamięci również są przetransformowane
                 bazaDanych = transformData(bazaDanych); 
                 netMsg.innerHTML = "<span class='msg-offline'>⚠️ Tryb Offline (Dane z pamięci)</span>";
                 if(force) alert("Brak sieci. Wczytano dane z pamięci urządzenia.");
@@ -527,7 +529,7 @@
         listContainer.style.display = 'block';
     }
 
-    // ================= KALKULATOR =================
+    // ================= KALKULATOR (OSTATECZNA POPRAWKA CZASU) =================
     function obliczStatus(kasa, swieto, dayOfWeek) {
         let hStr, bStr;
         if(swieto || dayOfWeek === 0) {
@@ -541,28 +543,45 @@
             bStr = kasa.przerwy.pn_pt;
         }
 
-        if(!hStr || String(hStr).toLowerCase().includes('nieczynne') || String(hStr).toLowerCase().includes('zamknięte')) {
+        const hStrLower = String(hStr).toLowerCase();
+        const is24h = hStrLower.includes('całodobowo');
+        
+        if(!hStr || hStrLower.includes('nieczynne') || hStrLower.includes('zamknięte')) {
             return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
         }
 
         const now = new Date();
         const min = now.getHours() * 60 + now.getMinutes();
-        const [open, close] = parseRange(hStr);
+        
+        // Sprawdzanie, czy kasa jest otwarta (tylko jeśli nie jest całodobowa)
+        if (!is24h) {
+            const [open, close] = parseRange(hStr);
+            let isOpen = false;
+            
+            if (open <= close) {
+                if(min >= open && min < close) isOpen = true;
+            } else {
+                if(min >= open || min < close) isOpen = true; // Przejście przez północ
+            }
 
-        let isOpen = false;
-        if(open <= close) {
-            if(min >= open && min < close) isOpen = true;
-        } else {
-            if(min >= open || min < close) isOpen = true;
+            if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
         }
-
-        if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
-
-        if(bStr && String(bStr).length > 3 && !String(bStr).toLowerCase().includes('brak') && String(bStr).toLowerCase() !== 'nan') {
+        
+        // Sprawdzenie przerwy (dla wszystkich, w tym całodobowych)
+        const bStrLower = String(bStr).toLowerCase();
+        if(bStr && bStrLower.length > 3 && !bStrLower.includes('brak') && bStrLower !== 'nan') {
             const breaks = String(bStr).split(';');
             for(let br of breaks) {
                 const [bStart, bEnd] = parseRange(br.trim());
-                if(min >= bStart && min < bEnd) {
+                
+                let isDuringBreak = false;
+                if (bStart <= bEnd) {
+                    if (min >= bStart && min < bEnd) isDuringBreak = true;
+                } else {
+                    if (min >= bStart || min < bEnd) isDuringBreak = true; // Przerwa przechodząca przez północ
+                }
+
+                if(isDuringBreak) {
                     return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
                 }
             }
