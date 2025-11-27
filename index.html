@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Asystent Kas Biletowych</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --bg: #f4f4f9;
+            --white: #ffffff;
+            --open: #28a745;
+            --closed: #dc3545;
+            --break: #ffc107;
+            --holiday: #6f42c1;
+            --text: #333;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 15px; 
+            padding-bottom: 40px; 
+        }
+
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            width: 100%;
+        }
+        
+        h1 { 
+            text-align: center; 
+            color: var(--primary); 
+            margin-bottom: 15px; 
+            font-size: 1.6rem;
+            letter-spacing: -0.5px;
+        }
+
+        /* Status sieci i Daty */
+        .top-info-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .network-msg {
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .msg-online { color: var(--open); }
+        .msg-offline { color: var(--closed); }
+
+        .date-bar {
+            background: #e9ecef;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #555;
+            border: 1px solid #ddd;
+            font-size: 1rem; /* Nieco większa czcionka dla zegara */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            line-height: 1.4;
+        }
+        .time-display {
+            color: var(--primary);
+            font-weight: 800;
+            margin-left: 10px;
+        }
+        .holiday-tag {
+            background-color: var(--holiday);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-left: 6px;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        /* Panel Sterowania */
+        .controls {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 15px;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button:active { transform: scale(0.98); background-color: #004494; }
+
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
+        
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #fff;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        /* GŁÓWNY BOX STATUSU */
+        #mainStatusBox {
+            display: none;
+            text-align: center;
+            padding: 25px 15px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 800;
+            font-size: 2rem;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            line-height: 1.1;
+        }
+        .bg-open { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        .bg-break { background: linear-gradient(135deg, #ffc107, #d39e00); color: #212529 !important; text-shadow: none !important; }
+        .bg-closed { background: linear-gradient(135deg, #dc3545, #bd2130); }
+
+        /* Kafelki Przewoźników */
+        .details-container { display: none; }
+        
+        .card {
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-left: 6px solid #ccc;
+        }
+
+        .card-header {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; 
+            gap: 10px;
+        }
+        .carrier-title { font-size: 1.1rem; font-weight: 700; color: #2c3e50; }
+        .epa-info { font-size: 0.8rem; color: #7f8c8d; margin-top: 2px; }
+        
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #f1f1f1;
+            vertical-align: top;
+        }
+        th { color: #666; width: 35%; font-weight: normal; } 
+        
+        .active-row { background-color: #e8f5e9; color: #1b5e20; }
+        .active-row th { color: #1b5e20; font-weight: 700; }
+        .active-row td { font-weight: 600; }
+
+        .btn-link {
+            display: block;
+            text-align: center;
+            margin: 15px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid #e9ecef;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .btn-link:active { background-color: #e2e6ea; border-color: #dae0e5; }
+
+        .meta-footer {
+            font-size: 0.7rem;
+            color: #95a5a6;
+            text-align: right;
+            padding: 8px 15px;
+            background: #fff;
+            border-top: 1px solid #f8f9fa;
+        }
+
+        @media (max-width: 370px) {
+            h1 { font-size: 1.4rem; }
+            #mainStatusBox { font-size: 1.6rem; padding: 20px 10px; }
+            th { width: 30%; font-size: 0.85rem; }
+            td { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚆 Asystent Kas Biletowych</h1>
+    
+    <div class="top-info-bar">
+        <div id="networkStatus" class="network-msg">Ładowanie systemu...</div>
+        <div id="dateBar" class="date-bar">...</div>
+    </div>
+
+    <div class="controls">
+        <button onclick="pobierzDane(true)">🔄 Pobierz / Aktualizuj Bazę</button>
+        <label for="stationSelect">Wybierz stację:</label>
+        <select id="stationSelect" onchange="wyswietlStacje()">
+            <option value="">-- Najpierw pobierz dane --</option>
+        </select>
+    </div>
+
+    <div id="mainStatusBox">STATUS</div>
+
+    <div id="detailsList" class="details-container"></div>
+</div>
+
+<script>
+    // ================= KONFIGURACJA =================
+    const URL_DANYCH = 'kasy.json'; 
+    const STORAGE_KEY = 'kasy_biletowe_v_clock';
+    let bazaDanych = [];
+
+    // ================= KALENDARZ ŚWIĄT =================
+    const SWIETA_STALE = {
+        '01-01': 'Nowy Rok', '01-06': 'Trzech Króli', '05-01': 'Święto Pracy',
+        '05-03': '3 Maja', '08-15': 'Wniebowzięcie NMP',
+        '11-01': 'Wszystkich Świętych', '11-11': 'Niepodległości',
+        '12-25': 'Boże Narodzenie', '12-26': 'Boże Narodzenie'
+    };
+    const SWIETA_RUCHOME = {
+        '2025-04-20': 'Wielkanoc', '2025-04-21': 'Pon. Wielkanocny', '2025-06-08': 'Zielone Świątki', '2025-06-19': 'Boże Ciało',
+        '2026-04-05': 'Wielkanoc', '2026-04-06': 'Pon. Wielkanocny', '2026-05-24': 'Zielone Świątki', '2026-06-04': 'Boże Ciało',
+        '2027-03-28': 'Wielkanoc', '2027-03-29': 'Pon. Wielkanocny', '2027-05-16': 'Zielone Świątki', '2027-05-27': 'Boże Ciało',
+        '2028-04-16': 'Wielkanoc', '2028-04-17': 'Pon. Wielkanocny', '2028-06-04': 'Zielone Świątki', '2028-06-15': 'Boże Ciało',
+        '2029-04-01': 'Wielkanoc', '2029-04-02': 'Pon. Wielkanocny', '2029-05-20': 'Zielone Świątki', '2029-05-31': 'Boże Ciało',
+        '2030-04-21': 'Wielkanoc', '2030-04-22': 'Pon. Wielkanocny', '2030-06-09': 'Zielone Świątki', '2030-06-20': 'Boże Ciało'
+    };
+
+    function sprawdzSwieto() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,'0');
+        const day = String(d.getDate()).padStart(2,'0');
+        
+        const keyFixed = `${m}-${day}`;
+        const keyMoveable = `${y}-${m}-${day}`;
+
+        if(SWIETA_STALE[keyFixed]) return SWIETA_STALE[keyFixed];
+        if(SWIETA_RUCHOME[keyMoveable]) return SWIETA_RUCHOME[keyMoveable];
+        return null;
+    }
+
+    // ================= LOGIKA DANYCH (OFFLINE) =================
+    async function pobierzDane(force = false) {
+        const netMsg = document.getElementById('networkStatus');
+        netMsg.innerText = "Łączenie z serwerem...";
+
+        try {
+            const res = await fetch(URL_DANYCH, { cache: "no-store" });
+            if(!res.ok) throw new Error("Błąd HTTP");
+            const json = await res.json();
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(json));
+            bazaDanych = json;
+            
+            netMsg.innerHTML = "<span class='msg-online'>✅ Baza online (Aktualna)</span>";
+            if(force) alert("Dane zaktualizowane pomyślnie!");
+            zbudujSelect();
+
+        } catch (e) {
+            console.warn("Offline fallback:", e);
+            const cached = localStorage.getItem(STORAGE_KEY);
+            if(cached) {
+                bazaDanych = JSON.parse(cached);
+                netMsg.innerHTML = "<span class='msg-offline'>⚠️ Tryb Offline (Dane z pamięci)</span>";
+                if(force) alert("Brak sieci. Wczytano dane z pamięci urządzenia.");
+                zbudujSelect();
+            } else {
+                netMsg.innerHTML = "<span class='msg-offline'>❌ Brak danych i brak internetu</span>";
+            }
+        }
+    }
+
+    // ================= INTERFEJS I ZEGAR =================
+    function initZegar() {
+        const d = new Date();
+        const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        
+        // Data
+        let dateStr = d.toLocaleDateString('pl-PL', optionsDate);
+        dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+
+        // Czas
+        const timeStr = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        const swieto = sprawdzSwieto();
+        const bar = document.getElementById('dateBar');
+        
+        let htmlContent = `${dateStr} <span class="time-display">⏰ ${timeStr}</span>`;
+
+        if(swieto) {
+            htmlContent += ` <span class="holiday-tag">★ ${swieto}</span>`;
+            bar.style.borderColor = "var(--holiday)";
+        } else {
+            bar.style.borderColor = "#ddd";
+        }
+        
+        bar.innerHTML = htmlContent;
+    }
+
+    function zbudujSelect() {
+        const sel = document.getElementById('stationSelect');
+        const saved = sel.value;
+        sel.innerHTML = '<option value="">-- Wybierz stację --</option>';
+
+        const stacje = [...new Set(bazaDanych.map(x => x.stacja))].sort((a,b) => a.localeCompare(b));
+        stacje.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s;
+            opt.text = s;
+            sel.appendChild(opt);
+        });
+
+        if(saved && stacje.includes(saved)) {
+            sel.value = saved;
+            wyswietlStacje();
+        }
+    }
+
+    function wyswietlStacje() {
+        const nazwa = document.getElementById('stationSelect').value;
+        const mainBox = document.getElementById('mainStatusBox');
+        const listContainer = document.getElementById('detailsList');
+        
+        listContainer.innerHTML = '';
+        if(!nazwa) {
+            mainBox.style.display = 'none';
+            listContainer.style.display = 'none';
+            return;
+        }
+
+        const kasy = bazaDanych.filter(k => k.stacja === nazwa);
+        
+        let anyOpen = false;
+        let anyBreak = false;
+
+        const d = new Date();
+        const swieto = sprawdzSwieto();
+        const day = d.getDay(); 
+        let dayType = 'pn_pt';
+        if(swieto || day === 0) dayType = 'nd';
+        else if(day === 6) dayType = 'sob';
+
+        kasy.forEach(k => {
+            const st = obliczStatus(k, swieto, day);
+            if(st.type === 'open') anyOpen = true;
+            if(st.type === 'break') anyBreak = true;
+
+            const html = `
+            <div class="card" style="border-left-color: ${st.color}">
+                <div class="card-header">
+                    <div>
+                        <div class="carrier-title">${k.przewoznik}</div>
+                        <div class="epa-info">EPA: ${k.epa}</div>
+                    </div>
+                    <div class="status-pill" style="background-color: ${st.color}; color: ${st.type==='break'?'#333':'white'}">
+                        ${st.text}
+                    </div>
+                </div>
+                <table>
+                    <tr class="${dayType==='pn_pt'?'active-row':''}">
+                        <th>Pn - Pt</th>
+                        <td>${k.godziny.pn_pt} <br> <small style="color:#777">Przerwa: ${k.przerwy.pn_pt||'-'}</small></td>
+                    </tr>
+                    <tr class="${dayType==='sob'?'active-row':''}">
+                        <th>Sobota</th>
+                        <td>${k.godziny.sob} <br> <small style="color:#777">Przerwa: ${k.przerwy.sob||'-'}</small></td>
+                    </tr>
+                    <tr class="${dayType==='nd'?'active-row':''}">
+                        <th>Ndz / Św</th>
+                        <td>${k.godziny.nd} <br> <small style="color:#777">Przerwa: ${k.przerwy.nd||'-'}</small></td>
+                    </tr>
+                </table>
+                ${k.url ? `<a href="${k.url}" target="_blank" class="btn-link">Strona Przewoźnika &raquo;</a>` : ''}
+                <div class="meta-footer">Data danych: ${k.meta.data} | Autor: ${k.meta.kto}</div>
+            </div>`;
+            listContainer.innerHTML += html;
+        });
+
+        mainBox.style.display = 'block';
+        mainBox.className = ''; 
+        if(anyOpen) {
+            mainBox.innerText = "KASA CZYNNA";
+            mainBox.classList.add('bg-open');
+        } else if(anyBreak) {
+            mainBox.innerText = "PRZERWA";
+            mainBox.classList.add('bg-break');
+        } else {
+            mainBox.innerText = "NIECZYNNE";
+            mainBox.classList.add('bg-closed');
+        }
+        listContainer.style.display = 'block';
+    }
+
+    // ================= KALKULATOR =================
+    function obliczStatus(kasa, swieto, dayOfWeek) {
+        if(kasa.statusSpecjalny && kasa.statusSpecjalny.toLowerCase() !== "czynna") {
+            return { type: 'closed', text: kasa.statusSpecjalny, color: '#dc3545' };
+        }
+
+        let hStr, bStr;
+        if(swieto || dayOfWeek === 0) {
+            hStr = kasa.godziny.nd;
+            bStr = kasa.przerwy.nd;
+        } else if(dayOfWeek === 6) {
+            hStr = kasa.godziny.sob;
+            bStr = kasa.przerwy.sob;
+        } else {
+            hStr = kasa.godziny.pn_pt;
+            bStr = kasa.przerwy.pn_pt;
+        }
+
+        if(!hStr || hStr.toLowerCase().includes('nieczynne') || hStr.toLowerCase().includes('zamknięte')) {
+            return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
+        }
+
+        const now = new Date();
+        const min = now.getHours() * 60 + now.getMinutes();
+        const [open, close] = parseRange(hStr);
+
+        let isOpen = false;
+        if(open <= close) {
+            if(min >= open && min < close) isOpen = true;
+        } else {
+            if(min >= open || min < close) isOpen = true;
+        }
+
+        if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
+
+        if(bStr && bStr.length > 3 && !bStr.toLowerCase().includes('brak')) {
+            const breaks = bStr.split(';');
+            for(let br of breaks) {
+                const [bStart, bEnd] = parseRange(br.trim());
+                if(min >= bStart && min < bEnd) {
+                    return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
+                }
+            }
+        }
+
+        return { type: 'open', text: 'OTWARTA', color: '#28a745' };
+    }
+
+    function parseTime(t) {
+        if(!t) return 0;
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
+    
+    function parseRange(str) {
+        if(!str || !str.includes('-')) return [0,0];
+        const parts = str.split('-');
+        return [parseTime(parts[0]), parseTime(parts[1])];
+    }
+
+    window.onload = () => {
+        initZegar();
+        pobierzDane();
+        // Odświeżanie zegara co 1 sekundę
+        setInterval(() => { initZegar(); }, 1000);
+        // Odświeżanie statusu stacji co 1 minutę
+        setInterval(() => { wyswietlStacje(); }, 60000);
+    };
+</script>
+</body>
+</html>

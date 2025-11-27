@@ -1,0 +1,86 @@
+[
+  {
+    "stacja": "Łódź Fabryczna",
+    "epa": "123456",
+    "przewoznik": "PKP Intercity",
+    "url": "https://www.intercity.pl/pl/site/dla-pasazera/informacje/wyszukiwarka-kas-i-biletomatow.html",
+    "godziny": {
+      "pn_pt": "07:00-19:30",
+      "sob": "08:00-18:00",
+      "nd": "09:00-17:00"
+    },
+    "przerwy": {
+      "pn_pt": "10:00-10:15; 14:00-14:30",
+      "sob": "12:00-12:20",
+      "nd": "Brak"
+    },
+    "statusSpecjalny": "Czynna",
+    "meta": {
+      "kto": "Jan Kowalski",
+      "data": "2025-01-10"
+    }
+  },
+  {
+    "stacja": "Łódź Fabryczna",
+    "epa": "654321",
+    "przewoznik": "ŁKA",
+    "url": "https://lka.lodzkie.pl/strona-glowna/Kasy-biletowe/",
+    "godziny": {
+      "pn_pt": "06:00-20:00",
+      "sob": "Nieczynne",
+      "nd": "Nieczynne"
+    },
+    "przerwy": {
+      "pn_pt": "11:00-11:15",
+      "sob": "-",
+      "nd": "-"
+    },
+    "statusSpecjalny": "Czynna",
+    "meta": {
+      "kto": "Anna Nowak",
+      "data": "2025-01-12"
+    }
+  },
+  {
+    "stacja": "Warszawa Centralna",
+    "epa": "999888",
+    "przewoznik": "PKP Intercity",
+    "url": "https://www.intercity.pl",
+    "godziny": {
+      "pn_pt": "00:00-23:59",
+      "sob": "00:00-23:59",
+      "nd": "00:00-23:59"
+    },
+    "przerwy": {
+      "pn_pt": "02:30-03:00",
+      "sob": "02:30-03:00",
+      "nd": "02:30-03:00"
+    },
+    "statusSpecjalny": "Czynna",
+    "meta": {
+      "kto": "Admin",
+      "data": "2025-01-15"
+    }
+  },
+  {
+    "stacja": "Kutno",
+    "epa": "111222",
+    "przewoznik": "Polregio",
+    "url": "https://polregio.pl",
+    "godziny": {
+      "pn_pt": "06:00-18:00",
+      "sob": "Nieczynne",
+      "nd": "Nieczynne"
+    },
+    "przerwy": {
+      "pn_pt": "10:00-10:20",
+      "sob": "-",
+      "nd": "-"
+    },
+    "statusSpecjalny": "Remont",
+    "meta": {
+      "kto": "Piotr",
+      "data": "2025-01-10"
+    }
+  }
+]
