@@ -13,6 +13,8 @@
             --closed: #dc3545;
             --break: #ffc107;
             --holiday: #6f42c1;
+            --note-bg: #fff3cd;      /* Tło dla uwag */
+            --note-text: #856404;    /* Tekst uwag */
             --text: #333;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
@@ -66,7 +68,7 @@
             font-weight: 600;
             color: #555;
             border: 1px solid #ddd;
-            font-size: 1rem; /* Nieco większa czcionka dla zegara */
+            font-size: 1rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             line-height: 1.4;
         }
@@ -184,6 +186,18 @@
             text-align: center;
         }
 
+        /* Sekcja Uwagi */
+        .notes-section {
+            background-color: var(--note-bg);
+            color: var(--note-text);
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            border-top: 1px solid #ffeb8f;
+            font-style: italic;
+            font-weight: 600;
+        }
+        .notes-section strong { font-style: normal; font-weight: 700; margin-right: 5px; }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -259,8 +273,28 @@
 <script>
     // ================= KONFIGURACJA =================
     const URL_DANYCH = 'kasy.json'; 
-    const STORAGE_KEY = 'kasy_biletowe_v_clock';
+    const STORAGE_KEY = 'kasy_biletowe_v_final';
     let bazaDanych = [];
+
+    // ================= BAZA LINKÓW DO PRZEWOŹNIKÓW =================
+    const BAZA_LINKOW = {
+        "PKP Intercity": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
+        "Polregio": "https://polregio.pl/pl/dla-podroznych/gdzie-kupic-bilet/kasy-biletowe/",
+        "Arriva RP": "https://arriva.pl/1032/kasy-biletowe",
+        "Koleje Śląskie": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "KŚ": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "Koleje Mazowieckie": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "KM": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "Łódzka Kolej Aglomeracyjna": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "ŁKA": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "Koleje Wielkopolskie": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "KW": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "Koleje Dolnośląskie": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "KD": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "Koleje Małopolskie": "https://www.kolejemalopolskie.com.pl/pl/kasa-biletowa-kolei-malopolskich-na-dworcu-krakow-glowny",
+        "Szybka Kolej Miejska w Trójmieście": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
+        "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow"
+    };
 
     // ================= KALENDARZ ŚWIĄT =================
     const SWIETA_STALE = {
@@ -283,10 +317,8 @@
         const y = d.getFullYear();
         const m = String(d.getMonth()+1).padStart(2,'0');
         const day = String(d.getDate()).padStart(2,'0');
-        
         const keyFixed = `${m}-${day}`;
         const keyMoveable = `${y}-${m}-${day}`;
-
         if(SWIETA_STALE[keyFixed]) return SWIETA_STALE[keyFixed];
         if(SWIETA_RUCHOME[keyMoveable]) return SWIETA_RUCHOME[keyMoveable];
         return null;
@@ -327,26 +359,19 @@
     function initZegar() {
         const d = new Date();
         const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        
-        // Data
         let dateStr = d.toLocaleDateString('pl-PL', optionsDate);
         dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-
-        // Czas
         const timeStr = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
         const swieto = sprawdzSwieto();
         const bar = document.getElementById('dateBar');
         
         let htmlContent = `${dateStr} <span class="time-display">⏰ ${timeStr}</span>`;
-
         if(swieto) {
             htmlContent += ` <span class="holiday-tag">★ ${swieto}</span>`;
             bar.style.borderColor = "var(--holiday)";
         } else {
             bar.style.borderColor = "#ddd";
         }
-        
         bar.innerHTML = htmlContent;
     }
 
@@ -398,17 +423,26 @@
             if(st.type === 'open') anyOpen = true;
             if(st.type === 'break') anyBreak = true;
 
+            const linkPrzewoznika = BAZA_LINKOW[k.przewoznik] || null;
+
+            // Tworzenie sekcji uwag
+            const uwagiHtml = k.uwagi ? 
+                `<div class="notes-section"><strong>UWAGI:</strong> ${k.uwagi}</div>` : '';
+
             const html = `
             <div class="card" style="border-left-color: ${st.color}">
                 <div class="card-header">
                     <div>
                         <div class="carrier-title">${k.przewoznik}</div>
-                        <div class="epa-info">EPA: ${k.epa}</div>
+                        <div class="epa-info">EPA: ${k.epa || 'Brak danych'}</div>
                     </div>
                     <div class="status-pill" style="background-color: ${st.color}; color: ${st.type==='break'?'#333':'white'}">
                         ${st.text}
                     </div>
                 </div>
+                
+                ${uwagiHtml}
+
                 <table>
                     <tr class="${dayType==='pn_pt'?'active-row':''}">
                         <th>Pn - Pt</th>
@@ -423,7 +457,9 @@
                         <td>${k.godziny.nd} <br> <small style="color:#777">Przerwa: ${k.przerwy.nd||'-'}</small></td>
                     </tr>
                 </table>
-                ${k.url ? `<a href="${k.url}" target="_blank" class="btn-link">Strona Przewoźnika &raquo;</a>` : ''}
+                
+                ${linkPrzewoznika ? `<a href="${linkPrzewoznika}" target="_blank" class="btn-link">Wykaz kas: ${k.przewoznik} &raquo;</a>` : ''}
+
                 <div class="meta-footer">Data danych: ${k.meta.data} | Autor: ${k.meta.kto}</div>
             </div>`;
             listContainer.innerHTML += html;
@@ -446,10 +482,8 @@
 
     // ================= KALKULATOR =================
     function obliczStatus(kasa, swieto, dayOfWeek) {
-        if(kasa.statusSpecjalny && kasa.statusSpecjalny.toLowerCase() !== "czynna") {
-            return { type: 'closed', text: kasa.statusSpecjalny, color: '#dc3545' };
-        }
-
+        // Usunięto check na statusSpecjalny - status jest czysto obliczeniowy
+        
         let hStr, bStr;
         if(swieto || dayOfWeek === 0) {
             hStr = kasa.godziny.nd;
@@ -507,9 +541,7 @@
     window.onload = () => {
         initZegar();
         pobierzDane();
-        // Odświeżanie zegara co 1 sekundę
         setInterval(() => { initZegar(); }, 1000);
-        // Odświeżanie statusu stacji co 1 minutę
         setInterval(() => { wyswietlStacje(); }, 60000);
     };
 </script>
