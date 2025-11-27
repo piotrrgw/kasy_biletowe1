@@ -13,8 +13,8 @@
             --closed: #dc3545;
             --break: #ffc107;
             --holiday: #6f42c1;
-            --note-bg: #fff3cd;      /* Tło dla uwag */
-            --note-text: #856404;    /* Tekst uwag */
+            --note-bg: #fff3cd;
+            --note-text: #856404;
             --text: #333;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
@@ -145,9 +145,9 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
             line-height: 1.1;
         }
-        .bg-open { background: linear-gradient(135deg, #28a745, #1e7e34); }
-        .bg-break { background: linear-gradient(135deg, #ffc107, #d39e00); color: #212529 !important; text-shadow: none !important; }
-        .bg-closed { background: linear-gradient(135deg, #dc3545, #bd2130); }
+        .bg-open { background: linear-gradient(135deg, var(--open), #1e7e34); }
+        .bg-break { background: linear-gradient(135deg, var(--break), #d39e00); color: #212529 !important; text-shadow: none !important; }
+        .bg-closed { background: linear-gradient(135deg, var(--closed), #bd2130); }
 
         /* Kafelki Przewoźników */
         .details-container { display: none; }
@@ -278,22 +278,23 @@
 
     // ================= BAZA LINKÓW DO PRZEWOŹNIKÓW =================
     const BAZA_LINKOW = {
-        "PKP Intercity": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
-        "Polregio": "https://polregio.pl/pl/dla-podroznych/gdzie-kupic-bilet/kasy-biletowe/",
-        "Arriva RP": "https://arriva.pl/1032/kasy-biletowe",
-        "Koleje Śląskie": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "PKP INTERCITY": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
+        "POLREGIO": "https://polregio.pl/pl/dla-podroznych/gdzie-kupic-bilet/kasy-biletowe/",
+        "ARRIVA RP": "https://arriva.pl/1032/kasy-biletowe",
+        "KOLEJE ŚLĄSKIE": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
         "KŚ": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
-        "Koleje Mazowieckie": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "KOLEJE MAZOWIECKIE": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
         "KM": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
-        "Łódzka Kolej Aglomeracyjna": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "ŁÓDZKA KOLEJ AGLOMERACYJNA": "https://lka.lodzkie.pl/kasy-biletowe/",
         "ŁKA": "https://lka.lodzkie.pl/kasy-biletowe/",
-        "Koleje Wielkopolskie": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "KOLEJE WIELKOPOLSKIE": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
         "KW": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
-        "Koleje Dolnośląskie": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "KOLEJE DOLNOŚLĄSKIE": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
         "KD": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
-        "Koleje Małopolskie": "https://www.kolejemalopolskie.com.pl/pl/kasa-biletowa-kolei-malopolskich-na-dworcu-krakow-glowny",
-        "Szybka Kolej Miejska w Trójmieście": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
-        "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow"
+        "KOLEJE MAŁOPOLSKIE": "https://www.kolejemalopolskie.com.pl/pl/kasa-biletowa-kolei-malopolskich-na-dworcu-krakow-glowny",
+        "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
+        "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
+        "BRAK": null
     };
 
     // ================= KALENDARZ ŚWIĄT =================
@@ -324,6 +325,48 @@
         return null;
     }
 
+    // ================= UNIWERSALNA FUNKCJA TRANSFORMACJI DANYCH (ULEPSZENIE) =================
+    function transformData(data) {
+        if (!Array.isArray(data)) return data;
+
+        return data.map(item => {
+            const newItem = {};
+            const itemKeys = Object.keys(item);
+
+            itemKeys.forEach(key => {
+                const value = item[key];
+                const parts = key.split('.');
+                let current = newItem;
+
+                // Nawigacja i budowanie hierarchii (godziny.pn_pt -> godziny: {pn_pt: ...})
+                for (let i = 0; i < parts.length; i++) {
+                    const part = parts[i];
+                    if (i === parts.length - 1) {
+                        current[part] = value;
+                    } else {
+                        if (!current[part] || typeof current[part] !== 'object') {
+                            current[part] = {};
+                        }
+                        current = current[part];
+                    }
+                }
+            });
+
+            // Dodatkowe czyszczenie i standaryzacja (jak w parseFlatData)
+            newItem.przewoznik = String(newItem.przewoznik || 'BRAK').toUpperCase();
+            newItem.epa = newItem.epa || 'Brak';
+            newItem.uwagi = (newItem.uwagi && String(newItem.uwagi).toLowerCase() !== 'nan') ? newItem.uwagi : '';
+
+            // Konwersja daty meta na string
+            if (newItem.meta && newItem.meta.data) {
+                newItem.meta.data = String(newItem.meta.data);
+            }
+
+            return newItem;
+        });
+    }
+
+
     // ================= LOGIKA DANYCH (OFFLINE) =================
     async function pobierzDane(force = false) {
         const netMsg = document.getElementById('networkStatus');
@@ -334,8 +377,11 @@
             if(!res.ok) throw new Error("Błąd HTTP");
             const json = await res.json();
             
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(json));
-            bazaDanych = json;
+            // Używamy nowej, uniwersalnej funkcji do transformacji danych
+            const processedData = transformData(json);
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(processedData));
+            bazaDanych = processedData;
             
             netMsg.innerHTML = "<span class='msg-online'>✅ Baza online (Aktualna)</span>";
             if(force) alert("Dane zaktualizowane pomyślnie!");
@@ -346,6 +392,8 @@
             const cached = localStorage.getItem(STORAGE_KEY);
             if(cached) {
                 bazaDanych = JSON.parse(cached);
+                // Upewniamy się, że wczytane dane z pamięci również są przetransformowane
+                bazaDanych = transformData(bazaDanych); 
                 netMsg.innerHTML = "<span class='msg-offline'>⚠️ Tryb Offline (Dane z pamięci)</span>";
                 if(force) alert("Brak sieci. Wczytano dane z pamięci urządzenia.");
                 zbudujSelect();
@@ -425,8 +473,7 @@
 
             const linkPrzewoznika = BAZA_LINKOW[k.przewoznik] || null;
 
-            // Tworzenie sekcji uwag
-            const uwagiHtml = k.uwagi ? 
+            const uwagiHtml = (k.uwagi && String(k.uwagi).toLowerCase() !== 'nan') ? 
                 `<div class="notes-section"><strong>UWAGI:</strong> ${k.uwagi}</div>` : '';
 
             const html = `
@@ -482,8 +529,6 @@
 
     // ================= KALKULATOR =================
     function obliczStatus(kasa, swieto, dayOfWeek) {
-        // Usunięto check na statusSpecjalny - status jest czysto obliczeniowy
-        
         let hStr, bStr;
         if(swieto || dayOfWeek === 0) {
             hStr = kasa.godziny.nd;
@@ -496,7 +541,7 @@
             bStr = kasa.przerwy.pn_pt;
         }
 
-        if(!hStr || hStr.toLowerCase().includes('nieczynne') || hStr.toLowerCase().includes('zamknięte')) {
+        if(!hStr || String(hStr).toLowerCase().includes('nieczynne') || String(hStr).toLowerCase().includes('zamknięte')) {
             return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
         }
 
@@ -513,8 +558,8 @@
 
         if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
 
-        if(bStr && bStr.length > 3 && !bStr.toLowerCase().includes('brak')) {
-            const breaks = bStr.split(';');
+        if(bStr && String(bStr).length > 3 && !String(bStr).toLowerCase().includes('brak') && String(bStr).toLowerCase() !== 'nan') {
+            const breaks = String(bStr).split(';');
             for(let br of breaks) {
                 const [bStart, bEnd] = parseRange(br.trim());
                 if(min >= bStart && min < bEnd) {
@@ -528,13 +573,13 @@
 
     function parseTime(t) {
         if(!t) return 0;
-        const [h, m] = t.split(':').map(Number);
+        const [h, m] = String(t).split(':').map(Number);
         return h * 60 + m;
     }
     
     function parseRange(str) {
-        if(!str || !str.includes('-')) return [0,0];
-        const parts = str.split('-');
+        if(!str || !String(str).includes('-')) return [0,0];
+        const parts = String(str).split('-');
         return [parseTime(parts[0]), parseTime(parts[1])];
     }
 
