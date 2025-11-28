@@ -18,6 +18,9 @@
             --note-text: #856404;
             --text: #333;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --warning-bg: #fff3cd; /* Tło dla WAŻNE */
+            --warning-border: #ffeeba;
+            --warning-text: #856404;
         }
 
         /* --- Globalne style i reset --- */
@@ -46,6 +49,23 @@
             letter-spacing: -0.5px;
         }
 
+        /* --- Sekcja ostrzegawcza WAŻNE --- */
+        .important-warning {
+            background-color: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: var(--warning-text);
+        }
+        .important-warning strong {
+            display: block;
+            font-size: 1.1rem;
+            color: #721c24; /* Czerwony dla WAŻNE */
+            margin-bottom: 5px;
+        }
+
         /* --- Status sieci i Daty --- */
         .top-info-bar {
             display: flex;
@@ -53,9 +73,20 @@
             gap: 10px;
             margin-bottom: 20px;
         }
-        .network-msg { text-align: center; font-size: 0.8rem; font-weight: bold; }
+        .network-msg { 
+            text-align: center; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+        }
         .msg-online { color: var(--open); }
         .msg-offline { color: var(--closed); }
+        .cache-status {
+            font-size: 0.8rem;
+            color: #555;
+            text-align: center;
+            font-style: italic;
+            margin-top: -5px;
+        }
 
         .date-bar {
             background: #e9ecef;
@@ -254,13 +285,19 @@
 <div class="container">
     <h1>🚆 Asystent Kas Biletowych</h1>
     
+    <div class="important-warning">
+        <strong>⚠️ WAŻNE: Wyłącznie Narzędzie Poglądowe</strong>
+        Godziny pracy kas **nie aktualizują się automatycznie**. W związku z tym strona jest **wyłącznie narzędziem poglądowym** i **nie stanowi źródła informacji handlowej**. Aktualne dane pracy kas należy **zawsze weryfikować** na stronach przewoźników.
+    </div>
+
     <div class="top-info-bar">
         <div id="networkStatus" class="network-msg">Ładowanie systemu...</div>
+        <div id="cacheStatus" class="cache-status"></div>
         <div id="dateBar" class="date-bar">...</div>
     </div>
 
     <div class="controls">
-        <button onclick="pobierzDane(true)">🔄 Pobierz / Aktualizuj Bazę</button>
+        <button onclick="pobierzDane(true)">Pobierz wykaz kas do pamięci podręcznej</button>
         <label for="stationSelect">Wybierz stację:</label>
         <select id="stationSelect" onchange="wyswietlStacje()">
             <option value="">-- Najpierw pobierz dane --</option>
@@ -331,7 +368,9 @@
         return null;
     }
 
-    // ================= UNIWERSALNA FUNKCJA TRANSFORMACJI DANYCH =================
+    // ================= FUNKCJA TRANSFORMACJI DANYCH I OBSŁUGI CACHE =================
+    
+    // Funkcja do transformacji płaskich danych JSON z kropkami na zagnieżdżone obiekty
     function transformData(data) {
         if (!Array.isArray(data)) return data;
 
@@ -344,7 +383,6 @@
                 const parts = key.split('.');
                 let current = newItem;
 
-                // Budowanie hierarchii (godziny.pn_pt -> godziny: {pn_pt: ...})
                 for (let i = 0; i < parts.length; i++) {
                     const part = parts[i];
                     if (i === parts.length - 1) {
@@ -358,16 +396,30 @@
                 }
             });
 
-            // Standaryzacja kluczowych pól
+            // Standaryzacja kluczowych pól i obsługa pustych/nan
             newItem.przewoznik = String(newItem.przewoznik || 'BRAK').toUpperCase();
             newItem.epa = newItem.epa || 'Brak';
             newItem.uwagi = (newItem.uwagi && String(newItem.uwagi).toLowerCase() !== 'nan') ? newItem.uwagi : '';
             if (newItem.meta && newItem.meta.data) {
                 newItem.meta.data = String(newItem.meta.data);
             }
-
             return newItem;
         });
+    }
+
+    // Funkcja do aktualizacji statusu cache w UI
+    function updateCacheStatus() {
+        const cacheStatusElement = document.getElementById('cacheStatus');
+        const cacheTime = localStorage.getItem(STORAGE_KEY + '_time');
+
+        if (cacheTime) {
+            const date = new Date(parseInt(cacheTime));
+            const dateStr = date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' });
+            const timeStr = date.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            cacheStatusElement.innerHTML = `Baza w pamięci przeglądarki z: ${dateStr}, ${timeStr}`;
+        } else {
+            cacheStatusElement.innerHTML = `Brak danych w pamięci. Pobierz wykaz kas.`;
+        }
     }
 
 
@@ -382,13 +434,16 @@
             const json = await res.json();
             
             const processedData = transformData(json);
+            const now = Date.now();
             
             localStorage.setItem(STORAGE_KEY, JSON.stringify(processedData));
+            localStorage.setItem(STORAGE_KEY + '_time', now.toString()); // Zapis czasu pobrania
             bazaDanych = processedData;
             
-            netMsg.innerHTML = "<span class='msg-online'>✅ Baza online (Aktualna)</span>";
+            netMsg.innerHTML = "<span class='msg-online'>✅ Dane pobrane pomyślnie!</span>";
             if(force) alert("Dane zaktualizowane pomyślnie!");
             zbudujSelect();
+            updateCacheStatus();
 
         } catch (e) {
             console.warn("Offline fallback:", e);
@@ -396,12 +451,13 @@
             if(cached) {
                 bazaDanych = JSON.parse(cached);
                 bazaDanych = transformData(bazaDanych); 
-                netMsg.innerHTML = "<span class='msg-offline'>⚠️ Tryb Offline (Dane z pamięci)</span>";
+                netMsg.innerHTML = "<span class='msg-offline'>⚠️ Tryb Offline (Błąd sieci)</span>";
                 if(force) alert("Brak sieci. Wczytano dane z pamięci urządzenia.");
                 zbudujSelect();
             } else {
-                netMsg.innerHTML = "<span class='msg-offline'>❌ Brak danych i brak internetu</span>";
+                netMsg.innerHTML = "<span class='msg-offline'>❌ Brak danych i błąd sieci</span>";
             }
+            updateCacheStatus();
         }
     }
 
@@ -605,6 +661,7 @@
     window.onload = () => {
         initZegar();
         pobierzDane();
+        updateCacheStatus(); // Inicjalizacja statusu przy starcie
         setInterval(() => { initZegar(); }, 1000);
         setInterval(() => { wyswietlStacje(); }, 60000);
     };
