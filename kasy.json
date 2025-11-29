@@ -2406,5 +2406,19 @@
     "uwagi": "",
     "meta.kto": "PIOTR M",
     "meta.data": "2025-11-27"
+  },
+  {
+    "stacja": "ŻŻŻ-TESTOWO",
+    "epa": 2137,
+    "przewoznik": "KOLEJE DOLNOŚLĄSKIE",
+    "godziny.pn_pt": "Całodobowo",
+    "godziny.sob": "Całodobowo",
+    "godziny.nd": "Całodobowo",
+    "przerwy.pn_pt": "00:30-3:30",
+    "przerwy.sob": "00:30-3:30",
+    "przerwy.nd": "00:30-3:30",
+    "uwagi": "TEST TEST TEST",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-09-27"
   }
 ]
