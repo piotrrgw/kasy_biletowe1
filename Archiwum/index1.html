@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="Cache-Control" content="max-age=14400">
     <title>Asystent Kas Biletowych</title>
     <style>
         /* --- Zmienne CSS --- */
@@ -17,11 +16,9 @@
             --holiday: #6f42c1;
             --note-bg: #fff3cd;
             --note-text: #856404;
-            --old-data-bg: #f8d7da; /* Tło dla starych danych (jasnoczerwone) */
-            --old-data-text: #721c24; /* Tekst dla starych danych (ciemnoczerwony) */
             --text: #333;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
-            --warning-bg: #fff3cd; 
+            --warning-bg: #fff3cd; /* Tło dla WAŻNE */
             --warning-border: #ffeeba;
             --warning-text: #856404;
         }
@@ -221,18 +218,6 @@
         }
         .notes-section strong { font-style: normal; font-weight: 700; margin-right: 5px; }
 
-        /* Komunikat o starych danych */
-        .data-age-warning {
-            background-color: var(--old-data-bg);
-            color: var(--old-data-text);
-            padding: 8px 15px;
-            font-size: 0.85rem;
-            text-align: center;
-            font-weight: 600;
-            border-top: 1px solid #f5c6cb;
-        }
-
-
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         th, td {
             padding: 12px 15px;
@@ -343,7 +328,6 @@
     // ================= KONFIGURACJA =================
     const URL_DANYCH = 'kasy.json'; 
     const STORAGE_KEY = 'kasy_biletowe_v_final';
-    const MAX_DAYS_FRESH = 30; // Maksymalna liczba dni, po której dane są uznawane za przestarzałe
     let bazaDanych = [];
 
     // ================= BAZA LINKÓW DO PRZEWOŹNIKÓW =================
@@ -393,24 +377,6 @@
         if(SWIETA_STALE[keyFixed]) return SWIETA_STALE[keyFixed];
         if(SWIETA_RUCHOME[keyMoveable]) return SWIETA_RUCHOME[keyMoveable];
         return null;
-    }
-
-    // ================= FUNKCJA WERYFIKACJI WIEKU DANYCH =================
-    function checkDataAge(dataDateStr) {
-        if (!dataDateStr) return false;
-
-        // Używamy formatu YYYY-MM-DD
-        const dataDate = new Date(dataDateStr);
-        const today = new Date();
-
-        // Ustawienie obu dat na północ, aby uniknąć problemów z różnicami czasowymi
-        dataDate.setHours(0, 0, 0, 0);
-        today.setHours(0, 0, 0, 0);
-
-        const diffTime = Math.abs(today - dataDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        
-        return diffDays > MAX_DAYS_FRESH;
     }
 
     // ================= FUNKCJA TRANSFORMACJI DANYCH I OBSŁUGI CACHE =================
@@ -573,15 +539,11 @@
             const st = obliczStatus(k, swieto, day);
             if(st.type === 'open') anyOpen = true;
             if(st.type === 'break') anyBreak = true;
-            
-            const isDataOld = checkDataAge(k.meta.data);
+
             const linkPrzewoznika = BAZA_LINKOW[k.przewoznik] || null;
 
             const uwagiHtml = (k.uwagi && String(k.uwagi).toLowerCase() !== 'nan') ? 
                 `<div class="notes-section"><strong>UWAGI:</strong> ${k.uwagi}</div>` : '';
-            
-            const dataAgeWarningHtml = isDataOld ? 
-                `<div class="data-age-warning">⛔ Dane nieaktualne (starsze niż ${MAX_DAYS_FRESH} dni). Weryfikuj u przewoźnika!</div>` : '';
 
             const html = `
             <div class="card" style="border-left-color: ${st.color}">
@@ -595,7 +557,6 @@
                     </div>
                 </div>
                 
-                ${dataAgeWarningHtml}
                 ${uwagiHtml}
 
                 <table>
@@ -711,7 +672,7 @@
     window.onload = () => {
         initZegar();
         pobierzDane();
-        updateCacheStatus(); 
+        updateCacheStatus(); // Inicjalizacja statusu przy starcie
         setInterval(() => { initZegar(); }, 1000);
         setInterval(() => { wyswietlStacje(); }, 60000);
     };
