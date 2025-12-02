@@ -301,8 +301,7 @@
     <h1>🚆 Asystent Kas Biletowych</h1>
     
     <div class="important-warning">
-        <strong><center>⚠️ WAŻNE: Strona jest wyłącznie NARZĘDZIEM POGLĄDOWYM
-        </center></strong><br>
+        <strong><center>⚠️ WAŻNE: Strona jest wyłącznie NARZĘDZIEM POGLĄDOWYM</center></strong><br>
        <center>W przypadku wątpliwości informacje nalezy weryfikować na stronach przewoźników.</center> 
     </div>
 
@@ -313,7 +312,6 @@
     </div>
 
     <div class="controls">
-        <button onclick="pobierzDane(true)">Pobierz wykaz kas do pamięci podręcznej</button>
         <label for="stationSelect">Wybierz stację:</label>
         <select id="stationSelect" onchange="wyswietlStacje()">
             <option value="">-- Najpierw pobierz dane --</option>
@@ -328,16 +326,6 @@
 <footer class="page-footer">
     Autorzy: Piotr M. 🚂 (Dane & Wizja), Gemini (Kod & Implementacja)<br>
     Edytorzy danych: Piotr M. 🚂 Anna S. Piotr S.
-
-       <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-W05T4L1HFD');
-</script>
 </footer>
 
 <script>
@@ -365,7 +353,7 @@
         "KOLEJE MAŁOPOLSKIE": "https://www.kolejemalopolskie.com.pl/pl/kasa-biletowa-kolei-malopolskich-na-dworcu-krakow-glowny",
         "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
         "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
-        "BRAK": null
+        "BRAK": "https://koleo.pl"
     };
 
     // ================= KALENDARZ ŚWIĄT =================
@@ -716,6 +704,19 @@
         setInterval(() => { initZegar(); }, 1000);
         setInterval(() => { wyswietlStacje(); }, 60000);
     };
+
+    
 </script>
+
+       <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W05T4L1HFD');
+</script>
+
 </body>
 </html>
