@@ -473,7 +473,7 @@ const SWIETA_RUCHOME = {
             const timeStr = date.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
             cacheStatusElement.innerHTML = `Baza w pamięci przeglądarki z: ${dateStr}, ${timeStr}`;
         } else {
-            cacheStatusElement.innerHTML = `Brak danych w pamięci. Pobierz wykaz kas.`;
+            cacheStatusElement.innerHTML = `Brak danych w pamięci. Uruchom ponownie przeglądarkę i sprawdź czy dostęp do internetu jest aktywny. <br><br> WYSTĄPIŁ BŁĄD POŁĄCZENIA Z SERWEREM`;
         }
     }
 
