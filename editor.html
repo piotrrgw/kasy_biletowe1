@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edytor Kas Biletowych</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --bg: #f4f4f9;
+            --white: #ffffff;
+            --success: #28a745;
+            --danger: #dc3545;
+            --text: #333;
+            --warning-bg: #fff3cd;
+            --warning-text: #856404;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 { text-align: center; color: var(--primary); margin-top: 0; }
+
+        /* Sekcja ładowania pliku (widoczna gdy automatyczne ładowanie zawiedzie) */
+        #manualLoadSection {
+            display: none; /* Domyślnie ukryte */
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ffeeba;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .file-upload-btn {
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        /* Panel wyboru */
+        .selector-panel {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        select {
+            padding: 12px;
+            font-size: 1rem;
+            flex-grow: 1;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            min-width: 250px;
+        }
+
+        /* Formularz */
+        .editor-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group { margin-bottom: 5px; }
+        .form-group.full-width { grid-column: span 2; }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; }
+
+        textarea { height: 80px; resize: vertical; font-family: inherit; }
+
+        .section-header {
+            grid-column: span 2;
+            border-bottom: 2px solid #eee;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Przyciski */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+        .btn-new { background-color: #17a2b8; }
+        .btn-save { background-color: var(--success); width: 100%; font-size: 1.1rem; margin-top: 20px; }
+        .btn-delete { background-color: var(--danger); margin-top: 10px; font-size: 0.9rem; }
+        .btn-download { 
+            background-color: #fd7e14; 
+            display: block; 
+            width: 100%; 
+            padding: 20px; 
+            font-size: 1.2rem; 
+            margin-top: 30px; 
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            border-radius: 8px;
+        }
+        .btn:hover { filter: brightness(1.1); }
+
+        #statusMsg {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        @media (max-width: 700px) {
+            .editor-form { grid-template-columns: 1fr; }
+            .form-group.full-width { grid-column: span 1; }
+            .section-header { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🛠️ Edytor Kas Biletowych</h1>
+
+    <div id="manualLoadSection">
+        <h3>⚠️ Nie udało się automatycznie wczytać pliku `kasy.json`</h3>
+        <p>Jeśli otwierasz stronę bezpośrednio z dysku, przeglądarka blokuje dostęp do plików.</p>
+        <p><strong>Wskaż plik `kasy.json` ręcznie:</strong></p>
+        <input type="file" id="fileInput" accept=".json" class="file-upload-btn" onchange="handleFileUpload(this)">
+    </div>
+
+    <div class="selector-panel">
+        <select id="stationSelect" onchange="loadStation()">
+            <option value="-1">-- Najpierw wczytaj dane --</option>
+        </select>
+        <button class="btn btn-new" onclick="createNewStation()">+ Nowa Stacja</button>
+    </div>
+
+    <form id="editForm" onsubmit="event.preventDefault(); saveChanges();">
+        <div class="editor-form">
+            <div class="section-header">1. Informacje podstawowe</div>
+            
+            <div class="form-group full-width">
+                <label>Nazwa Stacji:</label>
+                <input type="text" id="stacja" required placeholder="np. WARSZAWA CENTRALNA">
+            </div>
+            
+            <div class="form-group">
+                <label>Przewoźnik:</label>
+                <input type="text" id="przewoznik" list="przewoznicy" required placeholder="Wybierz lub wpisz">
+                <datalist id="przewoznicy">
+                    <option value="PKP INTERCITY">
+                    <option value="POLREGIO">
+                    <option value="KOLEJE MAZOWIECKIE">
+                    <option value="KOLEJE WIELKOPOLSKIE">
+                    <option value="KOLEJE ŚLĄSKIE">
+                    <option value="ŁÓDZKA KOLEJ AGLOMERACYJNA">
+                    <option value="BRAK">
+                </datalist>
+            </div>
+
+            <div class="form-group">
+                <label>Numer EPA:</label>
+                <input type="text" id="epa" placeholder="np. 1234">
+            </div>
+
+            <div class="section-header">2. Godziny otwarcia (format: GG:MM-GG:MM lub "Zamknięte")</div>
+            <div class="form-group"><label>Pn - Pt:</label><input type="text" id="godziny.pn_pt"></div>
+            <div class="form-group"><label>Sobota:</label><input type="text" id="godziny.sob"></div>
+            <div class="form-group"><label>Niedziela:</label><input type="text" id="godziny.nd"></div>
+
+            <div class="section-header">3. Przerwy (format: GG:MM-GG:MM lub "Brak")</div>
+            <div class="form-group"><label>Pn - Pt (Przerwy):</label><input type="text" id="przerwy.pn_pt"></div>
+            <div class="form-group"><label>Sobota (Przerwy):</label><input type="text" id="przerwy.sob"></div>
+            <div class="form-group"><label>Niedziela (Przerwy):</label><input type="text" id="przerwy.nd"></div>
+
+            <div class="section-header">4. Dodatkowe</div>
+            <div class="form-group full-width">
+                <label>Uwagi (widoczne dla pasażera):</label>
+                <textarea id="uwagi" placeholder="np. Kasa nieczynna w dni świąteczne..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Ostatnia edycja przez:</label>
+                <input type="text" id="meta.kto" value="PIOTR M">
+            </div>
+            <div class="form-group">
+                <label>Data danych (YYYY-MM-DD):</label>
+                <input type="date" id="meta.data" required>
+            </div>
+        </div>
+
+        <button class="btn btn-save">💾 Zapisz zmiany (w pamięci przeglądarki)</button>
+        <div id="statusMsg"></div>
+    </form>
+    
+    <div style="text-align: right;">
+        <button type="button" class="btn btn-delete" onclick="deleteStation()">🗑️ Usuń aktualną stację</button>
+    </div>
+
+    <hr style="margin: 40px 0;">
+    
+    <h2 style="color: #fd7e14;">⬇️ Pobieranie</h2>
+    <p style="text-align: center; color: #666;">Po zakończeniu edycji wszystkich stacji, pobierz nowy plik i zastąp stary `kasy.json` w folderze.</p>
+    <a href="#" id="downloadLink" class="btn btn-download" onclick="downloadJSON()">POBIERZ GOTOWY PLIK kasy.json</a>
+
+</div>
+
+<script>
+    let database = [];
+    let currentIndex = -1;
+
+    // --- 1. PRÓBA AUTOMATYCZNEGO ŁADOWANIA ---
+    window.onload = async function() {
+        // Ustawienie dzisiejszej daty w formularzu
+        document.getElementById('meta.data').valueAsDate = new Date();
+
+        try {
+            const response = await fetch('kasy.json');
+            if (!response.ok) throw new Error("Błąd HTTP");
+            database = await response.json();
+            populateSelect();
+            setStatus("✅ Plik załadowany automatycznie!", "green");
+        } catch (error) {
+            console.warn("Automatyczne ładowanie nieudane:", error);
+            // Pokazujemy sekcję ręcznego ładowania
+            document.getElementById('manualLoadSection').style.display = 'block';
+            setStatus("⚠️ Wczytaj plik kasy.json ręcznie powyżej", "orange");
+        }
+    };
+
+    // --- 2. OBSŁUGA RĘCZNEGO WCZYTYWANIA PLIKU ---
+    function handleFileUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                database = JSON.parse(e.target.result);
+                populateSelect();
+                document.getElementById('manualLoadSection').style.display = 'none'; // Ukryj ostrzeżenie po sukcesie
+                setStatus("✅ Plik wczytany poprawnie!", "green");
+            } catch (err) {
+                alert("Błąd: Wybrany plik nie jest poprawnym plikiem JSON!");
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // --- POZOSTAŁE FUNKCJE (BEZ ZMIAN) ---
+
+    function populateSelect() {
+        const select = document.getElementById('stationSelect');
+        const savedVal = select.value;
+        select.innerHTML = '<option value="-1">-- Wybierz stację do edycji --</option>';
+        
+        // Sortowanie alfabetyczne dla wygody
+        database.sort((a, b) => a.stacja.localeCompare(b.stacja));
+
+        database.forEach((item, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `${item.stacja} (${item.przewoznik})`;
+            select.appendChild(option);
+        });
+    }
+
+    function loadStation() {
+        const index = document.getElementById('stationSelect').value;
+        currentIndex = index;
+        
+        if (index == -1) {
+            document.getElementById('editForm').reset();
+            return;
+        }
+
+        const item = database[index];
+        
+        // Pomocnicza funkcja do bezpiecznego pobierania wartości
+        const getVal = (key) => item[key] || '';
+
+        setValue('stacja', getVal('stacja'));
+        setValue('epa', getVal('epa'));
+        setValue('przewoznik', getVal('przewoznik'));
+        setValue('uwagi', getVal('uwagi'));
+        
+        setValue('godziny.pn_pt', getVal('godziny.pn_pt'));
+        setValue('godziny.sob', getVal('godziny.sob'));
+        setValue('godziny.nd', getVal('godziny.nd'));
+        
+        setValue('przerwy.pn_pt', getVal('przerwy.pn_pt'));
+        setValue('przerwy.sob', getVal('przerwy.sob'));
+        setValue('przerwy.nd', getVal('przerwy.nd'));
+
+        setValue('meta.kto', getVal('meta.kto'));
+        setValue('meta.data', getVal('meta.data'));
+    }
+
+    function setValue(id, val) {
+        document.getElementById(id).value = val;
+    }
+
+    function getValue(id) {
+        return document.getElementById(id).value.trim(); // .trim() usuwa zbędne spacje
+    }
+
+    function createNewStation() {
+        document.getElementById('editForm').reset();
+        document.getElementById('stationSelect').value = -1;
+        currentIndex = -1;
+        document.getElementById('stacja').focus();
+        document.getElementById('meta.data').valueAsDate = new Date();
+        setStatus("📝 Wypełnij formularz i kliknij Zapisz", "blue");
+    }
+
+    function saveChanges() {
+        if(database.length === 0 && currentIndex === -1) {
+             alert("Najpierw wczytaj bazę danych (kasy.json)!");
+             return;
+        }
+
+        const newItem = {
+            "stacja": getValue('stacja').toUpperCase(),
+            "epa": getValue('epa') || "Brak",
+            "przewoznik": getValue('przewoznik').toUpperCase(),
+            "godziny.pn_pt": getValue('godziny.pn_pt') || "Zamknięte",
+            "godziny.sob": getValue('godziny.sob') || "Zamknięte",
+            "godziny.nd": getValue('godziny.nd') || "Zamknięte",
+            "przerwy.pn_pt": getValue('przerwy.pn_pt') || "Brak",
+            "przerwy.sob": getValue('przerwy.sob') || "Brak",
+            "przerwy.nd": getValue('przerwy.nd') || "Brak",
+            "uwagi": getValue('uwagi'),
+            "meta.kto": getValue('meta.kto'),
+            "meta.data": getValue('meta.data')
+        };
+
+        if (currentIndex == -1) {
+            database.push(newItem);
+            currentIndex = database.length - 1;
+            setStatus("✨ Dodano nową stację!", "green");
+        } else {
+            database[currentIndex] = newItem;
+            setStatus("💾 Zapisano zmiany dla stacji!", "green");
+        }
+
+        populateSelect();
+        document.getElementById('stationSelect').value = currentIndex;
+    }
+
+    function deleteStation() {
+        if (currentIndex == -1) return;
+        if (confirm("Czy na pewno chcesz trwale usunąć stację: " + database[currentIndex].stacja + "?")) {
+            database.splice(currentIndex, 1);
+            populateSelect();
+            createNewStation();
+            setStatus("🗑️ Stacja usunięta.", "red");
+        }
+    }
+
+    function downloadJSON() {
+        if(database.length === 0) {
+            alert("Brak danych do pobrania!");
+            return;
+        }
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(database, null, 2));
+        const downloadAnchorNode = document.getElementById('downloadLink');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "kasy.json");
+    }
+
+    function setStatus(msg, color = "black") {
+        const el = document.getElementById('statusMsg');
+        el.innerText = msg;
+        el.style.color = color;
+        // setTimeout(() => { el.innerText = ""; }, 5000); // Opcjonalne czyszczenie
+    }
+</script>
+
+</body>
+</html>
