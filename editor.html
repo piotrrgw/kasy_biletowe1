@@ -14,6 +14,13 @@
             --text: #333;
             --warning-bg: #fff3cd;
             --warning-text: #856404;
+            --table-head: #e9ecef;
+            --table-border: #dee2e6;
+            
+            /* Kolory statusów */
+            --row-modified: #fff3cd; /* Żółty */
+            --row-new: #d4edda;      /* Zielony */
+            --row-active: #cce5ff;   /* Niebieski (wybrany) */
         }
 
         body {
@@ -25,7 +32,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             background: var(--white);
             padding: 30px;
@@ -47,10 +54,7 @@
             margin-bottom: 20px;
         }
 
-        .file-upload-btn {
-            display: inline-block;
-            margin-top: 10px;
-        }
+        .file-upload-btn { margin-top: 10px; }
         
         /* Panel wyboru */
         .selector-panel {
@@ -141,6 +145,11 @@
             color: white;
             border-radius: 8px;
         }
+        .btn-toggle-table {
+            background-color: #6c757d;
+            width: 100%;
+            margin-top: 20px;
+        }
         .btn:hover { filter: brightness(1.1); }
 
         #statusMsg {
@@ -149,6 +158,72 @@
             font-weight: bold;
             min-height: 24px;
         }
+
+        /* --- STYLES DLA TABELI (ARKUSZA) --- */
+        #tableViewSection {
+            display: none;
+            margin-top: 30px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            justify-content: flex-end;
+        }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .color-box { width: 15px; height: 15px; border: 1px solid #ccc; border-radius: 3px; }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 600px;
+            border: 1px solid var(--table-border);
+            border-radius: 8px;
+        }
+
+        .spreadsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 1000px;
+        }
+
+        .spreadsheet-table th, .spreadsheet-table td {
+            border: 1px solid var(--table-border);
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        .spreadsheet-table th {
+            background-color: var(--table-head);
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* Podświetlenia wierszy */
+        .spreadsheet-table tbody tr { cursor: pointer; transition: background 0.15s; }
+        .spreadsheet-table tbody tr:hover { filter: brightness(0.95); } /* Lekkie przyciemnienie przy najechaniu */
+
+        /* Klasy statusów */
+        .row-modified { background-color: var(--row-modified); }
+        .row-new { background-color: var(--row-new); }
+        
+        /* Aktywny wiersz (nadpisuje kolory statusu lub łączy się z nimi) */
+        .spreadsheet-table tbody tr.active-row {
+            outline: 2px solid var(--primary);
+            outline-offset: -2px;
+            font-weight: 600;
+        }
+
+        .col-id { width: 40px; text-align: center; color: #888; }
+        .col-station { font-weight: 600; color: var(--primary); }
+        .col-sm { width: 100px; }
+        .col-lg { min-width: 200px; }
 
         @media (max-width: 700px) {
             .editor-form { grid-template-columns: 1fr; }
@@ -164,7 +239,7 @@
 
     <div id="manualLoadSection">
         <h3>⚠️ Nie udało się automatycznie wczytać pliku `kasy.json`</h3>
-        <p>Jeśli otwierasz stronę lokalnie, wskaż plik ręcznie:</p>
+        <p>Wskaż plik ręcznie (jeśli działasz lokalnie):</p>
         <input type="file" id="fileInput" accept=".json" class="file-upload-btn" onchange="handleFileUpload(this)">
     </div>
 
@@ -213,7 +288,7 @@
             <div class="form-group"><label>Sobota:</label><input type="text" id="godziny.sob"></div>
             <div class="form-group"><label>Niedziela:</label><input type="text" id="godziny.nd"></div>
 
-            <div class="section-header">3. Przerwy (np. "10:00-10:15" lub "00:05-00:10, 00:15-00:20" lub "Brak")</div>
+            <div class="section-header">3. Przerwy (np. 10:00-10:15 lub "Brak")</div>
             <div class="form-group"><label>Pn - Pt (Przerwy):</label><input type="text" id="przerwy.pn_pt"></div>
             <div class="form-group"><label>Sobota (Przerwy):</label><input type="text" id="przerwy.sob"></div>
             <div class="form-group"><label>Niedziela (Przerwy):</label><input type="text" id="przerwy.nd"></div>
@@ -246,6 +321,39 @@
         <button type="button" class="btn btn-delete" onclick="deleteStation()">🗑️ Usuń stację</button>
     </div>
 
+    <button class="btn btn-toggle-table" onclick="toggleTable()">📊 Pokaż / Ukryj Widok Tabeli (Arkusz)</button>
+    
+    <div id="tableViewSection">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="margin: 15px 0;">Podgląd Danych</h2>
+            <div class="legend">
+                <div class="legend-item"><div class="color-box" style="background:var(--row-modified)"></div> Edytowane</div>
+                <div class="legend-item"><div class="color-box" style="background:var(--row-new)"></div> Nowe</div>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table class="spreadsheet-table">
+                <thead>
+                    <tr>
+                        <th class="col-id">#</th>
+                        <th>Stacja</th>
+                        <th>Przewoźnik</th>
+                        <th>EPA</th>
+                        <th class="col-lg">Godz. Pn-Pt</th>
+                        <th class="col-lg">Godz. Sob</th>
+                        <th class="col-lg">Godz. Nd</th>
+                        <th>Uwagi</th>
+                        <th>Edytor</th>
+                        <th class="col-sm">Data</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
     <hr style="margin: 40px 0;">
     
     <h2 style="color: #fd7e14;">⬇️ Pobieranie</h2>
@@ -257,16 +365,14 @@
     let database = [];
     let currentIndex = -1;
 
-    // --- AUTOMATYCZNE ŁADOWANIE ---
     window.onload = async function() {
-        document.getElementById('meta.data').valueAsDate = new Date(); // Dziś
-
+        document.getElementById('meta.data').valueAsDate = new Date();
         try {
             const response = await fetch('kasy.json');
             if (!response.ok) throw new Error("Błąd HTTP");
             database = await response.json();
-            populateSelect();
-            setStatus("✅ Plik załadowany automatycznie!", "green");
+            initData();
+            setStatus("✅ Plik załadowany!", "green");
         } catch (error) {
             console.warn("Tryb offline:", error);
             document.getElementById('manualLoadSection').style.display = 'block';
@@ -274,7 +380,6 @@
         }
     };
 
-    // --- RĘCZNE ŁADOWANIE ---
     function handleFileUpload(input) {
         const file = input.files[0];
         if (!file) return;
@@ -282,19 +387,76 @@
         reader.onload = function(e) {
             try {
                 database = JSON.parse(e.target.result);
-                populateSelect();
+                initData();
                 document.getElementById('manualLoadSection').style.display = 'none';
-                setStatus("✅ Plik wczytany poprawnie!", "green");
+                setStatus("✅ Plik wczytany!", "green");
             } catch (err) { alert("Błąd: Niepoprawny plik JSON!"); }
         };
         reader.readAsText(file);
     }
 
-    // --- LOGIKA EDYTORA ---
+    function initData() {
+        // Sortowanie po nazwie stacji przy starcie
+        database.sort((a, b) => a.stacja.localeCompare(b.stacja));
+        populateSelect();
+        renderTable(); 
+    }
+
+    // --- TABELA / ARKUSZ ---
+    function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        database.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            
+            // Logika kolorowania wierszy
+            if (item._status === 'modified') tr.classList.add('row-modified');
+            if (item._status === 'new') tr.classList.add('row-new');
+            if (index == currentIndex) tr.classList.add('active-row');
+
+            tr.onclick = () => loadStationFromTable(index);
+
+            // Pomocnik do skracania tekstu
+            const safe = (txt) => txt || '-';
+            const short = (txt) => txt && txt.length > 30 ? txt.substring(0, 27) + '...' : (txt || '');
+
+            tr.innerHTML = `
+                <td class="col-id">${index + 1}</td>
+                <td class="col-station">${safe(item.stacja)}</td>
+                <td>${safe(item.przewoznik)}</td>
+                <td>${safe(item.epa)}</td>
+                <td>${short(item['godziny.pn_pt'])}</td>
+                <td>${short(item['godziny.sob'])}</td>
+                <td>${short(item['godziny.nd'])}</td>
+                <td style="font-style:italic; color:#666;">${short(item.uwagi)}</td>
+                <td>${safe(item['meta.kto'])}</td>
+                <td>${safe(item['meta.data'])}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function toggleTable() {
+        const sec = document.getElementById('tableViewSection');
+        if (sec.style.display === 'block') {
+            sec.style.display = 'none';
+        } else {
+            sec.style.display = 'block';
+            renderTable();
+        }
+    }
+
+    function loadStationFromTable(index) {
+        document.getElementById('stationSelect').value = index;
+        loadStation();
+        document.querySelector('.selector-panel').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // --- PODSTAWOWA LOGIKA ---
     function populateSelect() {
         const select = document.getElementById('stationSelect');
         select.innerHTML = '<option value="-1">-- Wybierz stację do edycji --</option>';
-        database.sort((a, b) => a.stacja.localeCompare(b.stacja));
         database.forEach((item, index) => {
             const opt = document.createElement('option');
             opt.value = index;
@@ -306,7 +468,8 @@
     function loadStation() {
         const index = document.getElementById('stationSelect').value;
         currentIndex = index;
-        
+        renderTable(); // Odśwież, aby zmienić "active-row"
+
         if (index == -1) { document.getElementById('editForm').reset(); return; }
 
         const item = database[index];
@@ -322,7 +485,7 @@
         setValue('przerwy.pn_pt', getVal('przerwy.pn_pt'));
         setValue('przerwy.sob', getVal('przerwy.sob'));
         setValue('przerwy.nd', getVal('przerwy.nd'));
-        setValue('meta.kto', getVal('meta.kto')); // Select automatycznie wybierze opcję jeśli value pasuje (np. "PIOTR M")
+        setValue('meta.kto', getVal('meta.kto'));
         setValue('meta.data', getVal('meta.data'));
     }
 
@@ -333,13 +496,14 @@
         document.getElementById('editForm').reset();
         document.getElementById('stationSelect').value = -1;
         currentIndex = -1;
+        renderTable(); 
         document.getElementById('stacja').focus();
         document.getElementById('meta.data').valueAsDate = new Date();
-        setStatus("📝 Wypełnij formularz i kliknij Zapisz", "blue");
+        setStatus("📝 Wypełnij formularz", "blue");
     }
 
     function saveChanges() {
-        if(database.length === 0 && currentIndex === -1) { alert("Brak bazy danych!"); return; }
+        if(database.length === 0 && currentIndex === -1) { alert("Brak bazy!"); return; }
 
         const newItem = {
             "stacja": getValue('stacja').toUpperCase(),
@@ -357,15 +521,27 @@
         };
 
         if (currentIndex == -1) {
+            // Dodawanie nowej stacji -> STATUS 'new'
+            newItem._status = 'new';
             database.push(newItem);
-            currentIndex = database.length - 1;
             setStatus("✨ Dodano stację!", "green");
         } else {
+            // Edycja istniejącej
+            // Jeśli edytujemy coś, co już było 'nowe', zostawiamy 'nowe'. Inaczej 'modified'
+            const oldStatus = database[currentIndex]._status;
+            newItem._status = (oldStatus === 'new') ? 'new' : 'modified';
+            
             database[currentIndex] = newItem;
-            setStatus("💾 Zapisano zmiany!", "green");
+            setStatus("💾 Zapisano!", "green");
         }
+        
+        // Sortowanie i aktualizacja indeksu
+        database.sort((a, b) => a.stacja.localeCompare(b.stacja));
+        currentIndex = database.findIndex(x => x === newItem); // Znajdź gdzie wylądował po sortowaniu
+
         populateSelect();
         document.getElementById('stationSelect').value = currentIndex;
+        renderTable(); // Tabela pokaże kolory
     }
 
     function deleteStation() {
@@ -374,13 +550,21 @@
             database.splice(currentIndex, 1);
             populateSelect();
             createNewStation();
+            renderTable(); 
             setStatus("🗑️ Usunięto.", "red");
         }
     }
 
     function downloadJSON() {
         if(database.length === 0) return;
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(database, null, 2));
+        
+        // Czysta kopia danych (bez flagi _status)
+        const cleanData = database.map(item => {
+            const { _status, ...rest } = item; // Usuwa _status
+            return rest;
+        });
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cleanData, null, 2));
         const dl = document.getElementById('downloadLink');
         dl.setAttribute("href", dataStr);
         dl.setAttribute("download", "kasy.json");
