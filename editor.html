@@ -14,17 +14,16 @@
     <title>Panel Edytora Danych</title>
     
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary: #0056b3;       /* Klasyczny, solidny niebieski */
+            --primary: #0056b3;
             --primary-dark: #004494;
-            --bg-app: #f4f6f9;        /* Jasne, czyste tło */
+            --bg-app: #f4f6f9;
             --white: #ffffff;
-            --success: #28a745;       /* Wyrazisty zielony */
-            --danger: #dc3545;        /* Wyrazisty czerwony */
+            --success: #28a745;
+            --danger: #dc3545;
             --warning: #ffc107;
             --text-main: #333333;
             --border: #dee2e6;
@@ -68,13 +67,30 @@
         .header-controls { display: flex; align-items: center; gap: 20px; }
 
         .clock-display {
-            font-family: monospace;
+            font-family: 'Fira Code', monospace;
             font-size: 0.9rem;
             color: #555;
             background: #f8f9fa;
             padding: 5px 10px;
             border-radius: 4px;
             border: 1px solid #e9ecef;
+        }
+
+        /* Nowy styl dla licznika sesji */
+        .session-timer {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #d63384; /* Wyróżniający się kolor */
+            background: #fff0f6;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #ffdeeb;
+            cursor: pointer; /* Kliknięcie resetuje */
+        }
+        .session-timer:hover::after {
+            content: " (Kliknij aby wyzerować)";
+            font-size: 0.7em;
+            color: #a0a0a0;
         }
 
         /* Globalny Edytor */
@@ -154,7 +170,7 @@
         /* --- CONTAINER --- */
         .container { max-width: 1300px; margin: 30px auto; padding: 0 20px; width: 100%; flex-grow: 1; }
 
-        /* --- INSTRUKCJA (WERSJA 1 - CZYTELNA) --- */
+        /* --- INSTRUKCJA --- */
         .instructions-panel {
             background: #ffffff;
             border: 1px solid #b8daff;
@@ -197,7 +213,6 @@
         .form-input { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px; font-size: 1rem; }
         .form-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(0,86,179,0.15); }
         
-        /* Walidacja wizualna */
         .form-input.is-invalid { border-color: var(--danger); background-color: #fff8f8; }
         .error-msg { color: var(--danger); font-size: 0.8rem; font-weight: 600; display: none; margin-top: 3px; }
         .form-input.is-invalid + .error-msg { display: block; }
@@ -223,7 +238,24 @@
 
         /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; display: none; justify-content: center; align-items: center; }
-        .modal { background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal { background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+        
+        /* Styl dla podglądu kodu w modalu */
+        .modal-large { max-width: 800px; width: 95%; }
+        .code-preview-box {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow: auto;
+            white-space: pre-wrap;
+            margin: 10px 0;
+            border: 1px solid #333;
+        }
+
         .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; color: #999; }
     </style>
 </head>
@@ -237,6 +269,8 @@
 
     <div class="header-controls">
         <div class="clock-display" id="clockDisplay">--.--.---- --:--</div>
+        
+        <div class="session-timer" id="sessionTimer" onclick="resetSessionTimer()" title="Kliknij, aby wyzerować">Czas pracy: 00:00:00</div>
 
         <div class="global-editor-box" title="Ten edytor będzie wpisywany automatycznie">
             <span>👤</span>
@@ -403,11 +437,14 @@
 </footer>
 
 <div class="modal-overlay" id="codeModal">
-    <div class="modal">
+    <div class="modal modal-large">
         <button class="close-modal" onclick="closeModals()">&times;</button>
-        <h3>👁️ Podgląd Kodu</h3>
-        <pre><code id="jsonPreview" style="max-height:400px; overflow:auto;"></code></pre>
-        <button class="btn btn-primary" onclick="closeModals()" style="width:100%; margin-top:15px;">Zamknij</button>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>👁️ Podgląd Kodu JSON</h3>
+            <button class="btn btn-primary" onclick="copyCodeToClipboard()">📋 Kopiuj cały kod</button>
+        </div>
+        <pre class="code-preview-box"><code id="jsonPreview"></code></pre>
+        <button class="btn btn-outline" onclick="closeModals()" style="align-self: flex-end;">Zamknij</button>
     </div>
 </div>
 
@@ -443,12 +480,40 @@
     let database = [];
     let currentIndex = -1;
     let manualProgressOffset = 0;
+    
+    // --- ZEGAR I LICZNIK SESJI (NOWOŚĆ) ---
+    let sessionSeconds = 0;
 
-    // ZEGAR
-    setInterval(() => {
-        const now = new Date();
-        document.getElementById('clockDisplay').innerText = now.toLocaleString('pl-PL');
-    }, 1000);
+    function initTimer() {
+        // Zegar zwykły
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clockDisplay').innerText = now.toLocaleString('pl-PL');
+        }, 1000);
+
+        // Licznik czasu pracy (Pamięć trwała)
+        const savedTime = localStorage.getItem('editorWorkTime');
+        if(savedTime) {
+            sessionSeconds = parseInt(savedTime, 10);
+        }
+
+        setInterval(() => {
+            sessionSeconds++;
+            localStorage.setItem('editorWorkTime', sessionSeconds);
+            
+            const h = Math.floor(sessionSeconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((sessionSeconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (sessionSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('sessionTimer').innerText = `Czas pracy: ${h}:${m}:${s}`;
+        }, 1000);
+    }
+
+    function resetSessionTimer() {
+        if(confirm("Czy na pewno chcesz wyzerować licznik czasu pracy?")) {
+            sessionSeconds = 0;
+            localStorage.setItem('editorWorkTime', 0);
+        }
+    }
 
     // MENU
     function toggleMenu() { document.getElementById('gearMenu').classList.toggle('active'); }
@@ -460,6 +525,7 @@
 
     // START
     window.onload = async function() {
+        initTimer(); // Uruchomienie zegarów
         document.getElementById('meta.data').valueAsDate = new Date();
         updateGlobalEditor();
         try {
@@ -467,7 +533,6 @@
             if(!res.ok) throw new Error("Status: " + res.status);
             const json = await res.json();
             
-            // Walidacja struktury pliku
             if(!Array.isArray(json)) throw new Error("Plik JSON nie jest tablicą!");
             
             database = json;
@@ -517,6 +582,16 @@
         document.getElementById('jsonPreview').innerText = JSON.stringify(clean, null, 2);
         document.getElementById('gearMenu').classList.remove('active');
         document.getElementById('codeModal').style.display = 'flex';
+    }
+
+    // Nowa funkcja kopiowania
+    function copyCodeToClipboard() {
+        const code = document.getElementById('jsonPreview').innerText;
+        navigator.clipboard.writeText(code).then(() => {
+            showToast("✅ Skopiowano kod do schowka!");
+        }).catch(err => {
+            alert("Błąd kopiowania: " + err);
+        });
     }
 
     function downloadJSON() {
@@ -595,7 +670,7 @@
             if(val && val !== 'brak' && !['zamknięte','zamkniete','nieczynne','całodobowo'].includes(val)) {
                 if(!timeReg.test(el.value.trim())) ok = false;
             }
-            if(val === '') ok = true; // puste dopuszczamy w tym trybie
+            if(val === '') ok = true; 
             if(ok) el.classList.remove('is-invalid'); else { el.classList.add('is-invalid'); valid = false; }
         };
 
@@ -695,7 +770,7 @@
             const tr = document.createElement('tr');
             if(item._status === 'modified') tr.className = 'row-modified';
             if(item._status === 'new') tr.className = 'row-new';
-            if(i == currentIndex) tr.classList.add('row-active'); // Aktywny wiersz
+            if(i == currentIndex) tr.classList.add('row-active');
             
             tr.onclick = () => { document.getElementById('stationSelect').value = i; loadStation(); };
             
