@@ -1,402 +1,511 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-W05T4L1HFD');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administratora Kas Biletowych</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #0056b3;
-            --primary-dark: #004494;
-            --bg: #f4f6f8;
+            --primary: #2563eb;       /* Nowoczesny niebieski */
+            --primary-dark: #1e40af;
+            --secondary: #64748b;     /* Szary dla tekstów pomocniczych */
+            --bg-app: #f1f5f9;        /* Bardzo jasny szary tło */
             --white: #ffffff;
-            --success: #28a745;
-            --danger: #dc3545;
-            --text: #2c3e50;
-            --text-muted: #6c757d;
-            --border: #dfe6e9;
+            --success: #16a34a;       /* Zielony */
+            --danger: #dc2626;        /* Czerwony */
+            --warning: #ca8a04;       /* Żółty/Złoty */
+            --border: #e2e8f0;
+            --text-main: #0f172a;
             
-            /* Kolory statusów tabeli */
-            --row-modified: #fff3cd;
-            --row-new: #d4edda;
-            --row-active: #e7f1ff;
+            /* Statusy wierszy tabeli */
+            --row-modified: #fef9c3;
+            --row-new: #dcfce7;
+            --row-active: #dbeafe;
         }
 
         * { box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-app);
+            color: var(--text-main);
             margin: 0;
-            padding-bottom: 60px;
-            line-height: 1.5;
+            padding-bottom: 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- STICKY HEADER --- */
-        .top-bar {
+        /* --- HEADER (Zegar, Logo) --- */
+        .app-header {
             background: var(--white);
-            padding: 15px 30px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-logo { font-size: 1.5rem; }
+        .brand-name { font-weight: 700; font-size: 1.1rem; color: var(--primary-dark); letter-spacing: -0.5px; }
+
+        .meta-info {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85rem;
+            color: var(--secondary);
+            background: #f8fafc;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .meta-item { display: flex; align-items: center; gap: 6px; }
+        .meta-item strong { color: var(--text-main); font-weight: 600; }
+
+        /* --- STICKY TOOLBAR (Akcje) --- */
+        .sticky-toolbar {
+            background: var(--white);
+            padding: 12px 24px;
             border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .brand {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .controls-area {
-            display: flex;
-            gap: 15px;
-            align-items: center;
+        /* Pasek Postępu */
+        .progress-section {
             flex-grow: 1;
-            max-width: 800px;
-            margin-left: 40px;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        .progress-track {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary) 0%, #60a5fa 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 10px;
+            flex-grow: 1;
+            align-items: center;
         }
 
         select.station-select {
             flex-grow: 1;
-            padding: 10px 15px;
+            padding: 10px 14px;
             border: 2px solid var(--border);
             border-radius: 8px;
-            font-weight: 600;
-            color: var(--text);
-            background-color: #f8f9fa;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            transition: all 0.2s;
+            max-width: 500px;
         }
-        select.station-select:focus { border-color: var(--primary); outline: none; background: #fff; }
+        select.station-select:focus {
+            border-color: var(--primary);
+            outline: none;
+            background-color: var(--white);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
 
-        /* --- BUTTONS --- */
+        /* Przyciski */
         .btn {
-            padding: 10px 20px;
-            border: none;
+            padding: 10px 18px;
             border-radius: 8px;
             font-weight: 600;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.95rem;
+            border: none;
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            transition: all 0.2s;
             text-decoration: none;
         }
-        .btn-primary { background-color: var(--primary); color: white; box-shadow: 0 4px 6px rgba(0,86,179,0.2); }
-        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-1px); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
         
-        .btn-success { background-color: var(--success); color: white; box-shadow: 0 4px 6px rgba(40,167,69,0.2); }
-        .btn-success:hover { background-color: #218838; transform: translateY(-1px); }
+        .btn-outline { background: white; border: 2px solid var(--border); color: var(--secondary); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: #eff6ff; }
 
-        .btn-danger { background-color: var(--danger); color: white; }
-        .btn-danger:hover { background-color: #c82333; }
+        .btn-danger { background: #fee2e2; color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; }
 
-        .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
-        .btn-outline:hover { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #15803d; transform: translateY(-1px); }
 
-        /* --- MAIN LAYOUT --- */
-        .main-container {
+        /* --- CONTAINER --- */
+        .container {
             max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
+            width: 100%;
+            margin: 24px auto;
+            padding: 0 24px;
+            flex-grow: 1;
         }
 
-        /* --- INSTRUKCJA (HELP BOX) --- */
-        details.help-box {
-            background: white;
+        /* --- OFFLINE ALERT --- */
+        .alert-box {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: none;
+            text-align: center;
+        }
+
+        /* --- INSTRUKCJA --- */
+        details.help-accordion {
+            background: var(--white);
+            border: 1px solid var(--border);
             border-radius: 10px;
-            border: 1px solid #b8daff;
+            margin-bottom: 24px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         }
-
-        details.help-box summary {
-            background: #e7f1ff;
-            padding: 15px 20px;
-            font-weight: 700;
-            color: var(--primary-dark);
+        details.help-accordion summary {
+            padding: 14px 20px;
+            background: #f8fafc;
+            font-weight: 600;
             cursor: pointer;
-            list-style: none; /* Ukrywa domyślny trójkąt w niektórych przeglądarkach */
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            color: var(--text-main);
         }
+        details.help-accordion summary:hover { background: #f1f5f9; }
         
-        details.help-box summary::after {
-            content: "▼"; 
-            font-size: 0.8rem;
-            transition: 0.3s;
-        }
-        details.help-box[open] summary::after { transform: rotate(180deg); }
-
         .help-content {
-            padding: 25px;
+            padding: 24px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
-
-        .help-section h4 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 8px; }
-        .help-section ul { padding-left: 20px; margin: 0; }
-        .help-section li { margin-bottom: 8px; }
-        
-        code {
-            background: #f0f0f0;
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-family: "Consolas", monospace;
-            font-weight: bold;
-        }
-        .good { color: var(--success); font-weight: bold; }
-        .bad { color: var(--danger); font-weight: bold; }
-        .tag {
-            display: inline-block;
-            background: #e9ecef;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin: 2px;
-            color: #495057;
-        }
+        .help-column h4 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
+        .tag-pill { display: inline-block; background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; margin: 2px 0; font-weight: 600; color: #475569; }
+        .val-good { color: var(--success); font-weight: 700; }
+        .val-bad { color: var(--danger); font-weight: 700; }
+        code { background: #f1f5f9; padding: 2px 4px; border-radius: 4px; font-family: monospace; font-weight: 600; color: #334155; border: 1px solid #e2e8f0; }
 
         /* --- FORM GRID --- */
-        .editor-grid {
+        .editor-layout {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 kolumny na dużym ekranie */
-            gap: 25px;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            margin-bottom: 30px;
         }
 
+        /* Karty */
         .card {
             background: var(--white);
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            padding: 25px;
-            border: 1px solid white; /* Czysty wygląd */
-            transition: transform 0.2s;
+            border: 1px solid var(--border);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
-        .card:hover { border-color: #e9ecef; }
-
-        /* Responsywność kart formularza */
-        .card.span-2 { grid-column: span 2; }
-        @media (max-width: 1200px) { .editor-grid { grid-template-columns: 1fr 1fr; } .card.span-2 { grid-column: span 1; } }
-        @media (max-width: 768px) { .editor-grid { grid-template-columns: 1fr; } }
-
         .card-header {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            color: var(--text);
-            margin-bottom: 20px;
+            color: var(--text-main);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 4px;
         }
-        .card-header i { color: var(--primary); }
+        .card-icon { font-size: 1.2rem; }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label {
+        /* Responsywne rozmieszczenie kart */
+        .col-span-6 { grid-column: span 6; } /* Połowa szerokości */
+        .col-span-3 { grid-column: span 3; } /* Ćwiartka */
+        .col-span-12 { grid-column: span 12; } /* Cała szerokość */
+
+        @media (max-width: 1100px) {
+            .col-span-3 { grid-column: span 6; } /* Na średnich ekranach ćwiartki stają się połówkami */
+        }
+        @media (max-width: 768px) {
+            .col-span-6, .col-span-3 { grid-column: span 12; } /* Na mobilkach wszystko w pionie */
+            .sticky-toolbar { flex-direction: column; align-items: stretch; gap: 15px; }
+            .progress-section { max-width: 100%; }
+        }
+
+        /* Formularze */
+        .input-group { position: relative; }
+        .input-label {
             display: block;
             margin-bottom: 6px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--secondary);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.03em;
         }
-
-        input, select, textarea {
+        .form-control {
             width: 100%;
-            padding: 12px;
+            padding: 10px 12px;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background: #fdfdfd;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            font-family: inherit;
         }
-        input:focus, select:focus, textarea:focus {
+        .form-control:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0,86,179,0.1);
-            background: #fff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-        textarea { height: 120px; resize: vertical; }
+        textarea.form-control { resize: vertical; min-height: 80px; }
 
-        /* --- BOTTOM BAR --- */
-        .action-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
+        /* Walidacja */
+        .form-control.is-invalid {
+            border-color: var(--danger);
+            background-color: #fef2f2;
         }
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 4px;
+            display: none;
+        }
+        .form-control.is-invalid + .error-msg { display: block; }
 
-        /* --- TABLE --- */
-        .table-section {
+        /* --- TABLE PREVIEW --- */
+        .table-card {
             background: var(--white);
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            overflow: hidden;
             border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
-
-        .table-toolbar {
-            padding: 15px 25px;
+        .table-header {
+            padding: 16px 24px;
+            background: #f8fafc;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #fafbfc;
         }
+        .table-title { font-weight: 700; color: var(--text-main); }
+        
+        .table-legend { display: flex; gap: 16px; font-size: 0.8rem; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
-        .table-wrapper {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
+        .table-responsive { max-height: 500px; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         th {
-            background: #f1f3f5;
-            color: var(--text);
-            font-weight: 700;
-            padding: 15px;
+            background: #f1f5f9;
+            padding: 12px 16px;
             text-align: left;
+            font-weight: 600;
+            color: var(--secondary);
             position: sticky;
             top: 0;
-            z-index: 10;
             border-bottom: 2px solid var(--border);
             white-space: nowrap;
         }
-        td { padding: 12px 15px; border-bottom: 1px solid var(--border); color: #495057; }
+        td { padding: 10px 16px; border-bottom: 1px solid var(--border); color: #334155; }
         tr { cursor: pointer; transition: background 0.1s; }
-        tr:hover { background-color: #f8f9fa; }
+        tr:hover { background: #f8fafc; }
 
-        .row-modified td { background-color: var(--row-modified); }
-        .row-new td { background-color: var(--row-new); }
-        .row-active td { 
-            background-color: var(--row-active) !important; 
-            border-bottom: 1px solid #b8daff;
-            color: var(--primary-dark);
-            font-weight: 600;
+        .row-modified td { background: var(--row-modified); }
+        .row-new td { background: var(--row-new); }
+        .row-active td { background: var(--row-active) !important; font-weight: 500; color: var(--primary-dark); border-bottom-color: #bfdbfe; }
+
+        /* --- FOOTER --- */
+        .app-footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+            background: var(--white);
         }
 
-        .legend { display: flex; gap: 20px; font-size: 0.85rem; }
-        .legend span { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-
-        /* Offline msg */
-        #manualLoadSection {
-            background: #fff3cd; color: #856404; padding: 15px; text-align: center;
-            margin-bottom: 20px; border-radius: 8px; display: none; border: 1px solid #ffeeba;
+        /* --- NOTIFICATIONS --- */
+        #statusBar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        #statusBar.visible { transform: translateY(0); }
     </style>
 </head>
 <body>
 
-<div class="top-bar">
-    <div class="brand">
-        <span>🚄</span> Panel Edytora Kas
+<header class="app-header">
+    <div class="brand-area">
+        <span class="brand-logo">🚄</span>
+        <span class="brand-name">Panel Edytora Danych</span>
     </div>
-    
-    <div class="controls-area">
+    <div class="meta-info">
+        <div class="meta-item">
+            📅 <span id="clockDate">--.--.----</span>
+        </div>
+        <div class="meta-item">
+            🕒 <span id="clockTime">--:--:--</span>
+        </div>
+        <div class="meta-item" style="border-left: 1px solid #cbd5e1; padding-left: 12px; margin-left: 6px;">
+            ⏱️ Sesja: <strong><span id="sessionTimer">00:00:00</span></strong>
+        </div>
+    </div>
+</header>
+
+<div class="sticky-toolbar">
+    <div class="progress-section">
+        <div class="progress-labels">
+            <span>Postęp sesji</span>
+            <span id="progressText">0 zmodyfikowanych</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <div class="controls-group">
         <select id="stationSelect" class="station-select" onchange="loadStation()">
-            <option value="-1">-- Ładowanie bazy danych... --</option>
+            <option value="-1">⌛ Wczytywanie bazy...</option>
         </select>
-        <button class="btn btn-outline" onclick="createNewStation()">+ Nowa</button>
-        <button class="btn btn-danger" onclick="deleteStation()">Usuń</button>
+        <button class="btn btn-outline" onclick="createNewStation()" title="Dodaj nową stację">
+            ✨ Nowa
+        </button>
+        <button class="btn btn-danger" onclick="deleteStation()" title="Usuń stację">
+            🗑️
+        </button>
     </div>
 
     <div>
-        <button class="btn btn-primary" onclick="saveChanges()">💾 Zapisz zmiany</button>
+        <button class="btn btn-success" onclick="downloadJSON()">
+            ⬇️ Pobierz Plik JSON
+        </button>
+        <button class="btn btn-primary" onclick="saveChanges()">
+            💾 Zapisz (Enter)
+        </button>
     </div>
 </div>
 
-<div class="main-container">
+<div class="container">
 
-    <div id="manualLoadSection">
-        <strong>⚠️ Tryb Lokalny:</strong> Nie można automatycznie pobrać pliku JSON. 
-        <input type="file" id="fileInput" accept=".json" style="margin-left:10px;" onchange="handleFileUpload(this)">
+    <div id="manualLoadSection" class="alert-box">
+        <h3>⚠️ Tryb Pracy Lokalnej</h3>
+        <p>Przeglądarka zablokowała automatyczny dostęp do pliku. Wskaż plik <code>kasy.json</code> ręcznie:</p>
+        <input type="file" id="fileInput" accept=".json" onchange="handleFileUpload(this)">
     </div>
 
-    <details class="help-box">
-        <summary>ℹ️ Zasady i Instrukcja dla Edytorów (Kliknij, aby rozwinąć/zwinąć)</summary>
+    <details class="help-accordion">
+        <summary>ℹ️ Zasady i Instrukcja Wprowadzania Danych (Kliknij, aby rozwinąć)</summary>
         <div class="help-content">
-            
-            <div class="help-section">
-                <h4>1. Godziny Otwarcia (Kluczowe!)</h4>
+            <div class="help-column">
+                <h4>1. Godziny Otwarcia</h4>
+                <p>To najważniejsze pole. Musi być precyzyjne.</p>
                 <ul>
-                    <li>Standard: <code>GG:MM-GG:MM</code> (np. <span class="good">07:00-19:00</span>)</li>
-                    <li>Przejście przez północ: <span class="good">06:00-02:00</span></li>
-                    <li>Całodobowo: wpisz słowo <span class="good">Całodobowo</span></li>
-                    <li>Zamknięte: wpisz słowo <span class="good">Zamknięte</span></li>
-                    <li><span class="bad">Źle:</span> 7-19, 07.00-19.00 (używaj dwukropka!)</li>
+                    <li>Standard: <code>GG:MM-GG:MM</code> (np. <span class="val-good">07:00-19:00</span>)</li>
+                    <li>Przez północ: <span class="val-good">06:00-02:00</span></li>
+                    <li>Opcje specjalne: <span class="val-good">Całodobowo</span>, <span class="val-good">Zamknięte</span></li>
+                    <li><span class="val-bad">Źle:</span> 7-19 (brak zer), 07.00 (kropki zamiast dwukropka)</li>
                 </ul>
             </div>
-
-            <div class="help-section">
+            <div class="help-column">
                 <h4>2. Przerwy</h4>
                 <ul>
-                    <li>Brak przerwy: wpisz <span class="good">Brak</span></li>
+                    <li>Brak przerwy: wpisz <span class="val-good">Brak</span></li>
                     <li>Jedna przerwa: <code>10:00-10:15</code></li>
-                    <li>Kilka przerw: rozdzielaj średnikiem <code>;</code></li>
-                    <li>Przykład: <span class="good">10:00-10:15; 14:00-14:30</span></li>
+                    <li>Wiele przerw: oddziel średnikiem <code>;</code><br>np. <span class="val-good">10:00-10:15; 14:00-14:30</span></li>
                 </ul>
             </div>
-
-            <div class="help-section">
-                <h4>3. Przewoźnicy (Linki)</h4>
-                <p>Używaj tych nazw, aby działały linki:</p>
+            <div class="help-column">
+                <h4>3. Przewoźnicy (Dla linków)</h4>
                 <div>
-                    <span class="tag">PKP INTERCITY</span>
-                    <span class="tag">POLREGIO</span>
-                    <span class="tag">KOLEJE MAZOWIECKIE</span>
-                    <span class="tag">KOLEJE ŚLĄSKIE</span>
-                    <span class="tag">KOLEJE WIELKOPOLSKIE</span>
-                    <span class="tag">KOLEJE DOLNOŚLĄSKIE</span>
-                    <span class="tag">ŁKA</span>
-                    <span class="tag">ARRIVA RP</span>
-                    <span class="tag">PKP SKM</span>
+                    <span class="tag-pill">PKP INTERCITY</span>
+                    <span class="tag-pill">POLREGIO</span>
+                    <span class="tag-pill">ARRIVA RP</span>
+                    <span class="tag-pill">KOLEJE MAZOWIECKIE</span>
+                    <span class="tag-pill">KOLEJE ŚLĄSKIE</span>
+                    <span class="tag-pill">KOLEJE WIELKOPOLSKIE</span>
+                    <span class="tag-pill">KOLEJE DOLNOŚLĄSKIE</span>
+                    <span class="tag-pill">KOLEJE MAŁOPOLSKIE</span>
+                    <span class="tag-pill">PKP SKM</span>
+                    <span class="tag-pill">ŁKA</span>
                 </div>
             </div>
-
-            <div class="help-section">
-                <h4>4. Data Danych</h4>
-                <ul>
-                    <li>Format: <code>RRRR-MM-DD</code></li>
-                    <li>Przykład: <span class="good">2025-11-27</span></li>
-                    <li><span class="bad">Źle:</span> 27.11.2025, Listopad 2025</li>
-                </ul>
-            </div>
-
         </div>
     </details>
 
     <form id="editForm" onsubmit="event.preventDefault(); saveChanges();">
-        <div class="editor-grid">
+        <div class="editor-layout">
             
-            <div class="card span-2">
-                <div class="card-header">📍 Dane Stacji</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Nazwa Stacji</label>
-                        <input type="text" id="stacja" required placeholder="np. WARSZAWA CENTRALNA">
-                    </div>
-                    <div class="form-group">
-                        <label>Przewoźnik</label>
-                        <input type="text" id="przewoznik" list="przewoznicy" required placeholder="Wybierz z listy">
+            <div class="card col-span-6">
+                <div class="card-header"><span class="card-icon">📍</span> Dane Stacji</div>
+                
+                <div class="input-group">
+                    <label class="input-label">Nazwa Stacji</label>
+                    <input type="text" id="stacja" class="form-control" required placeholder="np. WARSZAWA CENTRALNA">
+                    <div class="error-msg">Nazwa stacji jest wymagana.</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label class="input-label">Przewoźnik</label>
+                        <input type="text" id="przewoznik" list="przewoznicy" class="form-control" required placeholder="Wybierz lub wpisz">
+                        <div class="error-msg">Wybierz przewoźnika.</div>
                         <datalist id="przewoznicy">
                             <option value="PKP INTERCITY">
                             <option value="POLREGIO">
@@ -412,102 +521,102 @@
                             <option value="BRAK">
                         </datalist>
                     </div>
-                    <div class="form-group">
-                        <label>Numer EPA</label>
-                        <input type="text" id="epa">
+                    <div class="input-group">
+                        <label class="input-label">Numer EPA</label>
+                        <input type="text" id="epa" class="form-control">
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">🕒 Godziny</div>
-                <div class="form-group">
-                    <label>Pn - Pt</label>
-                    <input type="text" id="godziny.pn_pt" placeholder="06:00-18:00">
-                </div>
-                <div class="form-group">
-                    <label>Sobota</label>
-                    <input type="text" id="godziny.sob" placeholder="Zamknięte">
-                </div>
-                <div class="form-group">
-                    <label>Niedziela</label>
-                    <input type="text" id="godziny.nd" placeholder="Zamknięte">
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">☕ Przerwy</div>
-                <div class="form-group">
-                    <label>Pn - Pt</label>
-                    <input type="text" id="przerwy.pn_pt" placeholder="10:00-10:15">
-                </div>
-                <div class="form-group">
-                    <label>Sobota</label>
-                    <input type="text" id="przerwy.sob" placeholder="Brak">
-                </div>
-                <div class="form-group">
-                    <label>Niedziela</label>
-                    <input type="text" id="przerwy.nd" placeholder="Brak">
-                </div>
-            </div>
-
-            <div class="card span-2">
-                <div class="card-header">📝 Inne</div>
-                <div class="form-group">
-                    <label>Uwagi dla Pasażera</label>
-                    <textarea id="uwagi" placeholder="Ważne informacje, np. kasa nieczynna w dni świąteczne..."></textarea>
-                </div>
-            </div>
-
-            <div class="card span-2">
-                 <div class="card-header">⚙️ Meta Dane</div>
-                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Edytor</label>
-                        <select id="meta.kto">
+            <div class="card col-span-6">
+                <div class="card-header"><span class="card-icon">⚙️</span> Historia Zmian</div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label class="input-label">Edytor</label>
+                        <select id="meta.kto" class="form-control">
                             <option value="PIOTR M">Piotr M</option>
                             <option value="PIOTR S">Piotr S</option>
                             <option value="ANNA S">Anna S</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Data Aktualizacji (RRRR-MM-DD)</label>
-                        <input type="date" id="meta.data" required>
+                    <div class="input-group">
+                        <label class="input-label">Data Aktualizacji</label>
+                        <input type="date" id="meta.data" class="form-control" required>
+                        <div style="font-size:0.75rem; color:var(--success); margin-top:4px;">✅ Ustawiono na dziś</div>
                     </div>
-                 </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Uwagi (Dla pasażera)</label>
+                    <textarea id="uwagi" class="form-control" placeholder="Ważne informacje, awarie, lokalizacja okienka..."></textarea>
+                </div>
+            </div>
+
+            <div class="card col-span-3">
+                <div class="card-header" style="color:var(--primary);"><span class="card-icon">🕒</span> Godziny Otwarcia</div>
+                
+                <div class="input-group">
+                    <label class="input-label">Pn - Pt</label>
+                    <input type="text" id="godziny.pn_pt" class="form-control" placeholder="06:00-18:00">
+                    <div class="error-msg">Błąd formatu!</div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Sobota</label>
+                    <input type="text" id="godziny.sob" class="form-control" placeholder="Zamknięte">
+                    <div class="error-msg">Błąd formatu!</div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Niedziela</label>
+                    <input type="text" id="godziny.nd" class="form-control" placeholder="Zamknięte">
+                    <div class="error-msg">Błąd formatu!</div>
+                </div>
+            </div>
+
+            <div class="card col-span-3">
+                <div class="card-header" style="color:var(--warning);"><span class="card-icon">☕</span> Przerwy</div>
+                
+                <div class="input-group">
+                    <label class="input-label">Pn - Pt</label>
+                    <input type="text" id="przerwy.pn_pt" class="form-control" placeholder="10:00-10:15">
+                    <div class="error-msg">Błąd formatu!</div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Sobota</label>
+                    <input type="text" id="przerwy.sob" class="form-control" placeholder="Brak">
+                    <div class="error-msg">Błąd formatu!</div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Niedziela</label>
+                    <input type="text" id="przerwy.nd" class="form-control" placeholder="Brak">
+                    <div class="error-msg">Błąd formatu!</div>
+                </div>
             </div>
 
         </div>
     </form>
 
-    <div class="action-bar">
-        <div id="statusMsg" style="font-weight:600; color:var(--text-muted);">Gotowy do pracy.</div>
-        <a href="#" id="downloadLink" class="btn btn-success" onclick="downloadJSON()">⬇️ Pobierz plik kasy.json</a>
-    </div>
-
-    <div class="table-section">
-        <div class="table-toolbar">
-            <h3 style="margin:0; font-size:1.1rem; color:var(--text);">📊 Podgląd bazy danych</h3>
-            <div class="legend">
-                <span><span class="dot" style="background:var(--row-active); border:1px solid #b8daff;"></span> Edytowany</span>
-                <span><span class="dot" style="background:var(--row-modified); border:1px solid #ffeeba;"></span> Zmieniony</span>
-                <span><span class="dot" style="background:var(--row-new); border:1px solid #c3e6cb;"></span> Nowy</span>
+    <div class="table-card">
+        <div class="table-header">
+            <div class="table-title">📊 Podgląd Bazy Danych</div>
+            <div class="table-legend">
+                <div class="legend-item"><span class="dot" style="background:var(--row-active)"></span> Edytowany</div>
+                <div class="legend-item"><span class="dot" style="background:var(--row-modified)"></span> Zmodyfikowany</div>
+                <div class="legend-item"><span class="dot" style="background:var(--row-new)"></span> Nowy</div>
             </div>
         </div>
-        <div class="table-wrapper">
+        <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 50px;">Lp.</th>
+                        <th style="width:50px">Lp.</th>
                         <th>Stacja</th>
                         <th>Przewoźnik</th>
-                        <th>EPA</th>
                         <th>Godz. Pn-Pt</th>
                         <th>Godz. Sob</th>
                         <th>Godz. Nd</th>
                         <th>Uwagi</th>
-                        <th>Autor</th>
-                        <th style="width: 110px;">Data</th>
+                        <th style="width:120px">Data</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -518,24 +627,51 @@
 
 </div>
 
+<div id="statusBar">✅ Zapisano pomyślnie</div>
+
+<footer class="app-footer">
+    <p>Projekt i wykonanie: <strong>Piotr M 🚂</strong> oraz Gemini (AI) &bull; 2025</p>
+</footer>
+
 <script>
     let database = [];
     let currentIndex = -1;
+    let sessionStartTime = new Date();
+    let sessionModifiedCount = 0; // Licznik edytowanych stacji w sesji
 
-    // --- INITIALIZATION ---
+    // --- ZEGAR ---
+    function updateClocks() {
+        const now = new Date();
+        const d = now.getDate().toString().padStart(2,'0');
+        const mo = (now.getMonth()+1).toString().padStart(2,'0');
+        const y = now.getFullYear();
+        const h = now.getHours().toString().padStart(2,'0');
+        const mi = now.getMinutes().toString().padStart(2,'0');
+        const s = now.getSeconds().toString().padStart(2,'0');
+
+        document.getElementById('clockDate').innerText = `${d}.${mo}.${y}`;
+        document.getElementById('clockTime').innerText = `${h}:${mi}:${s}`;
+
+        const diff = Math.floor((now - sessionStartTime) / 1000);
+        const sh = Math.floor(diff / 3600).toString().padStart(2, '0');
+        const sm = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+        const ss = (diff % 60).toString().padStart(2, '0');
+        document.getElementById('sessionTimer').innerText = `${sh}:${sm}:${ss}`;
+    }
+    setInterval(updateClocks, 1000);
+
+    // --- START ---
     window.onload = async function() {
         document.getElementById('meta.data').valueAsDate = new Date();
-        
         try {
             const response = await fetch('kasy.json');
             if (!response.ok) throw new Error("HTTP Error");
             database = await response.json();
             initData();
         } catch (error) {
-            console.warn("Offline/Local mode:", error);
+            console.warn("Tryb lokalny:", error);
             document.getElementById('manualLoadSection').style.display = 'block';
-            document.getElementById('stationSelect').innerHTML = '<option>⚠️ Wczytaj plik ręcznie</option>';
-            setStatus("Wczytaj plik kasy.json, aby rozpocząć.", "orange");
+            document.getElementById('stationSelect').innerHTML = '<option>⚠️ Wczytaj plik ręcznie powyżej</option>';
         }
     };
 
@@ -548,115 +684,83 @@
                 database = JSON.parse(e.target.result);
                 initData();
                 document.getElementById('manualLoadSection').style.display = 'none';
-                setStatus("Plik wczytany pomyślnie.", "green");
-            } catch (err) { alert("Błąd pliku JSON"); }
+                showToast("✅ Plik wczytany poprawnie");
+            } catch (err) { alert("Błąd: Niepoprawny plik JSON"); }
         };
         reader.readAsText(file);
     }
 
     function initData() {
-        // Sortowanie po nazwie
         database.sort((a, b) => a.stacja.localeCompare(b.stacja));
         populateSelect();
         renderTable();
+        updateProgressBar();
     }
 
-    // --- LOGIC ---
-    function renderTable() {
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
-
-        database.forEach((item, index) => {
-            const tr = document.createElement('tr');
-            
-            // Klasy statusów
-            if (item._status === 'modified') tr.classList.add('row-modified');
-            if (item._status === 'new') tr.classList.add('row-new');
-            if (index == currentIndex) tr.classList.add('row-active');
-
-            tr.onclick = () => {
-                document.getElementById('stationSelect').value = index;
-                loadStation();
-            };
-
-            const safe = (t) => t || '';
-            const short = (t) => t && t.length > 25 ? t.substring(0, 22) + '...' : (t || '');
-
-            tr.innerHTML = `
-                <td style="text-align:center; color:#888;">${index + 1}</td>
-                <td style="font-weight:600; color:var(--primary)">${safe(item.stacja)}</td>
-                <td>${safe(item.przewoznik)}</td>
-                <td>${safe(item.epa)}</td>
-                <td>${short(item['godziny.pn_pt'])}</td>
-                <td>${short(item['godziny.sob'])}</td>
-                <td>${short(item['godziny.nd'])}</td>
-                <td style="color:#666; font-style:italic;">${short(item.uwagi)}</td>
-                <td>${safe(item['meta.kto'])}</td>
-                <td>${safe(item['meta.data'])}</td>
-            `;
-            tbody.appendChild(tr);
-        });
+    // --- WALIDACJA ---
+    function validateTimeFormat(value) {
+        if (!value || value.trim() === "") return true;
+        const lower = value.trim().toLowerCase();
+        if (["zamknięte", "zamkniete", "nieczynne", "całodobowo"].includes(lower)) return true;
+        const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+        return timeRegex.test(value.trim());
     }
 
-    function populateSelect() {
-        const select = document.getElementById('stationSelect');
-        select.innerHTML = '<option value="-1">-- Wybierz stację z listy --</option>';
-        database.forEach((item, index) => {
-            const opt = document.createElement('option');
-            opt.value = index;
-            let label = item.stacja;
-            if(item._status === 'modified') label += " (📝)";
-            if(item._status === 'new') label += " (🆕)";
-            opt.textContent = label;
-            select.appendChild(opt);
-        });
-    }
-
-    function loadStation() {
-        const index = document.getElementById('stationSelect').value;
-        currentIndex = index;
-        renderTable(); // Update highlight
-
-        if (index == -1) { 
-            document.getElementById('editForm').reset(); 
-            return; 
+    function validateBreakFormat(value) {
+        if (!value || value.trim() === "") return true; 
+        const lower = value.trim().toLowerCase();
+        if (lower === "brak") return true;
+        const parts = value.split(';');
+        const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+        for (let part of parts) {
+            if (!timeRegex.test(part.trim())) return false;
         }
-
-        const item = database[index];
-        const getVal = (k) => item[k] || '';
-
-        setValue('stacja', getVal('stacja'));
-        setValue('epa', getVal('epa'));
-        setValue('przewoznik', getVal('przewoznik'));
-        setValue('uwagi', getVal('uwagi'));
-        setValue('godziny.pn_pt', getVal('godziny.pn_pt'));
-        setValue('godziny.sob', getVal('godziny.sob'));
-        setValue('godziny.nd', getVal('godziny.nd'));
-        setValue('przerwy.pn_pt', getVal('przerwy.pn_pt'));
-        setValue('przerwy.sob', getVal('przerwy.sob'));
-        setValue('przerwy.nd', getVal('przerwy.nd'));
-        setValue('meta.kto', getVal('meta.kto'));
-        setValue('meta.data', getVal('meta.data'));
-        
-        // Scroll to form only if needed
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return true;
     }
 
-    function setValue(id, val) { document.getElementById(id).value = val; }
-    function getValue(id) { return document.getElementById(id).value.trim(); }
-
-    function createNewStation() {
-        document.getElementById('editForm').reset();
-        document.getElementById('stationSelect').value = -1;
-        currentIndex = -1;
-        renderTable();
-        document.getElementById('stacja').focus();
-        document.getElementById('meta.data').valueAsDate = new Date();
-        setStatus("Tworzenie nowej stacji...", "blue");
+    function validateField(id, validatorFn) {
+        const el = document.getElementById(id);
+        const isValid = validatorFn(el.value);
+        if (!isValid) el.classList.add('is-invalid');
+        else el.classList.remove('is-invalid');
+        return isValid;
     }
 
+    function validateAll() {
+        let isValid = true;
+        const stacjaEl = document.getElementById('stacja');
+        if(!stacjaEl.value.trim()) { stacjaEl.classList.add('is-invalid'); isValid = false; } 
+        else stacjaEl.classList.remove('is-invalid');
+
+        const przewoznikEl = document.getElementById('przewoznik');
+        if(!przewoznikEl.value.trim()) { przewoznikEl.classList.add('is-invalid'); isValid = false; } 
+        else przewoznikEl.classList.remove('is-invalid');
+
+        if(!validateField('godziny.pn_pt', validateTimeFormat)) isValid = false;
+        if(!validateField('godziny.sob', validateTimeFormat)) isValid = false;
+        if(!validateField('godziny.nd', validateTimeFormat)) isValid = false;
+        if(!validateField('przerwy.pn_pt', validateBreakFormat)) isValid = false;
+        if(!validateField('przerwy.sob', validateBreakFormat)) isValid = false;
+        if(!validateField('przerwy.nd', validateBreakFormat)) isValid = false;
+
+        return isValid;
+    }
+
+    // --- PROGRESS BAR ---
+    function updateProgressBar() {
+        // Liczymy ile stacji ma status 'modified' lub 'new'
+        const modified = database.filter(item => item._status === 'modified' || item._status === 'new').length;
+        const total = database.length;
+        const percent = total > 0 ? (modified / total) * 100 : 0;
+
+        document.getElementById('progressBar').style.width = percent + '%';
+        document.getElementById('progressText').innerText = `${modified} / ${total} stacji`;
+    }
+
+    // --- GŁÓWNA LOGIKA ---
     function saveChanges() {
         if (database.length === 0 && currentIndex === -1) { alert("Brak bazy danych."); return; }
+        if (!validateAll()) { showToast("❌ Popraw błędy formularza!"); return; }
 
         const newItem = {
             "stacja": getValue('stacja').toUpperCase(),
@@ -676,62 +780,134 @@
         if (currentIndex == -1) {
             newItem._status = 'new';
             database.push(newItem);
-            setStatus("Dodano nową stację!", "green");
+            showToast("✨ Dodano nową stację!");
         } else {
             const oldStatus = database[currentIndex]._status;
             newItem._status = (oldStatus === 'new') ? 'new' : 'modified';
             database[currentIndex] = newItem;
-            setStatus("Zapisano zmiany!", "green");
+            showToast("💾 Zapisano zmiany!");
         }
 
         database.sort((a, b) => a.stacja.localeCompare(b.stacja));
         currentIndex = database.findIndex(x => x === newItem);
         
+        updateProgressBar();
         populateSelect();
         document.getElementById('stationSelect').value = currentIndex;
         renderTable();
     }
 
+    function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        database.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            if (item._status === 'modified') tr.classList.add('row-modified');
+            if (item._status === 'new') tr.classList.add('row-new');
+            if (index == currentIndex) tr.classList.add('row-active');
+            
+            tr.onclick = () => { document.getElementById('stationSelect').value = index; loadStation(); };
+            
+            const short = (t) => t && t.length > 15 ? t.substring(0, 12) + '...' : (t || '');
+            tr.innerHTML = `
+                <td style="text-align:center; color:#64748b;">${index + 1}</td>
+                <td style="font-weight:600; color:var(--text-main)">${item.stacja || ''}</td>
+                <td>${item.przewoznik || ''}</td>
+                <td>${short(item['godziny.pn_pt'])}</td>
+                <td>${short(item['godziny.sob'])}</td>
+                <td>${short(item['godziny.nd'])}</td>
+                <td style="color:#64748b; font-style:italic;">${short(item.uwagi)}</td>
+                <td>${item['meta.data'] || ''}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function populateSelect() {
+        const select = document.getElementById('stationSelect');
+        select.innerHTML = '<option value="-1">-- Wybierz stację do edycji --</option>';
+        database.forEach((item, index) => {
+            const opt = document.createElement('option');
+            opt.value = index;
+            let label = item.stacja;
+            if(item._status === 'modified') label += " (✏️)";
+            if(item._status === 'new') label += " (✨)";
+            opt.textContent = label;
+            select.appendChild(opt);
+        });
+    }
+
+    function loadStation() {
+        const index = document.getElementById('stationSelect').value;
+        currentIndex = index;
+        renderTable();
+
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        
+        if (index == -1) { document.getElementById('editForm').reset(); return; }
+
+        const item = database[index];
+        const getVal = (k) => item[k] || '';
+
+        setValue('stacja', getVal('stacja'));
+        setValue('epa', getVal('epa'));
+        setValue('przewoznik', getVal('przewoznik'));
+        setValue('uwagi', getVal('uwagi'));
+        setValue('godziny.pn_pt', getVal('godziny.pn_pt'));
+        setValue('godziny.sob', getVal('godziny.sob'));
+        setValue('godziny.nd', getVal('godziny.nd'));
+        setValue('przerwy.pn_pt', getVal('przerwy.pn_pt'));
+        setValue('przerwy.sob', getVal('przerwy.sob'));
+        setValue('przerwy.nd', getVal('przerwy.nd'));
+        setValue('meta.kto', getVal('meta.kto'));
+        
+        document.getElementById('meta.data').valueAsDate = new Date();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function createNewStation() {
+        document.getElementById('editForm').reset();
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        document.getElementById('stationSelect').value = -1;
+        currentIndex = -1;
+        renderTable();
+        document.getElementById('stacja').focus();
+        document.getElementById('meta.data').valueAsDate = new Date();
+        showToast("Tryb: Nowa stacja");
+    }
+
     function deleteStation() {
         if (currentIndex == -1) return;
-        if (confirm(`Czy na pewno usunąć stację: ${database[currentIndex].stacja}?`)) {
+        if (confirm(`Usunąć stację: ${database[currentIndex].stacja}?`)) {
             database.splice(currentIndex, 1);
             populateSelect();
             createNewStation();
             renderTable();
-            setStatus("Stacja usunięta.", "red");
+            updateProgressBar();
+            showToast("🗑️ Stacja usunięta");
         }
     }
 
     function downloadJSON() {
         if (database.length === 0) return;
-        
-        // Clean technical fields (_status)
-        const cleanData = database.map(item => {
-            const { _status, ...rest } = item;
-            return rest;
-        });
-
+        const cleanData = database.map(item => { const { _status, ...rest } = item; return rest; });
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cleanData, null, 2));
-        const dl = document.getElementById('downloadLink');
+        const dl = document.createElement('a');
         dl.setAttribute("href", dataStr);
         dl.setAttribute("download", "kasy.json");
+        dl.click();
     }
 
-    function setStatus(msg, color) {
-        const el = document.getElementById('statusMsg');
-        el.innerText = msg;
-        el.style.color = color;
+    function setValue(id, val) { document.getElementById(id).value = val; }
+    function getValue(id) { return document.getElementById(id).value.trim(); }
+
+    function showToast(msg) {
+        const bar = document.getElementById('statusBar');
+        bar.innerText = msg;
+        bar.classList.add('visible');
+        setTimeout(() => bar.classList.remove('visible'), 3000);
     }
 </script>
-   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-W05T4L1HFD');
-</script>
 </body>
 </html>
