@@ -35,9 +35,9 @@
 
         h1, h2 { text-align: center; color: var(--primary); margin-top: 0; }
 
-        /* Sekcja ładowania pliku (widoczna gdy automatyczne ładowanie zawiedzie) */
+        /* Sekcja awaryjnego ładowania */
         #manualLoadSection {
-            display: none; /* Domyślnie ukryte */
+            display: none;
             background-color: var(--warning-bg);
             color: var(--warning-text);
             padding: 20px;
@@ -65,7 +65,7 @@
             flex-wrap: wrap;
         }
         
-        select {
+        select.station-select {
             padding: 12px;
             font-size: 1rem;
             flex-grow: 1;
@@ -92,7 +92,7 @@
             color: #555;
         }
 
-        input, textarea {
+        input, textarea, select.form-control {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -100,7 +100,7 @@
             box-sizing: border-box;
             font-size: 1rem;
         }
-        input:focus, textarea:focus { border-color: var(--primary); outline: none; }
+        input:focus, textarea:focus, select:focus { border-color: var(--primary); outline: none; }
 
         textarea { height: 80px; resize: vertical; font-family: inherit; }
 
@@ -164,13 +164,12 @@
 
     <div id="manualLoadSection">
         <h3>⚠️ Nie udało się automatycznie wczytać pliku `kasy.json`</h3>
-        <p>Jeśli otwierasz stronę bezpośrednio z dysku, przeglądarka blokuje dostęp do plików.</p>
-        <p><strong>Wskaż plik `kasy.json` ręcznie:</strong></p>
+        <p>Jeśli otwierasz stronę lokalnie, wskaż plik ręcznie:</p>
         <input type="file" id="fileInput" accept=".json" class="file-upload-btn" onchange="handleFileUpload(this)">
     </div>
 
     <div class="selector-panel">
-        <select id="stationSelect" onchange="loadStation()">
+        <select id="stationSelect" class="station-select" onchange="loadStation()">
             <option value="-1">-- Najpierw wczytaj dane --</option>
         </select>
         <button class="btn btn-new" onclick="createNewStation()">+ Nowa Stacja</button>
@@ -191,10 +190,15 @@
                 <datalist id="przewoznicy">
                     <option value="PKP INTERCITY">
                     <option value="POLREGIO">
-                    <option value="KOLEJE MAZOWIECKIE">
-                    <option value="KOLEJE WIELKOPOLSKIE">
+                    <option value="ARRIVA RP">
                     <option value="KOLEJE ŚLĄSKIE">
+                    <option value="KOLEJE MAZOWIECKIE">
                     <option value="ŁÓDZKA KOLEJ AGLOMERACYJNA">
+                    <option value="KOLEJE WIELKOPOLSKIE">
+                    <option value="KOLEJE DOLNOŚLĄSKIE">
+                    <option value="KOLEJE MAŁOPOLSKIE">
+                    <option value="SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE">
+                    <option value="PKP SKM">
                     <option value="BRAK">
                 </datalist>
             </div>
@@ -204,12 +208,12 @@
                 <input type="text" id="epa" placeholder="np. 1234">
             </div>
 
-            <div class="section-header">2. Godziny otwarcia (format: GG:MM-GG:MM lub "Zamknięte")</div>
+            <div class="section-header">2. Godziny otwarcia (np. 06:00-18:00 lub "Zamknięte")</div>
             <div class="form-group"><label>Pn - Pt:</label><input type="text" id="godziny.pn_pt"></div>
             <div class="form-group"><label>Sobota:</label><input type="text" id="godziny.sob"></div>
             <div class="form-group"><label>Niedziela:</label><input type="text" id="godziny.nd"></div>
 
-            <div class="section-header">3. Przerwy (format: GG:MM-GG:MM lub "Brak")</div>
+            <div class="section-header">3. Przerwy (np. "10:00-10:15" lub "00:05-00:10, 00:15-00:20" lub "Brak")</div>
             <div class="form-group"><label>Pn - Pt (Przerwy):</label><input type="text" id="przerwy.pn_pt"></div>
             <div class="form-group"><label>Sobota (Przerwy):</label><input type="text" id="przerwy.sob"></div>
             <div class="form-group"><label>Niedziela (Przerwy):</label><input type="text" id="przerwy.nd"></div>
@@ -217,12 +221,16 @@
             <div class="section-header">4. Dodatkowe</div>
             <div class="form-group full-width">
                 <label>Uwagi (widoczne dla pasażera):</label>
-                <textarea id="uwagi" placeholder="np. Kasa nieczynna w dni świąteczne..."></textarea>
+                <textarea id="uwagi"></textarea>
             </div>
             
             <div class="form-group">
                 <label>Ostatnia edycja przez:</label>
-                <input type="text" id="meta.kto" value="PIOTR M">
+                <select id="meta.kto" class="form-control">
+                    <option value="PIOTR M">Piotr M</option>
+                    <option value="PIOTR S">Piotr S</option>
+                    <option value="ANNA S">Anna S</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Data danych (YYYY-MM-DD):</label>
@@ -230,19 +238,18 @@
             </div>
         </div>
 
-        <button class="btn btn-save">💾 Zapisz zmiany (w pamięci przeglądarki)</button>
+        <button class="btn btn-save">💾 Zapisz zmiany (w pamięci)</button>
         <div id="statusMsg"></div>
     </form>
     
     <div style="text-align: right;">
-        <button type="button" class="btn btn-delete" onclick="deleteStation()">🗑️ Usuń aktualną stację</button>
+        <button type="button" class="btn btn-delete" onclick="deleteStation()">🗑️ Usuń stację</button>
     </div>
 
     <hr style="margin: 40px 0;">
     
     <h2 style="color: #fd7e14;">⬇️ Pobieranie</h2>
-    <p style="text-align: center; color: #666;">Po zakończeniu edycji wszystkich stacji, pobierz nowy plik i zastąp stary `kasy.json` w folderze.</p>
-    <a href="#" id="downloadLink" class="btn btn-download" onclick="downloadJSON()">POBIERZ GOTOWY PLIK kasy.json</a>
+    <a href="#" id="downloadLink" class="btn btn-download" onclick="downloadJSON()">POBIERZ PLIK kasy.json</a>
 
 </div>
 
@@ -250,10 +257,9 @@
     let database = [];
     let currentIndex = -1;
 
-    // --- 1. PRÓBA AUTOMATYCZNEGO ŁADOWANIA ---
+    // --- AUTOMATYCZNE ŁADOWANIE ---
     window.onload = async function() {
-        // Ustawienie dzisiejszej daty w formularzu
-        document.getElementById('meta.data').valueAsDate = new Date();
+        document.getElementById('meta.data').valueAsDate = new Date(); // Dziś
 
         try {
             const response = await fetch('kasy.json');
@@ -262,48 +268,38 @@
             populateSelect();
             setStatus("✅ Plik załadowany automatycznie!", "green");
         } catch (error) {
-            console.warn("Automatyczne ładowanie nieudane:", error);
-            // Pokazujemy sekcję ręcznego ładowania
+            console.warn("Tryb offline:", error);
             document.getElementById('manualLoadSection').style.display = 'block';
-            setStatus("⚠️ Wczytaj plik kasy.json ręcznie powyżej", "orange");
+            setStatus("⚠️ Wczytaj plik kasy.json ręcznie", "orange");
         }
     };
 
-    // --- 2. OBSŁUGA RĘCZNEGO WCZYTYWANIA PLIKU ---
+    // --- RĘCZNE ŁADOWANIE ---
     function handleFileUpload(input) {
         const file = input.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
                 database = JSON.parse(e.target.result);
                 populateSelect();
-                document.getElementById('manualLoadSection').style.display = 'none'; // Ukryj ostrzeżenie po sukcesie
+                document.getElementById('manualLoadSection').style.display = 'none';
                 setStatus("✅ Plik wczytany poprawnie!", "green");
-            } catch (err) {
-                alert("Błąd: Wybrany plik nie jest poprawnym plikiem JSON!");
-                console.error(err);
-            }
+            } catch (err) { alert("Błąd: Niepoprawny plik JSON!"); }
         };
         reader.readAsText(file);
     }
 
-    // --- POZOSTAŁE FUNKCJE (BEZ ZMIAN) ---
-
+    // --- LOGIKA EDYTORA ---
     function populateSelect() {
         const select = document.getElementById('stationSelect');
-        const savedVal = select.value;
         select.innerHTML = '<option value="-1">-- Wybierz stację do edycji --</option>';
-        
-        // Sortowanie alfabetyczne dla wygody
         database.sort((a, b) => a.stacja.localeCompare(b.stacja));
-
         database.forEach((item, index) => {
-            const option = document.createElement('option');
-            option.value = index;
-            option.textContent = `${item.stacja} (${item.przewoznik})`;
-            select.appendChild(option);
+            const opt = document.createElement('option');
+            opt.value = index;
+            opt.textContent = `${item.stacja} (${item.przewoznik})`;
+            select.appendChild(opt);
         });
     }
 
@@ -311,40 +307,27 @@
         const index = document.getElementById('stationSelect').value;
         currentIndex = index;
         
-        if (index == -1) {
-            document.getElementById('editForm').reset();
-            return;
-        }
+        if (index == -1) { document.getElementById('editForm').reset(); return; }
 
         const item = database[index];
-        
-        // Pomocnicza funkcja do bezpiecznego pobierania wartości
-        const getVal = (key) => item[key] || '';
+        const getVal = (k) => item[k] || '';
 
         setValue('stacja', getVal('stacja'));
         setValue('epa', getVal('epa'));
         setValue('przewoznik', getVal('przewoznik'));
         setValue('uwagi', getVal('uwagi'));
-        
         setValue('godziny.pn_pt', getVal('godziny.pn_pt'));
         setValue('godziny.sob', getVal('godziny.sob'));
         setValue('godziny.nd', getVal('godziny.nd'));
-        
         setValue('przerwy.pn_pt', getVal('przerwy.pn_pt'));
         setValue('przerwy.sob', getVal('przerwy.sob'));
         setValue('przerwy.nd', getVal('przerwy.nd'));
-
-        setValue('meta.kto', getVal('meta.kto'));
+        setValue('meta.kto', getVal('meta.kto')); // Select automatycznie wybierze opcję jeśli value pasuje (np. "PIOTR M")
         setValue('meta.data', getVal('meta.data'));
     }
 
-    function setValue(id, val) {
-        document.getElementById(id).value = val;
-    }
-
-    function getValue(id) {
-        return document.getElementById(id).value.trim(); // .trim() usuwa zbędne spacje
-    }
+    function setValue(id, val) { document.getElementById(id).value = val; }
+    function getValue(id) { return document.getElementById(id).value.trim(); }
 
     function createNewStation() {
         document.getElementById('editForm').reset();
@@ -356,10 +339,7 @@
     }
 
     function saveChanges() {
-        if(database.length === 0 && currentIndex === -1) {
-             alert("Najpierw wczytaj bazę danych (kasy.json)!");
-             return;
-        }
+        if(database.length === 0 && currentIndex === -1) { alert("Brak bazy danych!"); return; }
 
         const newItem = {
             "stacja": getValue('stacja').toUpperCase(),
@@ -379,42 +359,37 @@
         if (currentIndex == -1) {
             database.push(newItem);
             currentIndex = database.length - 1;
-            setStatus("✨ Dodano nową stację!", "green");
+            setStatus("✨ Dodano stację!", "green");
         } else {
             database[currentIndex] = newItem;
-            setStatus("💾 Zapisano zmiany dla stacji!", "green");
+            setStatus("💾 Zapisano zmiany!", "green");
         }
-
         populateSelect();
         document.getElementById('stationSelect').value = currentIndex;
     }
 
     function deleteStation() {
         if (currentIndex == -1) return;
-        if (confirm("Czy na pewno chcesz trwale usunąć stację: " + database[currentIndex].stacja + "?")) {
+        if (confirm("Usunąć stację: " + database[currentIndex].stacja + "?")) {
             database.splice(currentIndex, 1);
             populateSelect();
             createNewStation();
-            setStatus("🗑️ Stacja usunięta.", "red");
+            setStatus("🗑️ Usunięto.", "red");
         }
     }
 
     function downloadJSON() {
-        if(database.length === 0) {
-            alert("Brak danych do pobrania!");
-            return;
-        }
+        if(database.length === 0) return;
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(database, null, 2));
-        const downloadAnchorNode = document.getElementById('downloadLink');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "kasy.json");
+        const dl = document.getElementById('downloadLink');
+        dl.setAttribute("href", dataStr);
+        dl.setAttribute("download", "kasy.json");
     }
 
-    function setStatus(msg, color = "black") {
+    function setStatus(msg, color) {
         const el = document.getElementById('statusMsg');
         el.innerText = msg;
         el.style.color = color;
-        // setTimeout(() => { el.innerText = ""; }, 5000); // Opcjonalne czyszczenie
     }
 </script>
 
