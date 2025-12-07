@@ -1,32 +1,89 @@
-# kasy_biletowe1
+# 🚆 Asystent Kas Biletowych
 
-# Weryfikator Dostępności Kas Biletowych (Ticket Counter Status Checker)
+**Kompleksowe narzędzie webowe do weryfikacji dostępności kas biletowych na dworcach kolejowych w czasie rzeczywistym.**
 
-Aplikacja webowa umożliwiająca pasażerom weryfikację statusu operacyjnego kas biletowych na stacjach kolejowych w czasie rzeczywistym. System analizuje bieżącą godzinę oraz zdefiniowane harmonogramy, aby jednoznacznie określić, czy punkt sprzedaży jest w danym momencie otwarty.
+Projekt działa w architekturze **"No-Backend"**, co oznacza, że cała logika przetwarzana jest po stronie przeglądarki klienta, a bazą danych jest lekki plik JSON. Rozwiązanie to zapewnia szybkość, prywatność oraz możliwość działania offline.
+
+---
 
 ## 🚀 Kluczowe Funkcjonalności
 
-* **Weryfikacja w czasie rzeczywistym:** Sprawdzanie dostępności kasy dokładnie w momencie wysłania zapytania przez użytkownika.
-* **Obsługa harmonogramów złożonych:** Algorytm uwzględnia standardowe godziny otwarcia oraz przerwy pracownicze/techniczne.
-* **Kalendarz świąt:** Implementacja logiki obsługującej dni świąteczne i wolne od pracy, w których godziny otwarcia mogą ulec zmianie lub punkt może być nieczynny.
+### 🔍 Dla Konduktora (`index.html`)
+* **Status w czasie rzeczywistym:** Natychmiastowa informacja, czy kasa jest **OTWARTA**, **ZAMKNIĘTA** lub czy trwa **PRZERWA**.
+* **Zaawansowany Kalendarz:** Algorytm uwzględnia:
+    * Dni robocze, soboty, niedziele.
+    * **Święta stałe** (np. Bożego Narodzenia, Nowy Rok).
+    * **Święta ruchome** (Wielkanoc, Boże Ciało) wyliczane automatycznie do 2050 roku.
+* **Szczegółowe dane:** Wyświetla numer okienka (EPA), przewoźnika oraz dokładne godziny otwarcia i przerw.
+* **Integracja z przewoźnikami:** Bezpośrednie linki do oficjalnych wyszukiwarek kas (PKP IC, Polregio, Koleje Mazowieckie itp.).
+* **Tryb Offline / Cache:** Dane są zapisywane w `LocalStorage`, co pozwala na sprawdzenie statusu nawet przy chwilowym braku internetu.
 
-## 💾 Zarządzanie Danymi
+### 🛠️ Dla Administratora (`editor.html`)
+* **Graficzny Interfejs Edycji:** Przyjazny panel do zarządzania bazą danych `kasy.json` bez konieczności edycji kodu.
+* **Obsługa Błędów (CORS):** Możliwość ręcznego wczytania pliku bazy danych (działa lokalnie bez serwera).
+* **Walidacja Danych:** Formularze ułatwiające wprowadzanie godzin w poprawnym formacie.
+* **Wsparcie dla Zespołu:** Predefiniowana lista edytorów (Piotr M., Piotr S., Anna S.) oraz lista przewoźników.
+* **Eksport:** Generowanie gotowego do wdrożenia pliku JSON jednym kliknięciem.
 
-Architektura danych oparta jest na lekkim rozwiązaniu "No-Backend":
+---
 
-* **Źródło danych:** Informacje o stacjach i godzinach pracy przechowywane są w ustrukturyzowanym pliku **JSON**.
-* **Aktualizacja:** Baza danych jest zarządzana manualnie, co pozwala na łatwą edycję parametrów bez konieczności angażowania systemów bazodanowych (SQL).
+## 📂 Struktura Projektu
 
-## 🤖 AI-Assisted Development
+```text
+kasy_biletowe1/
+│
+├── index.html      # Aplikacja dla pasażera (Frontend)
+├── editor.html     # Panel administracyjny (Backend-less CMS)
+├── kasy.json       # Główna baza danych (JSON)
+└── README.md       # Dokumentacja projektu
+````
 
-Projekt został zrealizowany w modelu **AI-Assisted**, przy wsparciu generatywnej sztucznej inteligencji **Google Gemini**. Narzędzie to zostało wykorzystane do:
+-----
 
-* Opracowania logiki walidacji dat i godzin (w tym obsługi wyjątków kalendarzowych).
-* Optymalizacji struktury pliku JSON dla szybszego parsowania danych.
-* Przyspieszenia procesu pisania kodu (Boilerplate code).
+### ⚙️ Technologie
 
-## 🛠️ Technologie
+Projekt został zrealizowany przy użyciu natywnych technologii webowych, co gwarantuje kompatybilność z każdą nowoczesną przeglądarką (mobilną i desktopową):
 
-* HTML5 / CSS3
-* JavaScript (ES6+)
-* JSON (Data Storage)
+  * **HTML5** (Semantyczna struktura)
+  * **CSS3** (Responsywność, Flexbox/Grid, Zmienne CSS)
+  * **JavaScript (ES6+)** (Logika biznesowa, parsowanie JSON, obsługa plików)
+  * **JSON** (Przechowywanie danych)
+
+-----
+
+### 📖 Instrukcja Obsługi
+
+### Uruchomienie Aplikacji
+
+Jako że projekt jest statyczną stroną WWW, nie wymaga instalacji Node.js, PHP ani baz danych SQL.
+
+1.  Pobierz repozytorium.
+2.  Otwórz plik `index.html` w dowolnej przeglądarce internetowej.
+
+### Zarządzanie Danymi (Edycja)
+
+Aby zaktualizować godziny otwarcia lub dodać nową stację:
+
+1.  Uruchom plik `editor.html`.
+2.  **Jeśli działasz lokalnie:** Użyj przycisku "Wybierz plik", aby załadować `kasy.json` z dysku.
+3.  **Jeśli działasz na serwerze:** Plik załaduje się automatycznie.
+4.  Wybierz stację z listy lub dodaj nową.
+5.  Wprowadź zmiany i kliknij "Zapisz zmiany (w pamięci)".
+6.  Po zakończeniu prac kliknij **"POBIERZ PLIK kasy.json"**.
+7.  Podmień pobrany plik w głównym katalogu projektu i wyślij zmiany do repozytorium.
+
+-----
+
+## 👥 Autorzy i Kontrybucja
+
+Projekt rozwijany w modelu **AI-Assisted Development**.
+
+  * **Piotr M. 🚂** – Koncepcja, Dane, Zarządzanie Projektem.
+  * **Gemini (Google)** – Implementacja kodu, Logika JS, Design.
+  * **Zespół Edytorski:** Piotr M., Piotr S., Anna S.
+
+-----
+
+## 📄 Licencja
+
+Projekt udostępniony do użytku wewnętrznego oraz publicznego jako narzędzie informacyjne. Dane mają charakter poglądowy.
