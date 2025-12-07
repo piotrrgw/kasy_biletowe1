@@ -3,349 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edytor Kas Biletowych</title>
+    <title>Panel Administratora Kas Biletowych</title>
     <style>
         :root {
             --primary: #0056b3;
-            --bg: #f4f4f9;
+            --primary-dark: #004494;
+            --bg: #f0f2f5; /* Szare tło typowe dla dashboardów */
             --white: #ffffff;
             --success: #28a745;
             --danger: #dc3545;
-            --text: #333;
-            --warning-bg: #fff3cd;
-            --warning-text: #856404;
-            --table-head: #e9ecef;
-            --table-border: #dee2e6;
+            --text: #212529;
+            --text-muted: #6c757d;
+            --border: #dee2e6;
             
-            /* Kolory statusów */
-            --row-modified: #fff3cd; /* Żółty */
-            --row-new: #d4edda;      /* Zielony */
-            --row-active: #cce5ff;   /* Niebieski (wybrany) */
+            /* Kolory statusów tabeli */
+            --row-modified: #fff3cd;
+            --row-new: #d4edda;
+            --row-active: #e7f1ff;
         }
 
+        * { box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding-bottom: 50px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        /* --- STICKY HEADER (GÓRNA BELKA) --- */
+        .top-bar {
             background: var(--white);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        h1, h2 { text-align: center; color: var(--primary); margin-top: 0; }
-
-        /* Sekcja awaryjnego ładowania */
-        #manualLoadSection {
-            display: none;
-            background-color: var(--warning-bg);
-            color: var(--warning-text);
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #ffeeba;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .file-upload-btn { margin-top: 10px; }
-        
-        /* Panel wyboru */
-        .selector-panel {
-            background: #e9ecef;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
             display: flex;
-            gap: 15px;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-        }
-        
-        select.station-select {
-            padding: 12px;
-            font-size: 1rem;
-            flex-grow: 1;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            min-width: 250px;
+            border-bottom: 1px solid var(--border);
         }
 
-        /* Formularz */
-        .editor-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .form-group { margin-bottom: 5px; }
-        .form-group.full-width { grid-column: span 2; }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        input, textarea, select.form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-        input:focus, textarea:focus, select:focus { border-color: var(--primary); outline: none; }
-
-        textarea { height: 80px; resize: vertical; font-family: inherit; }
-
-        .section-header {
-            grid-column: span 2;
-            border-bottom: 2px solid #eee;
-            margin-top: 25px;
-            margin-bottom: 15px;
-            padding-bottom: 5px;
-            font-size: 1.1rem;
-            font-weight: bold;
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 700;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* Przyciski */
+        .controls-area {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 800px;
+            margin-left: 40px;
+        }
+
+        select.station-select {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        /* --- BUTTONS --- */
         .btn {
-            padding: 12px 20px;
+            padding: 10px 18px;
             border: none;
             border-radius: 6px;
+            font-weight: 600;
             cursor: pointer;
-            font-weight: bold;
-            color: white;
-            transition: 0.2s;
-            font-size: 1rem;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            white-space: nowrap;
         }
-        .btn-new { background-color: #17a2b8; }
-        .btn-save { background-color: var(--success); width: 100%; font-size: 1.1rem; margin-top: 20px; }
-        .btn-delete { background-color: var(--danger); margin-top: 10px; font-size: 0.9rem; }
-        .btn-download { 
-            background-color: #fd7e14; 
-            display: block; 
-            width: 100%; 
-            padding: 20px; 
-            font-size: 1.2rem; 
-            margin-top: 30px; 
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            border-radius: 8px;
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+        
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-success:hover { background-color: #218838; }
+
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-danger:hover { background-color: #c82333; }
+
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        /* --- GŁÓWNY LAYOUT (GRID) --- */
+        .main-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
         }
-        .btn-toggle-table {
-            background-color: #6c757d;
+
+        /* Sekcja edytora */
+        .editor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Responsywne kolumny */
+            gap: 20px;
+        }
+
+        /* Karty (Sekcje formularza) */
+        .card {
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.05);
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select, textarea {
             width: 100%;
-            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
         }
-        .btn:hover { filter: brightness(1.1); }
-
-        #statusMsg {
-            text-align: center;
-            margin-top: 15px;
-            font-weight: bold;
-            min-height: 24px;
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,86,179,0.1);
         }
 
-        /* --- STYLES DLA TABELI (ARKUSZA) --- */
-        #tableViewSection {
-            display: none;
-            margin-top: 30px;
-            border-top: 2px solid #eee;
-            padding-top: 20px;
+        textarea { height: 100px; resize: vertical; }
+
+        /* --- STATUS BAR & DOWNLOAD --- */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #e2e6ea;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
         }
         
-        .legend {
+        #statusMsg { font-weight: bold; margin-left: 20px; }
+
+        /* --- TABELA (ARKUSZ) --- */
+        .table-section {
+            margin-top: 40px;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            overflow: hidden; /* Zaokrąglenie rogów */
+        }
+
+        .table-toolbar {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            gap: 20px;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            justify-content: flex-end;
-        }
-        .legend-item { display: flex; align-items: center; gap: 5px; }
-        .color-box { width: 15px; height: 15px; border: 1px solid #ccc; border-radius: 3px; }
-
-        .table-container {
-            overflow-x: auto;
-            max-height: 600px;
-            border: 1px solid var(--table-border);
-            border-radius: 8px;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
         }
 
-        .spreadsheet-table {
+        .table-wrapper {
+            max-height: 500px; /* Stała wysokość z przewijaniem */
+            overflow-y: auto;
+            position: relative;
+        }
+
+        table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
-            min-width: 1000px;
+            font-size: 0.9rem;
         }
 
-        .spreadsheet-table th, .spreadsheet-table td {
-            border: 1px solid var(--table-border);
-            padding: 8px 10px;
-            text-align: left;
-        }
-
-        .spreadsheet-table th {
-            background-color: var(--table-head);
+        th {
+            background: #f1f3f5;
+            color: var(--text);
             font-weight: 700;
+            padding: 12px 15px;
+            text-align: left;
             position: sticky;
             top: 0;
             z-index: 10;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
         }
 
-        /* Podświetlenia wierszy */
-        .spreadsheet-table tbody tr { cursor: pointer; transition: background 0.15s; }
-        .spreadsheet-table tbody tr:hover { filter: brightness(0.95); } /* Lekkie przyciemnienie przy najechaniu */
-
-        /* Klasy statusów */
-        .row-modified { background-color: var(--row-modified); }
-        .row-new { background-color: var(--row-new); }
-        
-        /* Aktywny wiersz (nadpisuje kolory statusu lub łączy się z nimi) */
-        .spreadsheet-table tbody tr.active-row {
-            outline: 2px solid var(--primary);
-            outline-offset: -2px;
-            font-weight: 600;
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+            color: #495057;
         }
 
-        .col-id { width: 40px; text-align: center; color: #888; }
-        .col-station { font-weight: 600; color: var(--primary); }
-        .col-sm { width: 100px; }
-        .col-lg { min-width: 200px; }
+        tr { cursor: pointer; transition: background 0.1s; }
+        tr:hover { background-color: #f8f9fa; }
 
-        @media (max-width: 700px) {
-            .editor-form { grid-template-columns: 1fr; }
-            .form-group.full-width { grid-column: span 1; }
-            .section-header { grid-column: span 1; }
+        /* Statusy wierszy */
+        .row-modified td { background-color: var(--row-modified); }
+        .row-new td { background-color: var(--row-new); }
+        .row-active td { 
+            background-color: var(--row-active) !important; 
+            border-bottom: 1px solid #b8daff;
+            color: var(--primary-dark);
+            font-weight: 500;
+        }
+
+        /* Legenda kolorów */
+        .legend { display: flex; gap: 15px; font-size: 0.85rem; }
+        .legend span { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid rgba(0,0,0,0.1); }
+
+        /* Panel ładowania */
+        #manualLoadSection {
+            background: #fff3cd; color: #856404; padding: 15px; text-align: center;
+            margin-bottom: 20px; border-radius: 6px; display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🛠️ Edytor Kas Biletowych</h1>
-
-    <div id="manualLoadSection">
-        <h3>⚠️ Nie udało się automatycznie wczytać pliku `kasy.json`</h3>
-        <p>Wskaż plik ręcznie (jeśli działasz lokalnie):</p>
-        <input type="file" id="fileInput" accept=".json" class="file-upload-btn" onchange="handleFileUpload(this)">
+<div class="top-bar">
+    <div class="brand">
+        <span>🚆</span> Panel Administratora
+    </div>
+    
+    <div class="controls-area">
+        <select id="stationSelect" class="station-select" onchange="loadStation()">
+            <option value="-1">-- Wczytywanie danych... --</option>
+        </select>
+        <button class="btn btn-outline" onclick="createNewStation()">+ Nowa Stacja</button>
+        <button class="btn btn-danger" onclick="deleteStation()">Usuń</button>
     </div>
 
-    <div class="selector-panel">
-        <select id="stationSelect" class="station-select" onchange="loadStation()">
-            <option value="-1">-- Najpierw wczytaj dane --</option>
-        </select>
-        <button class="btn btn-new" onclick="createNewStation()">+ Nowa Stacja</button>
+    <div>
+        <button class="btn btn-primary" onclick="saveChanges()">💾 Zapisz zmiany</button>
+    </div>
+</div>
+
+<div class="main-container">
+
+    <div id="manualLoadSection">
+        <strong>⚠️ Tryb Offline:</strong> Przeglądarka zablokowała automatyczne wczytanie pliku.
+        <input type="file" id="fileInput" accept=".json" style="display:inline-block; width:auto; margin-left:10px;" onchange="handleFileUpload(this)">
     </div>
 
     <form id="editForm" onsubmit="event.preventDefault(); saveChanges();">
-        <div class="editor-form">
-            <div class="section-header">1. Informacje podstawowe</div>
+        <div class="editor-grid">
             
-            <div class="form-group full-width">
-                <label>Nazwa Stacji:</label>
-                <input type="text" id="stacja" required placeholder="np. WARSZAWA CENTRALNA">
-            </div>
-            
-            <div class="form-group">
-                <label>Przewoźnik:</label>
-                <input type="text" id="przewoznik" list="przewoznicy" required placeholder="Wybierz lub wpisz">
-                <datalist id="przewoznicy">
-                    <option value="PKP INTERCITY">
-                    <option value="POLREGIO">
-                    <option value="ARRIVA RP">
-                    <option value="KOLEJE ŚLĄSKIE">
-                    <option value="KOLEJE MAZOWIECKIE">
-                    <option value="ŁÓDZKA KOLEJ AGLOMERACYJNA">
-                    <option value="KOLEJE WIELKOPOLSKIE">
-                    <option value="KOLEJE DOLNOŚLĄSKIE">
-                    <option value="KOLEJE MAŁOPOLSKIE">
-                    <option value="SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE">
-                    <option value="PKP SKM">
-                    <option value="BRAK">
-                </datalist>
+            <div class="card">
+                <div class="card-header">ℹ️ Informacje podstawowe</div>
+                <div class="form-group">
+                    <label>Nazwa Stacji</label>
+                    <input type="text" id="stacja" required placeholder="np. WARSZAWA CENTRALNA">
+                </div>
+                <div class="form-group">
+                    <label>Przewoźnik</label>
+                    <input type="text" id="przewoznik" list="przewoznicy" required placeholder="Wybierz z listy">
+                    <datalist id="przewoznicy">
+                        <option value="PKP INTERCITY">
+                        <option value="POLREGIO">
+                        <option value="ARRIVA RP">
+                        <option value="KOLEJE ŚLĄSKIE">
+                        <option value="KOLEJE MAZOWIECKIE">
+                        <option value="ŁÓDZKA KOLEJ AGLOMERACYJNA">
+                        <option value="KOLEJE WIELKOPOLSKIE">
+                        <option value="KOLEJE DOLNOŚLĄSKIE">
+                        <option value="KOLEJE MAŁOPOLSKIE">
+                        <option value="SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE">
+                        <option value="PKP SKM">
+                        <option value="BRAK">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label>Numer EPA</label>
+                    <input type="text" id="epa">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Numer EPA:</label>
-                <input type="text" id="epa" placeholder="np. 1234">
+            <div class="card">
+                <div class="card-header">🕒 Godziny Otwarcia</div>
+                <div class="form-group">
+                    <label>Poniedziałek - Piątek</label>
+                    <input type="text" id="godziny.pn_pt" placeholder="np. 06:00-18:00">
+                </div>
+                <div class="form-group">
+                    <label>Sobota</label>
+                    <input type="text" id="godziny.sob" placeholder="np. Zamknięte">
+                </div>
+                <div class="form-group">
+                    <label>Niedziela i Święta</label>
+                    <input type="text" id="godziny.nd" placeholder="np. Zamknięte">
+                </div>
             </div>
 
-            <div class="section-header">2. Godziny otwarcia (np. 06:00-18:00 lub "Zamknięte")</div>
-            <div class="form-group"><label>Pn - Pt:</label><input type="text" id="godziny.pn_pt"></div>
-            <div class="form-group"><label>Sobota:</label><input type="text" id="godziny.sob"></div>
-            <div class="form-group"><label>Niedziela:</label><input type="text" id="godziny.nd"></div>
+            <div class="card">
+                <div class="card-header">☕ Przerwy</div>
+                <div class="form-group">
+                    <label>Pn - Pt (Przerwy)</label>
+                    <input type="text" id="przerwy.pn_pt" placeholder="np. 10:00-10:15; 14:00-14:20">
+                </div>
+                <div class="form-group">
+                    <label>Sobota (Przerwy)</label>
+                    <input type="text" id="przerwy.sob" placeholder="Brak">
+                </div>
+                <div class="form-group">
+                    <label>Niedziela (Przerwy)</label>
+                    <input type="text" id="przerwy.nd" placeholder="Brak">
+                </div>
+            </div>
 
-            <div class="section-header">3. Przerwy (np. 10:00-10:15 lub "Brak")</div>
-            <div class="form-group"><label>Pn - Pt (Przerwy):</label><input type="text" id="przerwy.pn_pt"></div>
-            <div class="form-group"><label>Sobota (Przerwy):</label><input type="text" id="przerwy.sob"></div>
-            <div class="form-group"><label>Niedziela (Przerwy):</label><input type="text" id="przerwy.nd"></div>
+            <div class="card">
+                <div class="card-header">📝 Inne / Meta</div>
+                <div class="form-group">
+                    <label>Uwagi (Publiczne)</label>
+                    <textarea id="uwagi" placeholder="Ważne informacje dla pasażera..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Edytor</label>
+                    <select id="meta.kto">
+                        <option value="PIOTR M">Piotr M</option>
+                        <option value="PIOTR S">Piotr S</option>
+                        <option value="ANNA S">Anna S</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Data aktualizacji</label>
+                    <input type="date" id="meta.data" required>
+                </div>
+            </div>
 
-            <div class="section-header">4. Dodatkowe</div>
-            <div class="form-group full-width">
-                <label>Uwagi (widoczne dla pasażera):</label>
-                <textarea id="uwagi"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label>Ostatnia edycja przez:</label>
-                <select id="meta.kto" class="form-control">
-                    <option value="PIOTR M">Piotr M</option>
-                    <option value="PIOTR S">Piotr S</option>
-                    <option value="ANNA S">Anna S</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Data danych (YYYY-MM-DD):</label>
-                <input type="date" id="meta.data" required>
-            </div>
         </div>
-
-        <button class="btn btn-save">💾 Zapisz zmiany (w pamięci)</button>
-        <div id="statusMsg"></div>
     </form>
-    
-    <div style="text-align: right;">
-        <button type="button" class="btn btn-delete" onclick="deleteStation()">🗑️ Usuń stację</button>
+
+    <div class="action-bar">
+        <div id="statusMsg">Gotowy do pracy.</div>
+        <a href="#" id="downloadLink" class="btn btn-success" onclick="downloadJSON()">⬇️ Pobierz plik kasy.json (Wdrożenie)</a>
     </div>
 
-    <button class="btn btn-toggle-table" onclick="toggleTable()">📊 Pokaż / Ukryj Widok Tabeli (Arkusz)</button>
-    
-    <div id="tableViewSection">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <h2 style="margin: 15px 0;">Podgląd Danych</h2>
+    <div class="table-section">
+        <div class="table-toolbar">
+            <h3 style="margin:0; font-size:1.1rem; color:var(--text);">📊 Podgląd bazy danych</h3>
             <div class="legend">
-                <div class="legend-item"><div class="color-box" style="background:var(--row-modified)"></div> Edytowane</div>
-                <div class="legend-item"><div class="color-box" style="background:var(--row-new)"></div> Nowe</div>
+                <span><span class="dot" style="background:var(--row-active); border-color:#b8daff"></span> Edytowany teraz</span>
+                <span><span class="dot" style="background:var(--row-modified)"></span> Zmieniony</span>
+                <span><span class="dot" style="background:var(--row-new)"></span> Nowy</span>
             </div>
         </div>
-        
-        <div class="table-container">
-            <table class="spreadsheet-table">
+        <div class="table-wrapper">
+            <table>
                 <thead>
                     <tr>
-                        <th class="col-id">#</th>
+                        <th style="width: 40px;">#</th>
                         <th>Stacja</th>
                         <th>Przewoźnik</th>
                         <th>EPA</th>
-                        <th class="col-lg">Godz. Pn-Pt</th>
-                        <th class="col-lg">Godz. Sob</th>
-                        <th class="col-lg">Godz. Nd</th>
+                        <th>Godz. Pn-Pt</th>
+                        <th>Godz. Sob</th>
+                        <th>Godz. Nd</th>
                         <th>Uwagi</th>
                         <th>Edytor</th>
-                        <th class="col-sm">Data</th>
+                        <th style="width: 100px;">Data</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -354,29 +398,26 @@
         </div>
     </div>
 
-    <hr style="margin: 40px 0;">
-    
-    <h2 style="color: #fd7e14;">⬇️ Pobieranie</h2>
-    <a href="#" id="downloadLink" class="btn btn-download" onclick="downloadJSON()">POBIERZ PLIK kasy.json</a>
-
 </div>
 
 <script>
     let database = [];
     let currentIndex = -1;
 
+    // --- INITIALIZATION ---
     window.onload = async function() {
         document.getElementById('meta.data').valueAsDate = new Date();
+        
         try {
             const response = await fetch('kasy.json');
-            if (!response.ok) throw new Error("Błąd HTTP");
+            if (!response.ok) throw new Error("HTTP Error");
             database = await response.json();
             initData();
-            setStatus("✅ Plik załadowany!", "green");
         } catch (error) {
-            console.warn("Tryb offline:", error);
+            console.warn("Offline/Local mode:", error);
             document.getElementById('manualLoadSection').style.display = 'block';
-            setStatus("⚠️ Wczytaj plik kasy.json ręcznie", "orange");
+            document.getElementById('stationSelect').innerHTML = '<option>⚠️ Wczytaj plik ręcznie</option>';
+            setStatus("Wczytaj plik kasy.json, aby rozpocząć.", "orange");
         }
     };
 
@@ -389,20 +430,25 @@
                 database = JSON.parse(e.target.result);
                 initData();
                 document.getElementById('manualLoadSection').style.display = 'none';
-                setStatus("✅ Plik wczytany!", "green");
-            } catch (err) { alert("Błąd: Niepoprawny plik JSON!"); }
+                setStatus("Plik wczytany pomyślnie.", "green");
+            } catch (err) { alert("Błąd pliku JSON"); }
         };
         reader.readAsText(file);
     }
 
     function initData() {
-        // Sortowanie po nazwie stacji przy starcie
+        // Sortowanie po nazwie
         database.sort((a, b) => a.stacja.localeCompare(b.stacja));
         populateSelect();
-        renderTable(); 
+        renderTable();
+        // Wybierz pierwszy element domyślnie, jeśli istnieje
+        /* if (database.length > 0) {
+            document.getElementById('stationSelect').value = 0;
+            loadStation();
+        } */
     }
 
-    // --- TABELA / ARKUSZ ---
+    // --- LOGIC ---
     function renderTable() {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = '';
@@ -410,26 +456,30 @@
         database.forEach((item, index) => {
             const tr = document.createElement('tr');
             
-            // Logika kolorowania wierszy
+            // Klasy statusów
             if (item._status === 'modified') tr.classList.add('row-modified');
             if (item._status === 'new') tr.classList.add('row-new');
-            if (index == currentIndex) tr.classList.add('active-row');
+            if (index == currentIndex) tr.classList.add('row-active');
 
-            tr.onclick = () => loadStationFromTable(index);
+            tr.onclick = () => {
+                document.getElementById('stationSelect').value = index;
+                loadStation();
+                // Opcjonalnie: scroll do góry
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
 
-            // Pomocnik do skracania tekstu
-            const safe = (txt) => txt || '-';
-            const short = (txt) => txt && txt.length > 30 ? txt.substring(0, 27) + '...' : (txt || '');
+            const safe = (t) => t || '';
+            const short = (t) => t && t.length > 25 ? t.substring(0, 22) + '...' : (t || '');
 
             tr.innerHTML = `
-                <td class="col-id">${index + 1}</td>
-                <td class="col-station">${safe(item.stacja)}</td>
+                <td style="text-align:center; color:#888;">${index + 1}</td>
+                <td style="font-weight:600; color:var(--primary)">${safe(item.stacja)}</td>
                 <td>${safe(item.przewoznik)}</td>
                 <td>${safe(item.epa)}</td>
                 <td>${short(item['godziny.pn_pt'])}</td>
                 <td>${short(item['godziny.sob'])}</td>
                 <td>${short(item['godziny.nd'])}</td>
-                <td style="font-style:italic; color:#666;">${short(item.uwagi)}</td>
+                <td style="color:#666; font-style:italic;">${short(item.uwagi)}</td>
                 <td>${safe(item['meta.kto'])}</td>
                 <td>${safe(item['meta.data'])}</td>
             `;
@@ -437,40 +487,29 @@
         });
     }
 
-    function toggleTable() {
-        const sec = document.getElementById('tableViewSection');
-        if (sec.style.display === 'block') {
-            sec.style.display = 'none';
-        } else {
-            sec.style.display = 'block';
-            renderTable();
-        }
-    }
-
-    function loadStationFromTable(index) {
-        document.getElementById('stationSelect').value = index;
-        loadStation();
-        document.querySelector('.selector-panel').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    // --- PODSTAWOWA LOGIKA ---
     function populateSelect() {
         const select = document.getElementById('stationSelect');
-        select.innerHTML = '<option value="-1">-- Wybierz stację do edycji --</option>';
+        select.innerHTML = '<option value="-1">-- Wybierz stację z listy --</option>';
         database.forEach((item, index) => {
             const opt = document.createElement('option');
             opt.value = index;
-            opt.textContent = `${item.stacja} (${item.przewoznik})`;
+            let label = item.stacja;
+            if(item._status === 'modified') label += " (📝)";
+            if(item._status === 'new') label += " (🆕)";
+            opt.textContent = label;
             select.appendChild(opt);
         });
     }
 
     function loadStation() {
         const index = document.getElementById('stationSelect').value;
-        currentIndex = index;
-        renderTable(); // Odśwież, aby zmienić "active-row"
+        currentIndex = index; // String to int conversion happens loosely but works, better to parse if needed
+        renderTable(); // Update active row highlight
 
-        if (index == -1) { document.getElementById('editForm').reset(); return; }
+        if (index == -1) { 
+            document.getElementById('editForm').reset(); 
+            return; 
+        }
 
         const item = database[index];
         const getVal = (k) => item[k] || '';
@@ -496,14 +535,14 @@
         document.getElementById('editForm').reset();
         document.getElementById('stationSelect').value = -1;
         currentIndex = -1;
-        renderTable(); 
+        renderTable();
         document.getElementById('stacja').focus();
         document.getElementById('meta.data').valueAsDate = new Date();
-        setStatus("📝 Wypełnij formularz", "blue");
+        setStatus("Tworzenie nowej stacji...", "blue");
     }
 
     function saveChanges() {
-        if(database.length === 0 && currentIndex === -1) { alert("Brak bazy!"); return; }
+        if (database.length === 0 && currentIndex === -1) { alert("Brak bazy danych."); return; }
 
         const newItem = {
             "stacja": getValue('stacja').toUpperCase(),
@@ -521,46 +560,43 @@
         };
 
         if (currentIndex == -1) {
-            // Dodawanie nowej stacji -> STATUS 'new'
             newItem._status = 'new';
             database.push(newItem);
-            setStatus("✨ Dodano stację!", "green");
+            setStatus("Dodano nową stację!", "green");
         } else {
-            // Edycja istniejącej
-            // Jeśli edytujemy coś, co już było 'nowe', zostawiamy 'nowe'. Inaczej 'modified'
             const oldStatus = database[currentIndex]._status;
             newItem._status = (oldStatus === 'new') ? 'new' : 'modified';
-            
             database[currentIndex] = newItem;
-            setStatus("💾 Zapisano!", "green");
+            setStatus("Zapisano zmiany!", "green");
         }
-        
-        // Sortowanie i aktualizacja indeksu
-        database.sort((a, b) => a.stacja.localeCompare(b.stacja));
-        currentIndex = database.findIndex(x => x === newItem); // Znajdź gdzie wylądował po sortowaniu
 
+        // Re-sort and keep selection logic could be complex, simple approach:
+        // For simplicity, we just rebuild list. To keep selection we'd need to find index by unique ID (station name)
+        database.sort((a, b) => a.stacja.localeCompare(b.stacja));
+        currentIndex = database.findIndex(x => x === newItem);
+        
         populateSelect();
         document.getElementById('stationSelect').value = currentIndex;
-        renderTable(); // Tabela pokaże kolory
+        renderTable();
     }
 
     function deleteStation() {
         if (currentIndex == -1) return;
-        if (confirm("Usunąć stację: " + database[currentIndex].stacja + "?")) {
+        if (confirm(`Czy na pewno usunąć stację: ${database[currentIndex].stacja}?`)) {
             database.splice(currentIndex, 1);
             populateSelect();
             createNewStation();
-            renderTable(); 
-            setStatus("🗑️ Usunięto.", "red");
+            renderTable();
+            setStatus("Stacja usunięta.", "red");
         }
     }
 
     function downloadJSON() {
-        if(database.length === 0) return;
+        if (database.length === 0) return;
         
-        // Czysta kopia danych (bez flagi _status)
+        // Clean technical fields (_status)
         const cleanData = database.map(item => {
-            const { _status, ...rest } = item; // Usuwa _status
+            const { _status, ...rest } = item;
             return rest;
         });
 
