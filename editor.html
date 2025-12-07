@@ -8,13 +8,13 @@
         :root {
             --primary: #0056b3;
             --primary-dark: #004494;
-            --bg: #f0f2f5; /* Szare tło typowe dla dashboardów */
+            --bg: #f4f6f8;
             --white: #ffffff;
             --success: #28a745;
             --danger: #dc3545;
-            --text: #212529;
+            --text: #2c3e50;
             --text-muted: #6c757d;
-            --border: #dee2e6;
+            --border: #dfe6e9;
             
             /* Kolory statusów tabeli */
             --row-modified: #fff3cd;
@@ -29,17 +29,18 @@
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding-bottom: 50px;
+            padding-bottom: 60px;
+            line-height: 1.5;
         }
 
-        /* --- STICKY HEADER (GÓRNA BELKA) --- */
+        /* --- STICKY HEADER --- */
         .top-bar {
             background: var(--white);
             padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -47,8 +48,8 @@
         }
 
         .brand {
-            font-size: 1.25rem;
-            font-weight: 700;
+            font-size: 1.3rem;
+            font-weight: 800;
             color: var(--primary);
             display: flex;
             align-items: center;
@@ -66,79 +67,149 @@
 
         select.station-select {
             flex-grow: 1;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            padding: 10px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
             font-weight: 600;
+            color: var(--text);
+            background-color: #f8f9fa;
         }
+        select.station-select:focus { border-color: var(--primary); outline: none; background: #fff; }
 
         /* --- BUTTONS --- */
         .btn {
-            padding: 10px 18px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.9rem;
-            white-space: nowrap;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
         }
-        .btn-primary { background-color: var(--primary); color: white; }
-        .btn-primary:hover { background-color: var(--primary-dark); }
+        .btn-primary { background-color: var(--primary); color: white; box-shadow: 0 4px 6px rgba(0,86,179,0.2); }
+        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-1px); }
         
-        .btn-success { background-color: var(--success); color: white; }
-        .btn-success:hover { background-color: #218838; }
+        .btn-success { background-color: var(--success); color: white; box-shadow: 0 4px 6px rgba(40,167,69,0.2); }
+        .btn-success:hover { background-color: #218838; transform: translateY(-1px); }
 
         .btn-danger { background-color: var(--danger); color: white; }
         .btn-danger:hover { background-color: #c82333; }
 
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background: var(--primary); color: white; }
 
-        /* --- GŁÓWNY LAYOUT (GRID) --- */
+        /* --- MAIN LAYOUT --- */
         .main-container {
             max-width: 1400px;
             margin: 30px auto;
             padding: 0 20px;
             display: grid;
             grid-template-columns: 1fr;
-            gap: 30px;
+            gap: 25px;
         }
 
-        /* Sekcja edytora */
+        /* --- INSTRUKCJA (HELP BOX) --- */
+        details.help-box {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #b8daff;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        details.help-box summary {
+            background: #e7f1ff;
+            padding: 15px 20px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            cursor: pointer;
+            list-style: none; /* Ukrywa domyślny trójkąt w niektórych przeglądarkach */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        details.help-box summary::after {
+            content: "▼"; 
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        details.help-box[open] summary::after { transform: rotate(180deg); }
+
+        .help-content {
+            padding: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            font-size: 0.95rem;
+        }
+
+        .help-section h4 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 8px; }
+        .help-section ul { padding-left: 20px; margin: 0; }
+        .help-section li { margin-bottom: 8px; }
+        
+        code {
+            background: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: "Consolas", monospace;
+            font-weight: bold;
+        }
+        .good { color: var(--success); font-weight: bold; }
+        .bad { color: var(--danger); font-weight: bold; }
+        .tag {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+            color: #495057;
+        }
+
+        /* --- FORM GRID --- */
         .editor-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Responsywne kolumny */
-            gap: 20px;
+            grid-template-columns: repeat(4, 1fr); /* 4 kolumny na dużym ekranie */
+            gap: 25px;
         }
 
-        /* Karty (Sekcje formularza) */
         .card {
             background: var(--white);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 1px 3px rgba(0,0,0,0.05);
-            padding: 20px;
-            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 25px;
+            border: 1px solid white; /* Czysty wygląd */
+            transition: transform 0.2s;
         }
+        .card:hover { border-color: #e9ecef; }
+
+        /* Responsywność kart formularza */
+        .card.span-2 { grid-column: span 2; }
+        @media (max-width: 1200px) { .editor-grid { grid-template-columns: 1fr 1fr; } .card.span-2 { grid-column: span 1; } }
+        @media (max-width: 768px) { .editor-grid { grid-template-columns: 1fr; } }
 
         .card-header {
             font-size: 1.1rem;
             font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
+            color: var(--text);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
+        .card-header i { color: var(--primary); }
 
         .form-group { margin-bottom: 15px; }
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -146,68 +217,62 @@
 
         input, select, textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--border);
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fdfdfd;
         }
         input:focus, select:focus, textarea:focus {
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 3px rgba(0,86,179,0.1);
+            background: #fff;
         }
+        textarea { height: 120px; resize: vertical; }
 
-        textarea { height: 100px; resize: vertical; }
-
-        /* --- STATUS BAR & DOWNLOAD --- */
+        /* --- BOTTOM BAR --- */
         .action-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #e2e6ea;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-top: 10px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
         }
-        
-        #statusMsg { font-weight: bold; margin-left: 20px; }
 
-        /* --- TABELA (ARKUSZ) --- */
+        /* --- TABLE --- */
         .table-section {
-            margin-top: 40px;
             background: var(--white);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            overflow: hidden; /* Zaokrąglenie rogów */
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         .table-toolbar {
-            padding: 15px 20px;
+            padding: 15px 25px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #f8f9fa;
+            background: #fafbfc;
         }
 
         .table-wrapper {
-            max-height: 500px; /* Stała wysokość z przewijaniem */
+            max-height: 600px;
             overflow-y: auto;
-            position: relative;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         th {
             background: #f1f3f5;
             color: var(--text);
             font-weight: 700;
-            padding: 12px 15px;
+            padding: 15px;
             text-align: left;
             position: sticky;
             top: 0;
@@ -215,35 +280,27 @@
             border-bottom: 2px solid var(--border);
             white-space: nowrap;
         }
-
-        td {
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--border);
-            color: #495057;
-        }
-
+        td { padding: 12px 15px; border-bottom: 1px solid var(--border); color: #495057; }
         tr { cursor: pointer; transition: background 0.1s; }
         tr:hover { background-color: #f8f9fa; }
 
-        /* Statusy wierszy */
         .row-modified td { background-color: var(--row-modified); }
         .row-new td { background-color: var(--row-new); }
         .row-active td { 
             background-color: var(--row-active) !important; 
             border-bottom: 1px solid #b8daff;
             color: var(--primary-dark);
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        /* Legenda kolorów */
-        .legend { display: flex; gap: 15px; font-size: 0.85rem; }
+        .legend { display: flex; gap: 20px; font-size: 0.85rem; }
         .legend span { display: flex; align-items: center; gap: 6px; }
-        .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid rgba(0,0,0,0.1); }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
-        /* Panel ładowania */
+        /* Offline msg */
         #manualLoadSection {
             background: #fff3cd; color: #856404; padding: 15px; text-align: center;
-            margin-bottom: 20px; border-radius: 6px; display: none;
+            margin-bottom: 20px; border-radius: 8px; display: none; border: 1px solid #ffeeba;
         }
     </style>
 </head>
@@ -251,14 +308,14 @@
 
 <div class="top-bar">
     <div class="brand">
-        <span>🚆</span> Panel Administratora
+        <span>🚄</span> Panel Edytora Kas
     </div>
     
     <div class="controls-area">
         <select id="stationSelect" class="station-select" onchange="loadStation()">
-            <option value="-1">-- Wczytywanie danych... --</option>
+            <option value="-1">-- Ładowanie bazy danych... --</option>
         </select>
-        <button class="btn btn-outline" onclick="createNewStation()">+ Nowa Stacja</button>
+        <button class="btn btn-outline" onclick="createNewStation()">+ Nowa</button>
         <button class="btn btn-danger" onclick="deleteStation()">Usuń</button>
     </div>
 
@@ -270,117 +327,178 @@
 <div class="main-container">
 
     <div id="manualLoadSection">
-        <strong>⚠️ Tryb Offline:</strong> Przeglądarka zablokowała automatyczne wczytanie pliku.
-        <input type="file" id="fileInput" accept=".json" style="display:inline-block; width:auto; margin-left:10px;" onchange="handleFileUpload(this)">
+        <strong>⚠️ Tryb Lokalny:</strong> Nie można automatycznie pobrać pliku JSON. 
+        <input type="file" id="fileInput" accept=".json" style="margin-left:10px;" onchange="handleFileUpload(this)">
     </div>
+
+    <details class="help-box">
+        <summary>ℹ️ Zasady i Instrukcja dla Edytorów (Kliknij, aby rozwinąć/zwinąć)</summary>
+        <div class="help-content">
+            
+            <div class="help-section">
+                <h4>1. Godziny Otwarcia (Kluczowe!)</h4>
+                <ul>
+                    <li>Standard: <code>GG:MM-GG:MM</code> (np. <span class="good">07:00-19:00</span>)</li>
+                    <li>Przejście przez północ: <span class="good">06:00-02:00</span></li>
+                    <li>Całodobowo: wpisz słowo <span class="good">Całodobowo</span></li>
+                    <li>Zamknięte: wpisz słowo <span class="good">Zamknięte</span></li>
+                    <li><span class="bad">Źle:</span> 7-19, 07.00-19.00 (używaj dwukropka!)</li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h4>2. Przerwy</h4>
+                <ul>
+                    <li>Brak przerwy: wpisz <span class="good">Brak</span></li>
+                    <li>Jedna przerwa: <code>10:00-10:15</code></li>
+                    <li>Kilka przerw: rozdzielaj średnikiem <code>;</code></li>
+                    <li>Przykład: <span class="good">10:00-10:15; 14:00-14:30</span></li>
+                </ul>
+            </div>
+
+            <div class="help-section">
+                <h4>3. Przewoźnicy (Linki)</h4>
+                <p>Używaj tych nazw, aby działały linki:</p>
+                <div>
+                    <span class="tag">PKP INTERCITY</span>
+                    <span class="tag">POLREGIO</span>
+                    <span class="tag">KOLEJE MAZOWIECKIE</span>
+                    <span class="tag">KOLEJE ŚLĄSKIE</span>
+                    <span class="tag">KOLEJE WIELKOPOLSKIE</span>
+                    <span class="tag">KOLEJE DOLNOŚLĄSKIE</span>
+                    <span class="tag">ŁKA</span>
+                    <span class="tag">ARRIVA RP</span>
+                    <span class="tag">PKP SKM</span>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h4>4. Data Danych</h4>
+                <ul>
+                    <li>Format: <code>RRRR-MM-DD</code></li>
+                    <li>Przykład: <span class="good">2025-11-27</span></li>
+                    <li><span class="bad">Źle:</span> 27.11.2025, Listopad 2025</li>
+                </ul>
+            </div>
+
+        </div>
+    </details>
 
     <form id="editForm" onsubmit="event.preventDefault(); saveChanges();">
         <div class="editor-grid">
             
-            <div class="card">
-                <div class="card-header">ℹ️ Informacje podstawowe</div>
-                <div class="form-group">
-                    <label>Nazwa Stacji</label>
-                    <input type="text" id="stacja" required placeholder="np. WARSZAWA CENTRALNA">
-                </div>
-                <div class="form-group">
-                    <label>Przewoźnik</label>
-                    <input type="text" id="przewoznik" list="przewoznicy" required placeholder="Wybierz z listy">
-                    <datalist id="przewoznicy">
-                        <option value="PKP INTERCITY">
-                        <option value="POLREGIO">
-                        <option value="ARRIVA RP">
-                        <option value="KOLEJE ŚLĄSKIE">
-                        <option value="KOLEJE MAZOWIECKIE">
-                        <option value="ŁÓDZKA KOLEJ AGLOMERACYJNA">
-                        <option value="KOLEJE WIELKOPOLSKIE">
-                        <option value="KOLEJE DOLNOŚLĄSKIE">
-                        <option value="KOLEJE MAŁOPOLSKIE">
-                        <option value="SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE">
-                        <option value="PKP SKM">
-                        <option value="BRAK">
-                    </datalist>
-                </div>
-                <div class="form-group">
-                    <label>Numer EPA</label>
-                    <input type="text" id="epa">
+            <div class="card span-2">
+                <div class="card-header">📍 Dane Stacji</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Nazwa Stacji</label>
+                        <input type="text" id="stacja" required placeholder="np. WARSZAWA CENTRALNA">
+                    </div>
+                    <div class="form-group">
+                        <label>Przewoźnik</label>
+                        <input type="text" id="przewoznik" list="przewoznicy" required placeholder="Wybierz z listy">
+                        <datalist id="przewoznicy">
+                            <option value="PKP INTERCITY">
+                            <option value="POLREGIO">
+                            <option value="ARRIVA RP">
+                            <option value="KOLEJE ŚLĄSKIE">
+                            <option value="KOLEJE MAZOWIECKIE">
+                            <option value="ŁÓDZKA KOLEJ AGLOMERACYJNA">
+                            <option value="KOLEJE WIELKOPOLSKIE">
+                            <option value="KOLEJE DOLNOŚLĄSKIE">
+                            <option value="KOLEJE MAŁOPOLSKIE">
+                            <option value="SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE">
+                            <option value="PKP SKM">
+                            <option value="BRAK">
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label>Numer EPA</label>
+                        <input type="text" id="epa">
+                    </div>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-header">🕒 Godziny Otwarcia</div>
+                <div class="card-header">🕒 Godziny</div>
                 <div class="form-group">
-                    <label>Poniedziałek - Piątek</label>
-                    <input type="text" id="godziny.pn_pt" placeholder="np. 06:00-18:00">
+                    <label>Pn - Pt</label>
+                    <input type="text" id="godziny.pn_pt" placeholder="06:00-18:00">
                 </div>
                 <div class="form-group">
                     <label>Sobota</label>
-                    <input type="text" id="godziny.sob" placeholder="np. Zamknięte">
+                    <input type="text" id="godziny.sob" placeholder="Zamknięte">
                 </div>
                 <div class="form-group">
-                    <label>Niedziela i Święta</label>
-                    <input type="text" id="godziny.nd" placeholder="np. Zamknięte">
+                    <label>Niedziela</label>
+                    <input type="text" id="godziny.nd" placeholder="Zamknięte">
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-header">☕ Przerwy</div>
                 <div class="form-group">
-                    <label>Pn - Pt (Przerwy)</label>
-                    <input type="text" id="przerwy.pn_pt" placeholder="np. 10:00-10:15; 14:00-14:20">
+                    <label>Pn - Pt</label>
+                    <input type="text" id="przerwy.pn_pt" placeholder="10:00-10:15">
                 </div>
                 <div class="form-group">
-                    <label>Sobota (Przerwy)</label>
+                    <label>Sobota</label>
                     <input type="text" id="przerwy.sob" placeholder="Brak">
                 </div>
                 <div class="form-group">
-                    <label>Niedziela (Przerwy)</label>
+                    <label>Niedziela</label>
                     <input type="text" id="przerwy.nd" placeholder="Brak">
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-header">📝 Inne / Meta</div>
+            <div class="card span-2">
+                <div class="card-header">📝 Inne</div>
                 <div class="form-group">
-                    <label>Uwagi (Publiczne)</label>
-                    <textarea id="uwagi" placeholder="Ważne informacje dla konduktora..."></textarea>
+                    <label>Uwagi dla Pasażera</label>
+                    <textarea id="uwagi" placeholder="Ważne informacje, np. kasa nieczynna w dni świąteczne..."></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Edytor</label>
-                    <select id="meta.kto">
-                        <option value="PIOTR M">Piotr M</option>
-                        <option value="PIOTR S">Piotr S</option>
-                        <option value="ANNA S">Anna S</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Data aktualizacji</label>
-                    <input type="date" id="meta.data" required>
-                </div>
+            </div>
+
+            <div class="card span-2">
+                 <div class="card-header">⚙️ Meta Dane</div>
+                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Edytor</label>
+                        <select id="meta.kto">
+                            <option value="PIOTR M">Piotr M</option>
+                            <option value="PIOTR S">Piotr S</option>
+                            <option value="ANNA S">Anna S</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data Aktualizacji (RRRR-MM-DD)</label>
+                        <input type="date" id="meta.data" required>
+                    </div>
+                 </div>
             </div>
 
         </div>
     </form>
 
     <div class="action-bar">
-        <div id="statusMsg">Gotowy do pracy.</div>
-        <a href="#" id="downloadLink" class="btn btn-success" onclick="downloadJSON()">⬇️ Pobierz plik kasy.json (Wdrożenie)</a>
+        <div id="statusMsg" style="font-weight:600; color:var(--text-muted);">Gotowy do pracy.</div>
+        <a href="#" id="downloadLink" class="btn btn-success" onclick="downloadJSON()">⬇️ Pobierz plik kasy.json</a>
     </div>
 
     <div class="table-section">
         <div class="table-toolbar">
             <h3 style="margin:0; font-size:1.1rem; color:var(--text);">📊 Podgląd bazy danych</h3>
             <div class="legend">
-                <span><span class="dot" style="background:var(--row-active); border-color:#b8daff"></span> Edytowany teraz</span>
-                <span><span class="dot" style="background:var(--row-modified)"></span> Zmieniony</span>
-                <span><span class="dot" style="background:var(--row-new)"></span> Nowy</span>
+                <span><span class="dot" style="background:var(--row-active); border:1px solid #b8daff;"></span> Edytowany</span>
+                <span><span class="dot" style="background:var(--row-modified); border:1px solid #ffeeba;"></span> Zmieniony</span>
+                <span><span class="dot" style="background:var(--row-new); border:1px solid #c3e6cb;"></span> Nowy</span>
             </div>
         </div>
         <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 40px;">#</th>
+                        <th style="width: 50px;">Lp.</th>
                         <th>Stacja</th>
                         <th>Przewoźnik</th>
                         <th>EPA</th>
@@ -388,8 +506,8 @@
                         <th>Godz. Sob</th>
                         <th>Godz. Nd</th>
                         <th>Uwagi</th>
-                        <th>Edytor</th>
-                        <th style="width: 100px;">Data</th>
+                        <th>Autor</th>
+                        <th style="width: 110px;">Data</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -441,11 +559,6 @@
         database.sort((a, b) => a.stacja.localeCompare(b.stacja));
         populateSelect();
         renderTable();
-        // Wybierz pierwszy element domyślnie, jeśli istnieje
-        /* if (database.length > 0) {
-            document.getElementById('stationSelect').value = 0;
-            loadStation();
-        } */
     }
 
     // --- LOGIC ---
@@ -464,8 +577,6 @@
             tr.onclick = () => {
                 document.getElementById('stationSelect').value = index;
                 loadStation();
-                // Opcjonalnie: scroll do góry
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             };
 
             const safe = (t) => t || '';
@@ -503,8 +614,8 @@
 
     function loadStation() {
         const index = document.getElementById('stationSelect').value;
-        currentIndex = index; // String to int conversion happens loosely but works, better to parse if needed
-        renderTable(); // Update active row highlight
+        currentIndex = index;
+        renderTable(); // Update highlight
 
         if (index == -1) { 
             document.getElementById('editForm').reset(); 
@@ -526,6 +637,9 @@
         setValue('przerwy.nd', getVal('przerwy.nd'));
         setValue('meta.kto', getVal('meta.kto'));
         setValue('meta.data', getVal('meta.data'));
+        
+        // Scroll to form only if needed
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function setValue(id, val) { document.getElementById(id).value = val; }
@@ -570,8 +684,6 @@
             setStatus("Zapisano zmiany!", "green");
         }
 
-        // Re-sort and keep selection logic could be complex, simple approach:
-        // For simplicity, we just rebuild list. To keep selection we'd need to find index by unique ID (station name)
         database.sort((a, b) => a.stacja.localeCompare(b.stacja));
         currentIndex = database.findIndex(x => x === newItem);
         
