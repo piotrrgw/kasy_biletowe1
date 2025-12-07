@@ -91,5 +91,5 @@ Projekt udostępniony do użytku wewnętrznego oraz publicznego jako narzędzie 
 -----
 ## 🔗 LINKI
 
-Strona produkcyjna: https://piotrrgw.github.io/kasy_biletowe1/
+Strona produkcyjna: https://piotrrgw.github.io/kasy_biletowe1/index.html
 Strona administratora: https://piotrrgw.github.io/kasy_biletowe1/editor.html
