@@ -87,3 +87,9 @@ Projekt rozwijany w modelu **AI-Assisted Development**.
 ## 📄 Licencja
 
 Projekt udostępniony do użytku wewnętrznego oraz publicznego jako narzędzie informacyjne. Dane mają charakter poglądowy.
+
+-----
+## 🔗 LINKI
+
+Strona produkcyjna: https://piotrrgw.github.io/kasy_biletowe1/
+Strona administratora: https://piotrrgw.github.io/kasy_biletowe1/editor.html
