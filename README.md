@@ -1,96 +1,45 @@
 # 🚆 Asystent Kas Biletowych
 
-**Kompleksowe narzędzie webowe do weryfikacji dostępności kas biletowych na dworcach kolejowych w czasie rzeczywistym.**
+Aplikacja webowa wspierająca Drużynę Konduktorską w szybkim sprawdzaniu godzin otwarcia kas biletowych na stacjach kolejowych w Polsce.
 
-Projekt działa w architekturze **"No-Backend"**, co oznacza, że cała logika przetwarzana jest po stronie przeglądarki klienta, a bazą danych jest lekki plik JSON. Rozwiązanie to zapewnia szybkość, prywatność oraz możliwość działania offline.
-
----
-
-## 🚀 Kluczowe Funkcjonalności
-
-### 🔍 Dla Konduktora (`index.html`)
-* **Status w czasie rzeczywistym:** Natychmiastowa informacja, czy kasa jest **OTWARTA**, **ZAMKNIĘTA** lub czy trwa **PRZERWA**.
-* **Zaawansowany Kalendarz:** Algorytm uwzględnia:
-    * Dni robocze, soboty, niedziele.
-    * **Święta stałe** (np. Bożego Narodzenia, Nowy Rok).
-    * **Święta ruchome** (Wielkanoc, Boże Ciało) wyliczane automatycznie do 2050 roku.
-* **Szczegółowe dane:** Wyświetla numer okienka (EPA), przewoźnika oraz dokładne godziny otwarcia i przerw.
-* **Integracja z przewoźnikami:** Bezpośrednie linki do oficjalnych wyszukiwarek kas (PKP IC, Polregio, Koleje Mazowieckie itp.).
-* **Tryb Offline / Cache:** Dane są zapisywane w `LocalStorage`, co pozwala na sprawdzenie statusu nawet przy chwilowym braku internetu.
-
-### 🛠️ Dla Administratora (`editor.html`)
-* **Graficzny Interfejs Edycji:** Przyjazny panel do zarządzania bazą danych `kasy.json` bez konieczności edycji kodu.
-* **Obsługa Błędów (CORS):** Możliwość ręcznego wczytania pliku bazy danych (działa lokalnie bez serwera).
-* **Walidacja Danych:** Formularze ułatwiające wprowadzanie godzin w poprawnym formacie.
-* **Wsparcie dla Zespołu:** Predefiniowana lista edytorów (Piotr M., Piotr S., Anna S.) oraz lista przewoźników.
-* **Eksport:** Generowanie gotowego do wdrożenia pliku JSON jednym kliknięciem.
+Projekt wykorzystuje logikę front-endową (JavaScript) do dynamicznego obliczania statusu (Czynna/Przerwa/Nieczynna) w czasie rzeczywistym, uwzględniając dni tygodnia i święta ruchome.
 
 ---
 
-## 📂 Struktura Projektu
+### 🚀 Dostęp do Aplikacji
 
-```text
-kasy_biletowe1/
-│
-├── index.html      # Aplikacja dla pasażera (Frontend)
-├── editor.html     # Panel administracyjny (Backend-less CMS)
-├── kasy.json       # Główna baza danych (JSON)
-└── README.md       # Dokumentacja projektu
-````
+| Moduł | Link | Opis |
+| :--- | :--- | :--- |
+| **Główny Asystent** | **index.html** | Interfejs dla Drużyny Konduktorskiej (podgląd statusu kas). |
+| **Panel Edytora** | **editor.html** | Interfejs dla administratorów/edytorów danych. Służy do modyfikacji i walidacji godzin pracy kas. |
 
------
+### 🛠️ Struktura i Technologie
 
-### ⚙️ Technologie
+Projekt składa się z trzech głównych elementów:
 
-Projekt został zrealizowany przy użyciu natywnych technologii webowych, co gwarantuje kompatybilność z każdą nowoczesną przeglądarką (mobilną i desktopową):
+1.  **`index.html`** (Asystent):
+    * Główny widok publiczny.
+    * Wbudowana funkcja wyszukiwania i filtrowania stacji.
+    * Lokalne buforowanie danych (`localStorage`) i wsparcie dla trybu offline.
+    * Załączony Google Analytics (`gtag.js`).
+2.  **`editor.html`** (Edytor):
+    * Panel administracyjny do zarządzania rekordami (CRUD).
+    * Wizualizacja dostępności w formie osi czasu.
+    * Funkcje masowej edycji i walidacji formatu danych.
+3.  **`kasy.json`** (Baza Danych):
+    * Centralny plik JSON zawierający szczegółowe godziny otwarcia i przerwy dla poszczególnych przewoźników i stacji (wraz z numerami EPA).
 
-  * **HTML5** (Semantyczna struktura)
-  * **CSS3** (Responsywność, Flexbox/Grid, Zmienne CSS)
-  * **JavaScript (ES6+)** (Logika biznesowa, parsowanie JSON, obsługa plików)
-  * **JSON** (Przechowywanie danych)
+### 👤 Autorzy i Kontrybutorzy
 
------
+* **Piotr M 🚂** – Koncepcja, Dane wejściowe, Wizja, Edytor danych.
+* **Gemini (AI)** – Implementacja kodu, logika aplikacji, optymalizacje.
+* **Edytorzy Danych:** Piotr M. 🚂, Anna S., Piotr S.
 
-### 📖 Instrukcja Obsługi
+---
 
-### Uruchomienie Aplikacji
+**Ważna informacja:** Aplikacja jest narzędziem poglądowym. Informacje o godzinach otwarcia kas należy zawsze weryfikować na stronach poszczególnych przewoźników.
 
-Jako że projekt jest statyczną stroną WWW, nie wymaga instalacji Node.js, PHP ani baz danych SQL.
+### 🔗 LINKI
 
-1.  Pobierz repozytorium.
-2.  Otwórz plik `index.html` w dowolnej przeglądarce internetowej.
-
-### Zarządzanie Danymi (Edycja)
-
-Aby zaktualizować godziny otwarcia lub dodać nową stację:
-
-1.  Uruchom plik `editor.html`.
-2.  **Jeśli działasz lokalnie:** Użyj przycisku "Wybierz plik", aby załadować `kasy.json` z dysku.
-3.  **Jeśli działasz na serwerze:** Plik załaduje się automatycznie.
-4.  Wybierz stację z listy lub dodaj nową.
-5.  Wprowadź zmiany i kliknij "Zapisz zmiany (w pamięci)".
-6.  Po zakończeniu prac kliknij **"POBIERZ PLIK kasy.json"**.
-7.  Podmień pobrany plik w głównym katalogu projektu i wyślij zmiany do repozytorium.
-
------
-
-## 👥 Autorzy i Kontrybucja
-
-Projekt rozwijany w modelu **AI-Assisted Development**.
-
-  * **Piotr M. 🚂** – Koncepcja, Dane, Zarządzanie Projektem.
-  * **Gemini (Google)** – Implementacja kodu, Logika JS, Design.
-  * **Zespół Edytorski:** Piotr M., Piotr S., Anna S.
-
------
-
-## 📄 Licencja
-
-Projekt udostępniony do użytku wewnętrznego oraz publicznego jako narzędzie informacyjne. Dane mają charakter poglądowy.
-
------
-## 🔗 LINKI
-
-Strona produkcyjna: https://piotrrgw.github.io/kasy_biletowe1/index.html
-
-Strona administratora: https://piotrrgw.github.io/kasy_biletowe1/editor.html
+Strona produkcyjna: `https://piotrrgw.github.io/kasy_biletowe1/index.html`
+Strona administratora: `https://piotrrgw.github.io/kasy_biletowe1/editor.html`
