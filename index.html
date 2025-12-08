@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -9,6 +8,8 @@
       gtag('js', new Date());
       gtag('config', 'G-W05T4L1HFD');
     </script>
+    
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="max-age=14400">
@@ -21,7 +22,7 @@
             --white: #ffffff;
             --open: #28a745;
             --closed: #dc3545;
-            --none: #6c757d; /* Kolor szary dla braku kasy */
+            --none: #6c757d;
             --break: #ffc107;
             --holiday: #6f42c1;
             --note-bg: #fff3cd;
@@ -44,8 +45,8 @@
             color: var(--text); 
             margin: 0; 
             padding: 15px; 
-            padding-bottom: 100px; /* Więcej miejsca na stopkę */
-            padding-top: 70px; /* Miejsce na przyklejony nagłówek */
+            padding-bottom: 100px;
+            padding-top: 70px;
         }
 
         .container { 
@@ -128,6 +129,52 @@
             color: #666;
             text-transform: uppercase;
         }
+
+        /* --- MODAL (INSTRUKCJA) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .modal h2 { margin-top: 0; color: var(--primary); }
+        .modal h3 { color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 20px; }
+        .modal p, .modal li { font-size: 1rem; line-height: 1.6; color: #444; }
+        .modal ul { padding-left: 20px; }
+        .modal-close-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .highlight-box {
+            background: #e7f1ff;
+            border-left: 5px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .color-sample { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; }
 
         /* --- Ostrzeżenie WAŻNE --- */
         .important-warning {
@@ -271,7 +318,7 @@
         .bg-closed { background: linear-gradient(135deg, var(--closed), #bd2130); }
         .bg-none { background: linear-gradient(135deg, var(--none), #495057); }
 
-        /* --- Kafelki Przewoźników (Widok Szczegółowy) --- */
+        /* --- Kafelki Przewoźników --- */
         .details-container { display: none; }
         
         .card {
@@ -327,7 +374,7 @@
             border-top: 1px solid #f5c6cb;
         }
 
-        /* --- Tabela Danych (Detale) --- */
+        /* --- Tabela Danych --- */
         .details-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         .details-table th, .details-table td {
             padding: 12px 15px;
@@ -365,7 +412,7 @@
             border-top: 1px solid #f8f9fa;
         }
 
-        /* --- STYLISTYKA TABELI ZBIORCZEJ (ALL STATIONS) --- */
+        /* --- TABELA ZBIORCZA --- */
         .summary-table {
             width: 100%;
             border-collapse: collapse;
@@ -393,7 +440,6 @@
         .summary-table tr:last-child td { border-bottom: none; }
         .summary-table tr:hover { background-color: #f8f9fa; cursor: pointer; }
         
-        /* Kolorowe kropki statusu w tabeli */
         .status-dot {
             display: inline-block;
             width: 10px;
@@ -446,6 +492,9 @@
     <button class="menu-item" onclick="pokazWszystkieStacje()">
         📋 Pokaż wszystkie stacje
     </button>
+    <button class="menu-item" onclick="pokazInstrukcje(); toggleMenu()">
+        ❓ Instrukcja obsługi
+    </button>
 
     <div class="menu-header">Zarządzanie Danymi</div>
     
@@ -454,7 +503,7 @@
     </button>
     
     <button class="menu-item" onclick="pobierzPlikNaDysk(); toggleMenu()">
-        ⬇️ Pobierz plik kasy.json (na dysk)
+        ⬇️ Pobierz plik kasy.json
     </button>
     
     <button class="menu-item" onclick="document.getElementById('localJsonFile').click(); toggleMenu()">
@@ -462,6 +511,40 @@
     </button>
     
     <input type="file" id="localJsonFile" accept=".json" onchange="wgrajLokalnyPlik(this)">
+</div>
+
+<div class="modal-overlay" id="helpModal">
+    <div class="modal">
+        <h2>❓ Instrukcja Obsługi</h2>
+        
+        <h3>1. Jak znaleźć stację?</h3>
+        <p>Wpisz nazwę swojej stacji lub numer EPA w polu wyszukiwania ("Wpisz nazwę stacji...").</p>
+        <ul>
+            <li>Jeśli stacja jest w bazie, pojawi się na liście. Kliknij w nią.</li>
+            <li>Jeśli stacja ma kilka kas, zobaczysz status dla każdej z nich osobno.</li>
+        </ul>
+
+        <h3>2. Co oznaczają kolory?</h3>
+        <ul>
+            <li><span class="color-sample" style="background:var(--open)"></span> <b>ZIELONY (Czynna)</b> – Kasa powinna być teraz otwarta.</li>
+            <li><span class="color-sample" style="background:var(--break)"></span> <b>ŻÓŁTY (Przerwa)</b> – Kasa ma teraz przerwę.</li>
+            <li><span class="color-sample" style="background:var(--closed)"></span> <b>CZERWONY (Nieczynna)</b> – Kasa jest już zamknięta lub jeszcze nieotwarta.</li>
+            <li><span class="color-sample" style="background:var(--none)"></span> <b>SZARY (Brak)</b> – Na tej stacji nie ma kasy biletowej tego przewoźnika.</li>
+        </ul>
+
+        <h3>3. Jak korzystać bez internetu?</h3>
+        <p>Możesz zapisać wykaz kas na "czarną godzinę".</p>
+        <div class="highlight-box">
+            <strong>Gdy masz internet:</strong><br>
+            Kliknij zębatkę ⚙️ i wybierz <b>"⬇️ Pobierz plik kasy.json"</b>. Plik zapisze się w telefonie/komputerze.
+        </div>
+        <div class="highlight-box">
+            <strong>Gdy NIE masz internetu:</strong><br>
+            Wejdź na tę stronę. Jeśli pojawi się błąd, kliknij przycisk <b>"📂 Wybierz plik z telefonu"</b> i wskaż pobrany wcześniej plik. Baza zadziała offline!
+        </div>
+
+        <button class="modal-close-btn" onclick="zamknijInstrukcje()">Rozumiem, zamknij</button>
+    </div>
 </div>
 
 
@@ -474,8 +557,8 @@
 
     <div id="recoveryPanel">
         <h3>⚠️ Brak danych</h3>
-        <p>Nie udało się połączyć z serwerem ani wczytać pamięci. Wgraj plik ręcznie.</p>
-        <button style="background-color: var(--closed); color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;" onclick="document.getElementById('localJsonFile').click()">📂 Wybierz plik z telefonu/dysku</button>
+        <p>Nie udało się połączyć z serwerem ani wczytać pamięci. Jeśli masz pobrany plik z danymi, wgraj go poniżej.</p>
+        <button style="background-color: var(--closed); color:white; padding:15px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; width:100%; font-size:1rem;" onclick="document.getElementById('localJsonFile').click()">📂 Wybierz plik z telefonu/dysku</button>
     </div>
 
     <div class="top-info-bar">
@@ -533,16 +616,33 @@
         '01-01': 'Nowy Rok', '01-06': 'Trzech Króli', '05-01': 'Święto Pracy',
         '05-03': '3 Maja', '08-15': 'Wniebowzięcie NMP',
         '11-01': 'Wszystkich Świętych', '11-11': 'Niepodległości',
-        '12-24': 'Wielkanoc', '12-25': 'Boże Narodzenie', '12-26': 'Drugi dzień Bożego Narodzenia'
+        '12-25': 'Boże Narodzenie', '12-26': 'Drugi dzień Bożego Narodzenia'
     };
-    const SWIETA_RUCHOME = {
-        '2025-04-20': 'Wielkanoc', '2025-04-21': 'Pon. Wielkanocny', '2025-06-08': 'Zielone Świątki', '2025-06-19': 'Boże Ciało',
-        '2026-04-05': 'Wielkanoc', '2026-04-06': 'Pon. Wielkanocny', '2026-05-24': 'Zielone Świątki', '2026-06-04': 'Boże Ciało',
-        '2027-03-28': 'Wielkanoc', '2027-03-29': 'Pon. Wielkanocny', '2027-05-16': 'Zielone Świątki', '2027-05-27': 'Boże Ciało',
-        '2028-04-16': 'Wielkanoc', '2028-04-17': 'Pon. Wielkanocny', '2028-06-04': 'Zielone Świątki', '2028-06-15': 'Boże Ciało',
-        '2029-04-01': 'Wielkanoc', '2029-04-02': 'Pon. Wielkanocny', '2029-05-20': 'Zielone Świątki', '2029-05-31': 'Boże Ciało',
-        '2030-04-21': 'Wielkanoc', '2030-04-22': 'Pon. Wielkanocny', '2030-06-09': 'Zielone Świątki', '2030-06-20': 'Boże Ciało'
-    };
+
+    // Algorytm obliczania Wielkanocy
+    function getEasterDate(year) {
+        const a = year % 19;
+        const b = Math.floor(year / 100);
+        const c = year % 100;
+        const d = Math.floor(b / 4);
+        const e = b % 4;
+        const f = Math.floor((b + 8) / 25);
+        const g = Math.floor((b - f + 1) / 3);
+        const h = (19 * a + b - d - g + 15) % 30;
+        const i = Math.floor(c / 4);
+        const k = c % 4;
+        const l = (32 + 2 * e + 2 * i - h - k) % 7;
+        const m = Math.floor((a + 11 * h + 22 * l) / 451);
+        const month = Math.floor((h + l - 7 * m + 114) / 31);
+        const day = ((h + l - 7 * m + 114) % 31) + 1;
+        return new Date(year, month - 1, day);
+    }
+
+    function addDays(date, days) {
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
 
     function sprawdzSwieto() {
         const d = new Date();
@@ -550,9 +650,25 @@
         const m = String(d.getMonth()+1).padStart(2,'0');
         const day = String(d.getDate()).padStart(2,'0');
         const keyFixed = `${m}-${day}`;
-        const keyMoveable = `${y}-${m}-${day}`;
+        
+        // Sprawdź stałe
         if(SWIETA_STALE[keyFixed]) return SWIETA_STALE[keyFixed];
-        if(SWIETA_RUCHOME[keyMoveable]) return SWIETA_RUCHOME[keyMoveable];
+
+        // Oblicz ruchome
+        const easter = getEasterDate(y);
+        const easterMon = addDays(easter, 1);
+        const corpusChristi = addDays(easter, 60);
+        const pentecost = addDays(easter, 49); // Zielone Świątki
+
+        const check = (dateObj) => {
+            return dateObj.getDate() === d.getDate() && dateObj.getMonth() === d.getMonth();
+        };
+
+        if(check(easter)) return 'Wielkanoc';
+        if(check(easterMon)) return 'Pon. Wielkanocny';
+        if(check(corpusChristi)) return 'Boże Ciało';
+        if(check(pentecost)) return 'Zielone Świątki';
+
         return null;
     }
 
@@ -565,37 +681,6 @@
         const diffTime = Math.abs(today - dataDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
         return diffDays > MAX_DAYS_FRESH;
-    }
-    
-    function transformData(data) {
-        if (!Array.isArray(data)) return data;
-        return data.map(item => {
-            const newItem = {};
-            const itemKeys = Object.keys(item);
-            itemKeys.forEach(key => {
-                const value = item[key];
-                const parts = key.split('.');
-                let current = newItem;
-                for (let i = 0; i < parts.length; i++) {
-                    const part = parts[i];
-                    if (i === parts.length - 1) {
-                        current[part] = value;
-                    } else {
-                        if (!current[part] || typeof current[part] !== 'object') {
-                            current[part] = {};
-                        }
-                        current = current[part];
-                    }
-                }
-            });
-            newItem.przewoznik = String(newItem.przewoznik || 'BRAK').toUpperCase();
-            newItem.epa = newItem.epa || 'Brak';
-            newItem.uwagi = (newItem.uwagi && String(newItem.uwagi).toLowerCase() !== 'nan') ? newItem.uwagi : '';
-            if (newItem.meta && newItem.meta.data) {
-                newItem.meta.data = String(newItem.meta.data);
-            }
-            return newItem;
-        });
     }
 
     function updateCacheStatus() {
@@ -613,7 +698,7 @@
 
     function normalizeText(text) {
         if (!text) return "";
-        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        return String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
     // ================= MENU I FUNKCJE PLIKÓW =================
@@ -623,7 +708,14 @@
         menu.classList.toggle('active');
     }
     
-    // NOWA FUNKCJA: Pokaż tabelę wszystkich stacji
+    function pokazInstrukcje() {
+        document.getElementById('helpModal').style.display = 'flex';
+    }
+    
+    function zamknijInstrukcje() {
+        document.getElementById('helpModal').style.display = 'none';
+    }
+
     function pokazWszystkieStacje() {
         document.getElementById('stationSearch').value = ''; 
         document.getElementById('searchResults').style.display = 'none';
@@ -632,7 +724,7 @@
         const mainBox = document.getElementById('mainStatusBox');
         const listContainer = document.getElementById('detailsList');
         
-        mainBox.style.display = 'none'; // Ukryj status główny
+        mainBox.style.display = 'none'; 
         listContainer.style.display = 'block';
         listContainer.innerHTML = '';
 
@@ -641,19 +733,18 @@
             return;
         }
 
-        // Deduplikacja: Grupujemy wpisy po nazwie stacji
         const stacjeMap = {};
         bazaDanych.forEach(item => {
+            if(item.ukryty) return; // IGNORUJ UKRYTE REKORDY
+            
             if(!stacjeMap[item.stacja]) {
                 stacjeMap[item.stacja] = [];
             }
             stacjeMap[item.stacja].push(item);
         });
 
-        // Sortowanie nazw
         const sortedNames = Object.keys(stacjeMap).sort((a,b) => a.localeCompare(b));
 
-        // Budowa tabeli
         let tableHtml = `
             <table class="summary-table">
                 <thead>
@@ -672,14 +763,7 @@
 
         sortedNames.forEach(name => {
             const entries = stacjeMap[name];
-            // Pobieramy EPA z pierwszego wpisu (zakładamy że są spójne dla stacji lub bierzemy reprezentanta)
-            const epaDisplay = (entries[0].epa && entries[0].epa !== 'Brak') ? entries[0].epa : '-';
-            
-            // Agregacja statusu: 
-            // - Jeśli choć jedna kasy "open" -> Stacja OPEN
-            // - Jeśli brak open, ale jest "break" -> Stacja BREAK
-            // - Jeśli wszystkie mają przewoźnika BRAK -> Stacja NONE
-            // - Inaczej CLOSED
+            const epaDisplay = (entries[0].epa && String(entries[0].epa) !== 'Brak') ? entries[0].epa : '-';
             
             let isAnyOpen = false;
             let isAnyBreak = false;
@@ -715,7 +799,6 @@
         listContainer.innerHTML = tableHtml;
     }
 
-
     document.addEventListener('click', function(e) {
         const menu = document.getElementById('settingsMenu');
         const btn = document.querySelector('.settings-btn');
@@ -726,7 +809,7 @@
 
     function pobierzPlikNaDysk() {
         if(bazaDanych.length === 0) {
-            alert("Brak danych do pobrania! Najpierw zaktualizuj bazę.");
+            alert("Brak danych do pobrania! Najpierw zaktualizuj bazę (potrzebny internet).");
             return;
         }
         const dataStr = JSON.stringify(bazaDanych, null, 2);
@@ -753,12 +836,11 @@
             if(!res.ok) throw new Error("Błąd HTTP");
             const json = await res.json();
             
-            const processedData = transformData(json);
             const now = Date.now();
             
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(processedData));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(json));
             localStorage.setItem(STORAGE_KEY + '_time', now.toString());
-            bazaDanych = processedData;
+            bazaDanych = json;
             
             netMsg.innerHTML = "<span class='msg-online'>✅ Dane pobrane pomyślnie!</span>";
             if(force) alert("Dane zaktualizowane pomyślnie!");
@@ -768,10 +850,8 @@
             console.warn("Offline fallback:", e);
             const cached = localStorage.getItem(STORAGE_KEY);
             if(cached) {
-                // AUTOMATYCZNE POBRANIE Z CACHE (Fallback)
                 bazaDanych = JSON.parse(cached);
-                bazaDanych = transformData(bazaDanych); 
-                netMsg.innerHTML = "<span class='msg-offline'>⚠️ Błąd serwera. Wczytano dane z pamięci.</span>";
+                netMsg.innerHTML = "<span class='msg-offline'>⚠️ Brak internetu. Dane z pamięci.</span>";
                 updateCacheStatus();
             } else {
                 netMsg.innerHTML = "<span class='msg-offline'>❌ BŁĄD SIECI / BRAK DANYCH</span>";
@@ -789,12 +869,11 @@
         reader.onload = function(e) {
             try {
                 const json = JSON.parse(e.target.result);
-                const processedData = transformData(json);
                 const now = Date.now();
 
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(processedData));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(json));
                 localStorage.setItem(STORAGE_KEY + '_time', now.toString());
-                bazaDanych = processedData;
+                bazaDanych = json;
 
                 alert("Plik lokalny wczytany pomyślnie!");
                 document.getElementById('recoveryPanel').style.display = 'none';
@@ -840,9 +919,13 @@
         const normalizedQuery = normalizeText(query);
         const unikalneStacje = [];
         const seen = new Set();
+        
         bazaDanych.forEach(item => {
+            if(item.ukryty) return; // IGNORUJ UKRYTE REKORDY
+
             const nazwaNormalized = normalizeText(item.stacja);
-            const epa = String(item.epa).toLowerCase();
+            const epa = String(item.epa || "").toLowerCase();
+            
             if (nazwaNormalized.includes(normalizedQuery) || epa.includes(normalizedQuery)) {
                 if (!seen.has(item.stacja)) {
                     seen.add(item.stacja);
@@ -860,7 +943,7 @@
         unikalneStacje.forEach(item => {
             const li = document.createElement('li');
             li.className = 'search-result-item';
-            const epaInfo = item.epa && item.epa !== 'Brak' ? `EPA: ${item.epa}` : '';
+            const epaInfo = (item.epa && String(item.epa) !== 'Brak') ? `EPA: ${item.epa}` : '';
             li.innerHTML = `<strong>${item.stacja}</strong> ${epaInfo ? `<small>${epaInfo}</small>` : ''}`;
             li.onclick = () => {
                 document.getElementById('stationSearch').value = item.stacja;
@@ -892,11 +975,18 @@
             return;
         }
 
-        const kasy = bazaDanych.filter(k => k.stacja === nazwa);
+        const kasy = bazaDanych.filter(k => k.stacja === nazwa && !k.ukryty); // IGNORUJ UKRYTE
         
+        if(kasy.length === 0) {
+             // Jeśli wszystkie kasy na stacji są ukryte, nie pokazuj nic (lub komunikat)
+            mainBox.style.display = 'none';
+            listContainer.style.display = 'none';
+            return;
+        }
+
         let anyOpen = false;
         let anyBreak = false;
-        let allNone = true; // Flaga dla braku kasy
+        let allNone = true;
 
         const d = new Date();
         const swieto = sprawdzSwieto();
@@ -911,12 +1001,21 @@
             const st = obliczStatus(k, swieto, day);
             if(st.type === 'open') anyOpen = true;
             if(st.type === 'break') anyBreak = true;
-            const isDataOld = checkDataAge(k.meta.data);
+            
+            const isDataOld = checkDataAge(k['meta.data']);
             const linkPrzewoznika = BAZA_LINKOW[k.przewoznik] || null;
             const uwagiHtml = (k.uwagi && String(k.uwagi).toLowerCase() !== 'nan') ? 
                 `<div class="notes-section"><strong>UWAGI:</strong> ${k.uwagi}</div>` : '';
             const dataAgeWarningHtml = isDataOld ? 
                 `<div class="data-age-warning">⛔ Dane nieaktualne (starsze niż ${MAX_DAYS_FRESH} dni). Weryfikuj u przewoźnika!</div>` : '';
+
+            const h_pnpt = k['godziny.pn_pt'] || '-';
+            const h_sob = k['godziny.sob'] || '-';
+            const h_nd = k['godziny.nd'] || '-';
+            
+            const p_pnpt = k['przerwy.pn_pt'] || '-';
+            const p_sob = k['przerwy.sob'] || '-';
+            const p_nd = k['przerwy.nd'] || '-';
 
             const html = `
             <div class="card" style="border-left-color: ${st.color}">
@@ -936,21 +1035,21 @@
                 <table class="details-table">
                     <tr class="${dayType==='pn_pt'?'active-row':''}">
                         <th>Pn - Pt</th>
-                        <td>${k.godziny.pn_pt} <br> <small style="color:#777">Przerwa: ${k.przerwy.pn_pt||'-'}</small></td>
+                        <td>${h_pnpt} <br> <small style="color:#777">Przerwa: ${p_pnpt}</small></td>
                     </tr>
                     <tr class="${dayType==='sob'?'active-row':''}">
                         <th>Sobota</th>
-                        <td>${k.godziny.sob} <br> <small style="color:#777">Przerwa: ${k.przerwy.sob||'-'}</small></td>
+                        <td>${h_sob} <br> <small style="color:#777">Przerwa: ${p_sob}</small></td>
                     </tr>
                     <tr class="${dayType==='nd'?'active-row':''}">
                         <th>Ndz / Św</th>
-                        <td>${k.godziny.nd} <br> <small style="color:#777">Przerwa: ${k.przerwy.nd||'-'}</small></td>
+                        <td>${h_nd} <br> <small style="color:#777">Przerwa: ${p_nd}</small></td>
                     </tr>
                 </table>
                 
                 ${linkPrzewoznika ? `<a href="${linkPrzewoznika}" target="_blank" class="btn-link">Wykaz kas: ${k.przewoznik} &raquo;</a>` : ''}
 
-                <div class="meta-footer">Data danych: ${k.meta.data} | Autor: ${k.meta.kto}</div>
+                <div class="meta-footer">Data danych: ${k['meta.data'] || '-'} | Autor: ${k['meta.kto'] || '-'}</div>
             </div>`;
             listContainer.innerHTML += html;
         });
@@ -982,16 +1081,17 @@
 
         let hStr, bStr;
         if(swieto || dayOfWeek === 0) {
-            hStr = kasa.godziny.nd;
-            bStr = kasa.przerwy.nd;
+            hStr = kasa['godziny.nd'];
+            bStr = kasa['przerwy.nd'];
         } else if(dayOfWeek === 6) {
-            hStr = kasa.godziny.sob;
-            bStr = kasa.przerwy.sob;
+            hStr = kasa['godziny.sob'];
+            bStr = kasa['przerwy.sob'];
         } else {
-            hStr = kasa.godziny.pn_pt;
-            bStr = kasa.przerwy.pn_pt;
+            hStr = kasa['godziny.pn_pt'];
+            bStr = kasa['przerwy.pn_pt'];
         }
-        const hStrLower = String(hStr).toLowerCase();
+        
+        const hStrLower = String(hStr || "").toLowerCase();
         const is24h = hStrLower.includes('całodobowo');
         
         if(!hStr || hStrLower.includes('nieczynne') || hStrLower.includes('zamknięte')) {
@@ -1010,7 +1110,7 @@
             }
             if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
         }
-        const bStrLower = String(bStr).toLowerCase();
+        const bStrLower = String(bStr || "").toLowerCase();
         if(bStr && bStrLower.length > 3 && !bStrLower.includes('brak') && bStrLower !== 'nan') {
             const breaks = String(bStr).split(';');
             for(let br of breaks) {
@@ -1031,7 +1131,9 @@
 
     function parseTime(t) {
         if(!t) return 0;
-        const [h, m] = String(t).split(':').map(Number);
+        const cleanT = String(t).replace('.', ':').trim();
+        const [h, m] = cleanT.split(':').map(Number);
+        if (isNaN(h) || isNaN(m)) return 0;
         return h * 60 + m;
     }
     
@@ -1046,7 +1148,6 @@
         pobierzDane(); 
         setInterval(() => { initZegar(); }, 1000);
         setInterval(() => { 
-            // Odświeżaj status tylko jeśli nie jesteśmy w trybie "Pokaż Wszystkie" (bo tam nie ma mainBox)
             if(document.getElementById('mainStatusBox').style.display !== 'none') {
                  wyswietlStacje(); 
             }

@@ -32,6 +32,7 @@
             --row-new: #d4edda;
             --row-done: #e2e6ea;
             --row-active: #cce5ff;
+            --row-hidden: #e9ecef;
         }
 
         * { box-sizing: border-box; }
@@ -90,6 +91,7 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-outline { background: white; border: 1px solid #ced4da; color: #555; }
         .btn-danger { background: var(--danger); color: white; }
+        .btn-clone { background: #e2e6ea; color: #333; }
 
         .carrier-link-btn { display: inline-flex; text-decoration: none; background: #e7f1ff; color: var(--primary); border: 1px solid #b8daff; padding: 8px 12px; border-radius: 5px; font-size: 0.85rem; font-weight: 600; align-items: center; gap: 5px; transition: 0.2s; height: 42px; }
         .carrier-link-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
@@ -142,15 +144,17 @@
         .add-row-btn:hover { background: #e9ecef; color: var(--primary); border-color: var(--primary); }
         .hidden { display: none; }
 
-        /* --- TIMELINE --- */
+        /* --- VISUALIZATION STYLES --- */
         .timeline-wrapper { margin-top: 5px; display: flex; flex-direction: column; gap: 10px; }
         .timeline-row { display: flex; align-items: center; font-size: 0.8rem; color: #555; }
         .timeline-label { width: 50px; font-weight: bold; flex-shrink: 0; }
         .timeline-track { flex-grow: 1; height: 16px; background: #e9ecef; border-radius: 3px; position: relative; overflow: hidden; border: 1px solid #dee2e6; }
         .timeline-ruler { position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: flex; justify-content: space-between; pointer-events: none; padding: 0 2px; }
         .ruler-mark { height: 100%; border-left: 1px solid rgba(0,0,0,0.1); font-size: 0.6rem; color: #999; padding-left: 2px; line-height: 16px; }
-        .bar-open { position: absolute; height: 100%; background: #28a745; opacity: 0.9; top: 0; }
-        .bar-break { position: absolute; height: 100%; background: #ffc107; opacity: 1; top: 0; z-index: 2; border-left: 1px solid rgba(0,0,0,0.1); border-right: 1px solid rgba(0,0,0,0.1); }
+        
+        /* Poprawione paski wizualizacji */
+        .bar-open { position: absolute; height: 100%; background: #28a745; opacity: 0.7; top: 0; z-index: 1; border-radius: 2px; }
+        .bar-break { position: absolute; height: 100%; background: #ffc107; opacity: 0.9; top: 0; z-index: 2; border-left: 1px solid rgba(0,0,0,0.2); border-right: 1px solid rgba(0,0,0,0.2); }
 
         /* --- TABLE --- */
         .table-wrap { background: white; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden; }
@@ -163,6 +167,7 @@
         .row-new td { background: var(--row-new); }
         .row-done td { background: var(--row-done); color: #6c757d; }
         .row-active td { background: var(--row-active) !important; color: #000; }
+        .row-hidden td { opacity: 0.5; background: var(--row-hidden); font-style: italic; }
 
         /* --- FOOTER & MODALS --- */
         .footer { text-align: center; padding: 20px; font-size: 0.85rem; color: #666; margin-top: auto; border-top: 1px solid #dee2e6; background: white; }
@@ -177,8 +182,13 @@
         .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; color: #999; }
         
         .help-list { list-style: none; padding: 0; margin: 0; font-size: 0.9rem; line-height: 1.6; }
-        .help-list li { margin-bottom: 10px; }
-        .help-list strong { color: var(--primary); }
+        .help-list li { margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .help-list strong { color: var(--primary); display: block; margin-bottom: 4px; font-size: 1rem; }
+        .help-warn { color: #d63384; font-weight: bold; }
+        
+        .checkbox-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 8px; border: 1px dashed #ced4da; border-radius: 5px; background: #fdfdfd; }
+        .checkbox-wrapper input { width: 18px; height: 18px; cursor: pointer; }
+        .checkbox-wrapper label { cursor: pointer; font-size: 0.9rem; font-weight: 600; color: #555; }
     </style>
 </head>
 <body>
@@ -200,7 +210,9 @@
                 <div class="menu-item" onclick="downloadJSON()">⬇️ Pobierz JSON</div>
                 <div class="menu-item" onclick="showCodePreview()">👁️ Podgląd Kodu</div>
                 <div class="menu-item" onclick="openProgressModal()">📊 Skonfiguruj Postęp</div>
+                <div class="menu-item" onclick="openFindReplaceModal()">🔎 Znajdź i Zamień</div>
                 <div class="menu-item" onclick="openHelpModal()">❓ Instrukcja Obsługi</div>
+                <div class="menu-item" onclick="bulkFixData()">🔧 Napraw Format Danych</div>
                 <div class="menu-item" onclick="bulkUpdateClosed()" style="color:var(--warning);">🔨 Aktualizuj "Nieczynne"</div>
             </div>
         </div>
@@ -216,12 +228,11 @@
         <select id="filterCarrier" class="toolbar-select" onchange="applyFilter()">
             <option value="ALL">Wszyscy przewoźnicy</option>
         </select>
-        
         <select id="stationSelect" class="toolbar-select" onchange="loadStation()">
             <option value="-1">⌛ Wczytywanie bazy...</option>
         </select>
-        
         <button class="btn btn-outline" onclick="createNewStation()">+ Nowa</button>
+        <button class="btn btn-clone" onclick="cloneStation()" title="Sklonuj bieżącą stację">👯 Klonuj</button>
         <button class="btn btn-danger" onclick="deleteStation()">Usuń</button>
     </div>
     <button class="btn btn-primary" onclick="saveChanges()">💾 Zapisz Zmiany</button>
@@ -235,7 +246,6 @@
 
     <form id="editForm" onsubmit="event.preventDefault();">
         <div class="editor-form">
-            
             <div class="card col-span-6">
                 <div class="card-header">📍 Dane Stacji</div>
                 <div class="form-group">
@@ -280,6 +290,12 @@
                 <div class="form-group">
                     <label class="form-label">Uwagi</label>
                     <textarea id="uwagi" class="form-input" placeholder="Wpisz uwagi..."></textarea>
+                    
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="ukryty">
+                        <label for="ukryty">👁️ Ukryj tę stację w podglądzie (zamiast usuwać)</label>
+                    </div>
+
                     <div class="suggestions-box">
                         <div class="suggestion-chip" onclick="insertSuggestion('PROSZĘ WERYFIKOWAĆ NA STRONIE PRZEWOŹNIKA')">PROSZĘ WERYFIKOWAĆ...</div>
                         <div class="suggestion-chip" onclick="insertSuggestion('CENTRUM OBSŁUGI KLIENTA')">CENTRUM OBSŁUGI KLIENTA</div>
@@ -370,25 +386,19 @@
 
 <div class="modal-overlay" id="codeModal"><div class="modal modal-large"><button class="close-modal" onclick="closeModals()">&times;</button><div style="display:flex; justify-content:space-between; align-items:center;"><h3>👁️ Podgląd JSON</h3><button class="btn btn-primary" onclick="copyCodeToClipboard()">📋 Kopiuj</button></div><pre class="code-preview-box"><code id="jsonPreview"></code></pre><button class="btn btn-outline" onclick="closeModals()" style="align-self: flex-end;">Zamknij</button></div></div>
 <div class="modal-overlay" id="progressModal"><div class="modal"><button class="close-modal" onclick="closeModals()">&times;</button><h3>📊 Ustawienia Postępu</h3><div class="form-group"><label class="form-label">Opcja A: Ręcznie</label><input type="number" id="manualOffset" class="form-input" value="0"></div><hr style="margin:15px 0;"><div class="form-group"><label class="form-label">Opcja B: Wg daty</label><div style="display:flex; gap:10px;"><input type="date" id="dateOffset" class="form-input"><button class="btn btn-outline" onclick="calcProgressByDate()">Oznacz</button></div></div><button class="btn btn-primary" onclick="saveProgressSettings()" style="width:100%; margin-top:15px;">Zapisz</button></div></div>
+<div class="modal-overlay" id="findReplaceModal"><div class="modal"><button class="close-modal" onclick="closeModals()">&times;</button><h3>🔎 Znajdź i Zamień</h3><p style="font-size:0.85rem; color:#666;">Ta operacja zmieni dane we wszystkich rekordach. Bądź ostrożny!</p><div class="form-group"><label class="form-label">Gdzie szukać?</label><select id="fr_field" class="form-input"><option value="przewoznik">Przewoźnik</option><option value="stacja">Nazwa Stacji</option><option value="uwagi">Uwagi</option></select></div><div class="form-group"><label class="form-label">Znajdź (tekst):</label><input type="text" id="fr_find" class="form-input" placeholder="np. Przewozy Regionalne"></div><div class="form-group"><label class="form-label">Zamień na:</label><input type="text" id="fr_replace" class="form-input" placeholder="np. POLREGIO"></div><div style="display:flex; gap:10px; margin-top:15px;"><button class="btn btn-primary" onclick="applyFindReplace()" style="flex:1;">Wykonaj</button><button class="btn btn-outline" onclick="closeModals()">Anuluj</button></div></div></div>
 
 <div class="modal-overlay" id="helpModal">
     <div class="modal modal-large">
         <button class="close-modal" onclick="closeModals()">&times;</button>
-        <h3>❓ Instrukcja Obsługi</h3>
+        <h3>❓ Instrukcja Obsługi i Bezpieczeństwo</h3>
         <div style="overflow-y:auto; max-height:400px; padding-right:10px;">
             <ul class="help-list">
-                <li><strong>1. Wybór stacji:</strong> Użyj listy rozwijanej w pasku narzędzi, aby wybrać stację do edycji. Możesz filtrować listę wybierając konkretnego przewoźnika.</li>
-                <li><strong>2. Edycja Godzin:</strong>
-                    <ul>
-                        <li>Użyj przycisków <b>Zamknięte / Całodobowo / Godziny</b> aby szybko ustawić tryb pracy.</li>
-                        <li>W trybie "Godziny" możesz dodać wiele przedziałów (np. 08:00-12:00 i 13:00-15:00).</li>
-                        <li>Użyj przycisków <b>"📋 Kopiuj"</b>, aby szybko przenieść godziny z dni powszednich na weekend.</li>
-                    </ul>
-                </li>
-                <li><strong>3. Wizualizacja:</strong> Paski na dole formularza pokazują graficznie godziny otwarcia (zielone) i przerwy (żółte). Sprawdź, czy wszystko wygląda logicznie.</li>
-                <li><strong>4. Przewoźnik i Linki:</strong> Przycisk "🔗 WWW" przeniesie Cię bezpośrednio do wyszukiwarki kas danego przewoźnika (jeśli jest dostępna). Jeśli przycisk jest przekreślony, link nie jest zdefiniowany.</li>
-                <li><strong>5. Zapisywanie:</strong> Po edycji kliknij <b>"💾 Zapisz Zmiany"</b>. Rekord zostanie oznaczony kolorem żółtym (zmodyfikowany) lub zielonym (nowy).</li>
-                <li><strong>6. Eksport:</strong> Na koniec pracy kliknij zębatkę ⚙️ i wybierz <b>"⬇️ Pobierz JSON"</b>, aby zapisać plik `kasy.json` na dysku.</li>
+                <li><strong>1. Klonowanie Stacji (👯 Klonuj)</strong> Użyj tej funkcji, gdy dodajesz stację o podobnych godzinach co poprzednia. EPA zostanie zachowane, a przewoźnik wyczyszczony.</li>
+                <li><strong>2. Masowa Zamiana (🔎 Znajdź i Zamień)</strong> Użyj, gdy chcesz zmienić nazwę przewoźnika lub fragment uwag w całej bazie naraz. <span class="help-warn">UWAGA: To działanie jest nieodwracalne!</span></li>
+                <li><strong>3. Ukrywanie Rekordów (👁️ Ukryj)</strong> Zamiast usuwać stację, zaznacz opcję "Ukryj stację". Stacja pozostanie w bazie, ale nie będzie widoczna dla pasażerów.</li>
+                <li><strong>4. Naprawa Danych (🔧 Napraw Format)</strong> Zamienia kropki w godzinach na dwukropki, usuwa zbędne spacje i ujednolica numery EPA.</li>
+                <li><strong>5. Bezpieczeństwo Danych</strong> Regularnie pobieraj plik `kasy.json` jako kopię zapasową.</li>
             </ul>
         </div>
         <button class="btn btn-outline" onclick="closeModals()" style="align-self: flex-end; margin-top:15px;">Zamknij</button>
@@ -417,473 +427,252 @@
         "BRAK": null
     };
 
-    // --- TIME BUILDER LOGIC ---
     const isBreakField = (id) => id.includes('przerwy');
-
-    function normalizeTimeForInput(t) {
-        if(!t) return '';
+    
+    // Normalizacja do inputa (np. "8:00" -> "08:00")
+    function normalizeTimeForInput(t) { 
+        if(!t) return ''; 
         t = t.trim().replace('.', ':'); 
-        const parts = t.split(':');
-        if(parts.length === 2) {
-            const h = parts[0].padStart(2, '0');
-            const m = parts[1].padStart(2, '0');
-            return `${h}:${m}`;
-        }
-        return '';
+        const p = t.split(':'); 
+        return p.length===2 ? `${p[0].padStart(2,'0')}:${p[1].padStart(2,'0')}` : ''; 
     }
 
     function renderTimeEditor(containerId, valueString) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = '';
-        const isBreak = isBreakField(containerId);
-        let cleanVal = (valueString || '').trim().replace(/–/g, '-');
+        const container = document.getElementById(containerId); container.innerHTML = '';
+        const isBreak = isBreakField(containerId); let cleanVal = (valueString || '').trim().replace(/–/g, '-');
+        let mode = 'custom'; const valLower = cleanVal.toLowerCase();
+        if (valLower.includes('zamknięte') || valLower.includes('nieczynne') || valLower.includes('brak')) mode = 'closed';
+        else if (valLower.includes('całodobowo')) mode = '24h';
+        else if (cleanVal === '' && isBreak) mode = 'closed';
 
-        let mode = 'custom';
-        const valLower = cleanVal.toLowerCase();
-        
-        if (valLower.includes('zamknięte') || valLower.includes('nieczynne') || valLower.includes('brak')) {
-            mode = 'closed';
-        } else if (valLower.includes('całodobowo')) {
-            mode = '24h';
-        } else if (cleanVal === '' && isBreak) {
-            mode = 'closed';
-        }
-
-        const btnGroup = document.createElement('div');
-        btnGroup.className = 'mode-buttons';
-        
-        const createBtn = (label, modeName) => {
-            const btn = document.createElement('div');
-            btn.className = `mode-btn ${mode === modeName ? 'active' : ''}`;
-            btn.innerText = label;
-            btn.dataset.mode = modeName;
+        const btnGroup = document.createElement('div'); btnGroup.className = 'mode-buttons';
+        const createBtn = (label, mName) => {
+            const btn = document.createElement('div'); btn.className = `mode-btn ${mode === mName ? 'active' : ''}`; btn.innerText = label; btn.dataset.mode = mName;
             btn.onclick = () => {
-                btnGroup.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
-                const rowsContainer = container.querySelector('.time-rows-container');
-                const addBtn = container.querySelector('.add-row-btn');
-                
-                if (modeName === 'custom') {
-                    rowsContainer.classList.remove('hidden');
-                    addBtn.classList.remove('hidden');
-                    if(rowsContainer.children.length === 0) addTimeRow(rowsContainer);
-                } else {
-                    rowsContainer.classList.add('hidden');
-                    addBtn.classList.add('hidden');
-                }
+                btnGroup.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+                const rc = container.querySelector('.time-rows-container'); const ab = container.querySelector('.add-row-btn');
+                if (mName === 'custom') { rc.classList.remove('hidden'); ab.classList.remove('hidden'); if(rc.children.length === 0) addTimeRow(rc); }
+                else { rc.classList.add('hidden'); ab.classList.add('hidden'); }
                 updateTimeline(); 
-            };
-            return btn;
+            }; return btn;
         };
-
         btnGroup.appendChild(createBtn(isBreak ? 'Brak' : 'Zamknięte', 'closed'));
         if(!isBreak) btnGroup.appendChild(createBtn('Całodobowo', '24h'));
         btnGroup.appendChild(createBtn(isBreak ? 'Przerwa' : 'Godziny', 'custom'));
         container.appendChild(btnGroup);
 
-        const rowsContainer = document.createElement('div');
-        rowsContainer.className = `time-rows-container ${mode !== 'custom' ? 'hidden' : ''}`;
-        container.appendChild(rowsContainer);
-
-        if (mode === 'custom') {
-            const parts = cleanVal.split(';');
-            parts.forEach(part => {
-                const times = part.split('-');
-                if (times.length === 2) {
-                    const t1 = normalizeTimeForInput(times[0]);
-                    const t2 = normalizeTimeForInput(times[1]);
-                    if(t1 && t2) addTimeRow(rowsContainer, t1, t2);
-                }
-            });
-            if (rowsContainer.children.length === 0) addTimeRow(rowsContainer);
-        }
-
-        const addBtn = document.createElement('button');
-        addBtn.className = `add-row-btn ${mode !== 'custom' ? 'hidden' : ''}`;
-        addBtn.innerText = '+ Dodaj kolejny przedział';
-        addBtn.onclick = () => addTimeRow(rowsContainer);
-        container.appendChild(addBtn);
+        const rowsContainer = document.createElement('div'); rowsContainer.className = `time-rows-container ${mode !== 'custom' ? 'hidden' : ''}`; container.appendChild(rowsContainer);
+        if (mode === 'custom') { cleanVal.split(';').forEach(p => { const t = p.split('-'); if(t.length === 2) { const t1 = normalizeTimeForInput(t[0]); const t2 = normalizeTimeForInput(t[1]); if(t1 && t2) addTimeRow(rowsContainer, t1, t2); } }); if (rowsContainer.children.length === 0) addTimeRow(rowsContainer); }
+        const addBtn = document.createElement('button'); addBtn.className = `add-row-btn ${mode !== 'custom' ? 'hidden' : ''}`; addBtn.innerText = '+ Dodaj kolejny przedział'; addBtn.onclick = () => addTimeRow(rowsContainer); container.appendChild(addBtn);
     }
 
-    function addTimeRow(container, startVal = '', endVal = '') {
-        const row = document.createElement('div');
-        row.className = 'time-row';
-        
-        const input1 = document.createElement('input');
-        input1.type = 'time'; input1.className = 'time-input'; input1.value = startVal;
-        input1.oninput = updateTimeline; 
-
-        const sep = document.createElement('span');
-        sep.className = 'time-separator'; sep.innerText = '-';
-
-        const input2 = document.createElement('input');
-        input2.type = 'time'; input2.className = 'time-input'; input2.value = endVal;
-        input2.oninput = updateTimeline;
-
-        const delBtn = document.createElement('div');
-        delBtn.className = 'remove-row-btn';
-        delBtn.innerHTML = '&times;';
-        delBtn.title = 'Usuń wiersz';
-        delBtn.onclick = () => { row.remove(); updateTimeline(); };
-
-        row.appendChild(input1);
-        row.appendChild(sep);
-        row.appendChild(input2);
-        row.appendChild(delBtn);
-        container.appendChild(row);
+    function addTimeRow(container, s = '', e = '') {
+        const row = document.createElement('div'); row.className = 'time-row';
+        const i1 = document.createElement('input'); i1.type = 'time'; i1.className = 'time-input'; i1.value = s; i1.oninput = updateTimeline;
+        const sp = document.createElement('span'); sp.className = 'time-separator'; sp.innerText = '-';
+        const i2 = document.createElement('input'); i2.type = 'time'; i2.className = 'time-input'; i2.value = e; i2.oninput = updateTimeline;
+        const db = document.createElement('div'); db.className = 'remove-row-btn'; db.innerHTML = '&times;'; db.onclick = () => { row.remove(); updateTimeline(); };
+        row.append(i1, sp, i2, db); container.appendChild(row);
     }
 
-    function getTimeEditorValue(containerId) {
-        const container = document.getElementById(containerId);
-        const activeBtn = container.querySelector('.mode-btn.active');
-        const mode = activeBtn ? activeBtn.dataset.mode : 'closed';
-        const isBreak = isBreakField(containerId);
-
-        if (mode === 'closed') return isBreak ? 'Brak' : 'Zamknięte';
-        if (mode === '24h') return 'Całodobowo';
-        
-        const rows = container.querySelectorAll('.time-row');
-        let parts = [];
-        rows.forEach(row => {
-            const inputs = row.querySelectorAll('input');
-            const start = inputs[0].value;
-            const end = inputs[1].value;
-            if (start && end) {
-                parts.push(`${start}-${end}`);
-            }
-        });
-        
-        if (parts.length === 0) return isBreak ? 'Brak' : 'Zamknięte';
-        return parts.join('; ');
+    function getTimeEditorValue(cid) {
+        const c = document.getElementById(cid); const mode = c.querySelector('.mode-btn.active')?.dataset.mode || 'closed'; const isBreak = isBreakField(cid);
+        if (mode === 'closed') return isBreak ? 'Brak' : 'Zamknięte'; if (mode === '24h') return 'Całodobowo';
+        const rows = c.querySelectorAll('.time-row'); let p = []; rows.forEach(r => { const i = r.querySelectorAll('input'); if(i[0].value && i[1].value) p.push(`${i[0].value}-${i[1].value}`); });
+        return p.length === 0 ? (isBreak ? 'Brak' : 'Zamknięte') : p.join('; ');
     }
     
-    function copyTime(sourceId, targetId) {
-        const val = getTimeEditorValue(sourceId);
-        renderTimeEditor(targetId, val);
-        updateTimeline();
-        showToast("Skopiowano!");
-    }
+    function copyTime(sid, tid) { renderTimeEditor(tid, getTimeEditorValue(sid)); updateTimeline(); showToast("Skopiowano!"); }
+    function insertSuggestion(t) { document.getElementById('uwagi').value = t; }
 
-    function insertSuggestion(text) {
-        const el = document.getElementById('uwagi');
-        el.value = text;
-    }
-
-    // --- MAIN APP LOGIC ---
     let sessionSeconds = 0;
     function initTimer() {
         setInterval(() => { document.getElementById('clockDisplay').innerText = new Date().toLocaleString('pl-PL'); }, 1000);
-        const savedTime = localStorage.getItem('editorWorkTime');
-        if(savedTime) sessionSeconds = parseInt(savedTime, 10);
-        setInterval(() => {
-            sessionSeconds++; localStorage.setItem('editorWorkTime', sessionSeconds);
-            const h = Math.floor(sessionSeconds / 3600).toString().padStart(2, '0');
-            const m = Math.floor((sessionSeconds % 3600) / 60).toString().padStart(2, '0');
-            const s = (sessionSeconds % 60).toString().padStart(2, '0');
-            document.getElementById('sessionTimer').innerText = `Czas pracy: ${h}:${m}:${s}`;
-        }, 1000);
+        const savedTime = localStorage.getItem('editorWorkTime'); if(savedTime) sessionSeconds = parseInt(savedTime, 10);
+        setInterval(() => { sessionSeconds++; localStorage.setItem('editorWorkTime', sessionSeconds);
+            const h = Math.floor(sessionSeconds / 3600).toString().padStart(2, '0'); const m = Math.floor((sessionSeconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (sessionSeconds % 60).toString().padStart(2, '0'); document.getElementById('sessionTimer').innerText = `Czas pracy: ${h}:${m}:${s}`; }, 1000);
     }
     function resetSessionTimer() { if(confirm("Wyzerować licznik?")) { sessionSeconds = 0; localStorage.setItem('editorWorkTime', 0); } }
-
     function toggleMenu() { document.getElementById('gearMenu').classList.toggle('active'); }
     document.addEventListener('click', e => { if (!document.querySelector('.gear-wrapper').contains(e.target)) document.getElementById('gearMenu').classList.remove('active'); });
 
     window.onload = async function() {
-        initTimer();
-        document.getElementById('meta.data').valueAsDate = new Date();
-        updateGlobalEditor();
-        try {
-            const res = await fetch('kasy.json');
-            if(!res.ok) throw new Error("Status: " + res.status);
-            const json = await res.json();
-            if(!Array.isArray(json)) throw new Error("Brak tablicy JSON");
-            database = json;
-            initData();
-        } catch(e) {
-            console.warn(e);
-            document.getElementById('offlineAlert').style.display = 'block';
-            document.getElementById('stationSelect').innerHTML = '<option>⚠️ Wczytaj plik ręcznie</option>';
-        }
+        initTimer(); document.getElementById('meta.data').valueAsDate = new Date(); updateGlobalEditor();
+        try { const r = await fetch('kasy.json'); if(!r.ok) throw new Error(r.status); const j = await r.json(); if(!Array.isArray(j)) throw new Error("Brak tablicy"); database = j; initData(); } 
+        catch(e) { console.warn(e); document.getElementById('offlineAlert').style.display = 'block'; document.getElementById('stationSelect').innerHTML = '<option>⚠️ Wczytaj plik ręcznie</option>'; }
     };
 
     function handleFileUpload(input) {
-        const file = input.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try { database = JSON.parse(e.target.result); initData(); document.getElementById('offlineAlert').style.display = 'none'; showToast("✅ Plik wczytany"); } 
-            catch(err) { alert("Błąd JSON: " + err.message); }
-        }; reader.readAsText(file);
+        const file = input.files[0]; if(!file) return; const reader = new FileReader();
+        reader.onload = function(e) { try { const j = JSON.parse(e.target.result); if (!Array.isArray(j)) throw new Error("Błąd formatu"); if (j.length > 0 && !j[0].hasOwnProperty('stacja')) throw new Error("Brak pola stacja"); database = j; initData(); document.getElementById('offlineAlert').style.display = 'none'; showToast("✅ Plik wczytany"); } catch(err) { alert("Błąd: " + err.message); } }; reader.readAsText(file);
     }
 
     function initData() {
-        database.sort((a,b) => a.stacja.localeCompare(b.stacja));
-        populateCarrierFilter();
-        populateSelect(); 
-        renderTable();
+        database.sort((a,b) => a.stacja.localeCompare(b.stacja)); populateCarrierFilter(); populateSelect(); renderTable();
         ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(id => renderTimeEditor(id, ''));
     }
 
-    // --- CARRIER LOGIC ---
     function populateCarrierFilter() {
-        const filterEl = document.getElementById('filterCarrier');
-        const uniqueCarriers = new Set();
-        database.forEach(item => { if(item.przewoznik) uniqueCarriers.add(item.przewoznik); });
-        
-        const sorted = Array.from(uniqueCarriers).sort();
-        filterEl.innerHTML = '<option value="ALL">Wszyscy przewoźnicy</option>';
-        sorted.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c; opt.text = c;
-            filterEl.appendChild(opt);
-        });
+        const f = document.getElementById('filterCarrier'); const u = new Set(); database.forEach(i => { if(i.przewoznik) u.add(i.przewoznik); });
+        const s = Array.from(u).sort(); f.innerHTML = '<option value="ALL">Wszyscy przewoźnicy</option>'; s.forEach(c => { const o = document.createElement('option'); o.value = c; o.text = c; f.appendChild(o); });
     }
+    function applyFilter() { populateSelect(); renderTable(); }
+    function updateCarrierBtn() { const v = document.getElementById('przewoznik').value.toUpperCase(); const b = document.getElementById('carrierBtn'); const l = carrierLinks[v]; if (l) { b.href = l; b.classList.remove('disabled'); } else { b.href = "#"; b.classList.add('disabled'); } }
 
-    // Nowa funkcja spinająca filtrowanie: odświeża select I tabelę
-    function applyFilter() {
-        populateSelect();
-        renderTable();
-    }
-
-    function updateCarrierBtn() {
-        const val = document.getElementById('przewoznik').value.toUpperCase();
-        const btn = document.getElementById('carrierBtn');
-        const link = carrierLinks[val];
-        
-        if (link) { 
-            btn.href = link; btn.classList.remove('disabled');
-        } else { 
-            btn.href = "#"; btn.classList.add('disabled'); 
-        }
-    }
-
-    // --- TIMELINE VISUALIZATION ---
     function updateTimeline() {
         drawTimelineBar('vis-pn-pt', getTimeEditorValue('godziny.pn_pt'), getTimeEditorValue('przerwy.pn_pt'));
         drawTimelineBar('vis-sob', getTimeEditorValue('godziny.sob'), getTimeEditorValue('przerwy.sob'));
         drawTimelineBar('vis-nd', getTimeEditorValue('godziny.nd'), getTimeEditorValue('przerwy.nd'));
     }
 
-    function timeToMinutes(timeStr) {
-        if(!timeStr || !timeStr.includes(':')) return null;
-        const [h, m] = timeStr.split(':').map(Number);
+    // Nowa, pancerna funkcja parsowania czasu do wizualizacji
+    function timeToMinutes(t) {
+        if (!t) return null;
+        // Usuń wszystko co nie jest cyfrą lub dwukropkiem
+        const clean = t.replace(/[^0-9:]/g, '');
+        if (!clean.includes(':')) return null;
+        const [h, m] = clean.split(':').map(Number);
+        if (isNaN(h) || isNaN(m)) return null;
         return h * 60 + m;
     }
 
-    function drawTimelineBar(elementId, hoursStr, breaksStr) {
-        const container = document.getElementById(elementId);
-        const oldBars = container.querySelectorAll('.bar-open, .bar-break');
-        oldBars.forEach(el => el.remove());
-
-        const createBar = (start, end, type) => {
-            const startM = timeToMinutes(start);
-            const endM = timeToMinutes(end);
-            if(startM === null || endM === null) return;
-            let duration = endM - startM;
-            if (duration < 0) duration += 1440; 
-            const effectiveEnd = (startM + duration) > 1440 ? 1440 : (startM + duration);
-            const widthPct = ((effectiveEnd - startM) / 1440) * 100;
-            const leftPct = (startM / 1440) * 100;
-
-            const div = document.createElement('div');
-            div.className = type === 'open' ? 'bar-open' : 'bar-break';
-            div.style.left = leftPct + '%'; div.style.width = widthPct + '%';
-            container.appendChild(div);
+    function drawTimelineBar(eid, hStr, bStr) {
+        const c = document.getElementById(eid); 
+        c.querySelectorAll('.bar-open, .bar-break').forEach(el => el.remove());
+        
+        const createBar = (s, e, type) => {
+            const sm = timeToMinutes(s); 
+            const em = timeToMinutes(e);
+            if(sm === null || em === null) return;
+            
+            let d = em - sm; 
+            if (d < 0) d += 1440; 
+            const effEnd = (sm + d) > 1440 ? 1440 : (sm + d);
+            
+            const w = ((effEnd - sm) / 1440) * 100; 
+            const l = (sm / 1440) * 100;
+            
+            const div = document.createElement('div'); 
+            div.className = type === 'open' ? 'bar-open' : 'bar-break'; 
+            div.style.left = l + '%'; 
+            div.style.width = w + '%'; 
+            c.appendChild(div);
         };
 
-        if(hoursStr.toLowerCase().includes('całodobowo')) { createBar("00:00", "24:00", 'open'); }
-        else {
-            hoursStr.split(';').forEach(range => {
-                const parts = range.trim().split('-');
-                if(parts.length === 2) createBar(parts[0], parts[1], 'open');
-            });
-        }
-        breaksStr.split(';').forEach(range => {
-            const parts = range.trim().split('-');
-            if(parts.length === 2) createBar(parts[0], parts[1], 'break');
+        if(hStr.toLowerCase().includes('całodobowo')) createBar("00:00", "24:00", 'open');
+        else hStr.split(';').forEach(r => { 
+            const p = r.trim().split('-'); 
+            if(p.length === 2) createBar(p[0], p[1], 'open'); 
+        });
+        
+        bStr.split(';').forEach(r => { 
+            const p = r.trim().split('-'); 
+            if(p.length === 2) createBar(p[0], p[1], 'break'); 
         });
     }
 
-    // --- SAVING & LOADING ---
     function loadStation() {
-        const idx = document.getElementById('stationSelect').value;
-        currentIndex = idx;
-        renderTable();
+        const idx = document.getElementById('stationSelect').value; currentIndex = idx; renderTable();
         document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-        
-        const timeFields = ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'];
-
-        if(idx == -1) { 
-            document.getElementById('editForm').reset(); 
-            updateCarrierBtn();
-            timeFields.forEach(id => renderTimeEditor(id, ''));
-            updateTimeline();
-            return; 
-        }
-        
-        const item = database[idx];
-        const get = k => item[k] || '';
-        
-        setValue('stacja', get('stacja'));
-        setValue('epa', get('epa'));
-        setValue('przewoznik', get('przewoznik'));
-        setValue('uwagi', get('uwagi'));
-        
-        timeFields.forEach(id => renderTimeEditor(id, get(id)));
-
-        document.getElementById('meta.kto').value = document.getElementById('globalEditor').value;
-        document.getElementById('meta.data').valueAsDate = new Date();
-        
+        const tf = ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'];
+        if(idx == -1) { document.getElementById('editForm').reset(); updateCarrierBtn(); tf.forEach(id => renderTimeEditor(id, '')); updateTimeline(); return; }
+        const item = database[idx]; const g = k => item[k] || '';
+        setValue('stacja', g('stacja')); setValue('epa', g('epa')); setValue('przewoznik', g('przewoznik')); setValue('uwagi', g('uwagi'));
+        document.getElementById('ukryty').checked = item.ukryty === true;
+        tf.forEach(id => renderTimeEditor(id, g(id)));
+        document.getElementById('meta.kto').value = document.getElementById('globalEditor').value; document.getElementById('meta.data').valueAsDate = new Date();
         setTimeout(() => { updateCarrierBtn(); updateTimeline(); }, 0);
     }
 
     function saveChanges() {
-        if(database.length === 0) return;
-        const stacja = getValue('stacja');
-        if(!stacja) { alert("Nazwa stacji wymagana"); return; }
-
+        if(database.length === 0) return; const stacja = getValue('stacja'); if(!stacja) { alert("Nazwa stacji wymagana"); return; }
         const editor = document.getElementById('globalEditor').value;
         const newItem = {
-            "stacja": stacja.toUpperCase(),
-            "epa": getValue('epa') || "Brak",
-            "przewoznik": getValue('przewoznik').toUpperCase(),
-            "godziny.pn_pt": getTimeEditorValue('godziny.pn_pt'),
-            "godziny.sob": getTimeEditorValue('godziny.sob'),
-            "godziny.nd": getTimeEditorValue('godziny.nd'),
-            "przerwy.pn_pt": getTimeEditorValue('przerwy.pn_pt'),
-            "przerwy.sob": getTimeEditorValue('przerwy.sob'),
-            "przerwy.nd": getTimeEditorValue('przerwy.nd'),
-            "uwagi": getValue('uwagi'),
-            "meta.kto": editor,
-            "meta.data": getValue('meta.data')
+            "stacja": stacja.toUpperCase(), "epa": String(getValue('epa') || "Brak"), "przewoznik": getValue('przewoznik').toUpperCase(),
+            "godziny.pn_pt": getTimeEditorValue('godziny.pn_pt'), "godziny.sob": getTimeEditorValue('godziny.sob'), "godziny.nd": getTimeEditorValue('godziny.nd'),
+            "przerwy.pn_pt": getTimeEditorValue('przerwy.pn_pt'), "przerwy.sob": getTimeEditorValue('przerwy.sob'), "przerwy.nd": getTimeEditorValue('przerwy.nd'),
+            "uwagi": getValue('uwagi'), "ukryty": document.getElementById('ukryty').checked, "meta.kto": editor, "meta.data": getValue('meta.data')
         };
-
-        if(currentIndex === -1) {
-            newItem._status = 'new'; database.push(newItem); showToast("✨ Dodano");
-        } else {
-            const old = database[currentIndex]._status;
-            newItem._status = (old === 'new') ? 'new' : 'modified';
-            database[currentIndex] = newItem; showToast("💾 Zapisano");
-        }
-        
-        database.sort((a,b) => a.stacja.localeCompare(b.stacja));
-        currentIndex = database.findIndex(x => x === newItem);
-        
-        populateCarrierFilter();
-        populateSelect(); 
-        document.getElementById('stationSelect').value = currentIndex;
-        renderTable(); updateProgressBar();
-    }
-
-    // --- UTILS ---
-    function populateSelect() {
-        const s = document.getElementById('stationSelect');
-        const filterVal = document.getElementById('filterCarrier').value;
-        const oldVal = s.value;
-        
-        s.innerHTML = '<option value="-1">-- Wybierz stację --</option>';
-        
-        database.forEach((item, i) => {
-            if (filterVal !== 'ALL' && item.przewoznik !== filterVal) return; // Filtr
-
-            let t = item.stacja;
-            if(item._status === 'modified') t += ' (📝)';
-            if(item._status === 'new') t += ' (✨)';
-            if(progressRefDate && item['meta.data'] === progressRefDate) t += ' (✔)';
-            
-            const op = document.createElement('option');
-            op.value = i; op.text = t;
-            s.appendChild(op);
-        });
-        
-        if(oldVal && oldVal != -1) {
-             if (s.querySelector(`option[value="${oldVal}"]`)) s.value = oldVal;
-        }
+        if(currentIndex === -1) { newItem._status = 'new'; database.push(newItem); showToast("✨ Dodano"); }
+        else { const old = database[currentIndex]._status; newItem._status = (old === 'new') ? 'new' : 'modified'; database[currentIndex] = newItem; showToast("💾 Zapisano"); }
+        database.sort((a,b) => a.stacja.localeCompare(b.stacja)); currentIndex = database.findIndex(x => x === newItem);
+        populateCarrierFilter(); populateSelect(); document.getElementById('stationSelect').value = currentIndex; renderTable(); updateProgressBar();
     }
     
-    function calcProgressByDate() {
-        const dateVal = document.getElementById('dateOffset').value;
-        if(!dateVal) { alert("Wybierz datę!"); return; }
-        let count = 0;
-        progressRefDate = dateVal;
-        database.forEach(item => { if(item['meta.data'] === dateVal) count++; });
-        document.getElementById('manualOffset').value = count;
-        alert(`Znaleziono ${count} rekordów z datą ${dateVal}.`);
-        populateSelect(); renderTable();
+    function cloneStation() {
+        if (currentIndex === -1) { alert("Wybierz stację do sklonowania!"); return; }
+        const newItem = JSON.parse(JSON.stringify(database[currentIndex]));
+        newItem.przewoznik = ""; 
+        newItem.uwagi = "";      
+        newItem._status = 'new';
+        newItem['meta.kto'] = document.getElementById('globalEditor').value;
+        newItem['meta.data'] = new Date().toISOString().split('T')[0];
+        
+        database.push(newItem);
+        database.sort((a,b) => a.stacja.localeCompare(b.stacja));
+        currentIndex = database.indexOf(newItem);
+        populateSelect(); document.getElementById('stationSelect').value = currentIndex; loadStation(); renderTable(); updateProgressBar(); showToast("👯 Sklonowano (EPA zachowane)!");
     }
 
-    function saveProgressSettings() {
-        manualProgressOffset = parseInt(document.getElementById('manualOffset').value) || 0;
-        updateProgressBar(); closeModals();
+    function openFindReplaceModal() { document.getElementById('gearMenu').classList.remove('active'); document.getElementById('findReplaceModal').style.display = 'flex'; }
+    function applyFindReplace() {
+        const f = document.getElementById('fr_field').value; const ft = document.getElementById('fr_find').value; const rt = document.getElementById('fr_replace').value;
+        if(!ft) { alert("Wpisz tekst"); return; }
+        if(!confirm(`Zamienić "${ft}" na "${rt}" w polu [${f}]?`)) return;
+        let c = 0; const ed = document.getElementById('globalEditor').value; const td = new Date().toISOString().split('T')[0];
+        database.forEach(i => { if(i[f] && i[f].includes(ft)) { i[f] = i[f].replace(new RegExp(ft, 'g'), rt); i['meta.kto'] = ed; i['meta.data'] = td; i._status = 'modified'; c++; } });
+        closeModals(); renderTable(); updateProgressBar(); populateCarrierFilter(); alert(`✅ Zmieniono ${c} rekordów.`);
     }
 
-    function renderTable() {
-        const tb = document.getElementById('tableBody'); tb.innerHTML = '';
-        const filterVal = document.getElementById('filterCarrier').value;
-
+    function populateSelect() {
+        const s = document.getElementById('stationSelect'); const fv = document.getElementById('filterCarrier').value; const old = s.value;
+        s.innerHTML = '<option value="-1">-- Wybierz stację --</option>';
         database.forEach((item, i) => {
-            // Filtr tabeli
-            if (filterVal !== 'ALL' && item.przewoznik !== filterVal) return;
-
+            if (fv !== 'ALL' && item.przewoznik !== fv) return;
+            let t = item.stacja; if(item._status === 'modified') t += ' (📝)'; if(item._status === 'new') t += ' (✨)'; if(item.ukryty) t += ' (👁️)'; if(progressRefDate && item['meta.data'] === progressRefDate) t += ' (✔)';
+            const o = document.createElement('option'); o.value = i; o.text = t; s.appendChild(o);
+        });
+        if(old && old != -1) { if (s.querySelector(`option[value="${old}"]`)) s.value = old; }
+    }
+    
+    function calcProgressByDate() { const d = document.getElementById('dateOffset').value; if(!d) return; let c = 0; progressRefDate = d; database.forEach(i => { if(i['meta.data'] === d) c++; }); document.getElementById('manualOffset').value = c; alert(`Znaleziono: ${c}`); populateSelect(); renderTable(); }
+    function saveProgressSettings() { manualProgressOffset = parseInt(document.getElementById('manualOffset').value) || 0; updateProgressBar(); closeModals(); }
+    function renderTable() {
+        const tb = document.getElementById('tableBody'); tb.innerHTML = ''; const fv = document.getElementById('filterCarrier').value;
+        database.forEach((item, i) => {
+            if (fv !== 'ALL' && item.przewoznik !== fv) return;
             const tr = document.createElement('tr');
-            if(item._status === 'modified') tr.className = 'row-modified';
-            else if(item._status === 'new') tr.className = 'row-new';
-            else if(progressRefDate && item['meta.data'] === progressRefDate) tr.className = 'row-done';
+            if(item._status === 'modified') tr.className = 'row-modified'; else if(item._status === 'new') tr.className = 'row-new'; else if(progressRefDate && item['meta.data'] === progressRefDate) tr.className = 'row-done';
+            if (item.ukryty) tr.classList.add('row-hidden');
             if(i == currentIndex) tr.classList.add('row-active');
-            
             tr.onclick = () => { 
-                // Hack: dodaj opcję jeśli jej nie ma (bo jest ukryta filtrem)
-                const sel = document.getElementById('stationSelect');
-                if(!sel.querySelector(`option[value="${i}"]`)) {
-                    const op = document.createElement('option');
-                    op.value = i; op.text = item.stacja; op.selected = true;
-                    sel.appendChild(op);
-                }
-                sel.value = i; 
-                loadStation(); 
+                const s = document.getElementById('stationSelect');
+                if(!s.querySelector(`option[value="${i}"]`)) { const o = document.createElement('option'); o.value = i; o.text = item.stacja; o.selected = true; s.appendChild(o); }
+                s.value = i; loadStation(); 
             };
-            
-            const short = t => t && t.length > 20 ? t.substring(0,17)+'...' : (t||'');
-            const editorName = item['meta.kto'] || '-';
-            tr.innerHTML = `<td>${i+1}</td><td><b>${item.stacja}</b></td><td>${item.przewoznik}</td><td>${short(item.uwagi)}</td><td>${editorName}</td><td>${item['meta.data']}</td>`;
+            const sh = t => t && t.length > 20 ? t.substring(0,17)+'...' : (t||'');
+            tr.innerHTML = `<td>${i+1}</td><td><b>${item.stacja}</b></td><td>${item.przewoznik}</td><td>${sh(item.uwagi)}</td><td>${item['meta.kto']||'-'}</td><td>${item['meta.data']}</td>`;
             tb.appendChild(tr);
         });
     }
 
-    // --- HELPERS ---
     function updateGlobalEditor() { const g = document.getElementById('globalEditor').value; const f = document.getElementById('meta.kto'); if(f) f.value = g; }
     function getValue(id) { return document.getElementById(id).value.trim(); }
     function setValue(id, val) { document.getElementById(id).value = val; }
     function showToast(msg) { const t=document.getElementById('toast'); t.innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
     function createNewStation() { document.getElementById('editForm').reset(); document.getElementById('stationSelect').value = -1; currentIndex = -1; document.getElementById('meta.kto').value = document.getElementById('globalEditor').value; document.getElementById('meta.data').valueAsDate = new Date(); ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(id => renderTimeEditor(id, '')); updateCarrierBtn(); updateTimeline(); showToast("Nowa Stacja"); }
     function deleteStation() { if(currentIndex===-1)return; if(confirm("Usunąć?")){ database.splice(currentIndex,1); populateSelect(); createNewStation(); renderTable(); updateProgressBar(); showToast("🗑️ Usunięto"); }}
-    
-    function syntaxHighlight(json) {
-        if (typeof json != 'string') json = JSON.stringify(json, undefined, 2);
-        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
-            let cls = 'number';
-            if (/^"/.test(match)) { cls = /:$/.test(match) ? 'key' : 'string'; }
-            else if (/true|false/.test(match)) cls = 'boolean';
-            else if (/null/.test(match)) cls = 'null';
-            return '<span class="' + cls + '">' + match + '</span>';
-        });
-    }
-    function showCodePreview() {
-        const clean = database.map(item => { const {_status, ...rest} = item; return rest; });
-        document.getElementById('jsonPreview').innerHTML = syntaxHighlight(clean);
-        document.getElementById('gearMenu').classList.remove('active'); document.getElementById('codeModal').style.display = 'flex';
-    }
-    function copyCodeToClipboard() {
-        const clean = database.map(item => { const {_status, ...rest} = item; return rest; });
-        navigator.clipboard.writeText(JSON.stringify(clean, null, 2)).then(() => showToast("✅ Skopiowano!"));
-    }
-    function downloadJSON() { if(database.length===0)return; const clean = database.map(item => { const {_status, ...rest} = item; return rest; }); const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(clean, null, 2)); const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "kasy.json"); dl.click(); document.getElementById('gearMenu').classList.remove('active'); }
+    function syntaxHighlight(j) { if (typeof j != 'string') j = JSON.stringify(j, undefined, 2); j = j.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); return j.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => { let c = 'number'; if (/^"/.test(m)) { c = /:$/.test(m) ? 'key' : 'string'; } else if (/true|false/.test(m)) c = 'boolean'; else if (/null/.test(m)) c = 'null'; return '<span class="' + c + '">' + m + '</span>'; }); }
+    function showCodePreview() { const c = database.map(i => { const {_status, ...r} = i; return r; }); document.getElementById('jsonPreview').innerHTML = syntaxHighlight(c); document.getElementById('gearMenu').classList.remove('active'); document.getElementById('codeModal').style.display = 'flex'; }
+    function copyCodeToClipboard() { const c = database.map(i => { const {_status, ...r} = i; return r; }); navigator.clipboard.writeText(JSON.stringify(c, null, 2)).then(() => showToast("✅ Skopiowano!")); }
+    function downloadJSON() { if(database.length===0)return; const c = database.map(i => { const {_status, ...r} = i; return r; }); const s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(c, null, 2)); const d = document.createElement('a'); d.setAttribute("href", s); d.setAttribute("download", "kasy.json"); d.click(); document.getElementById('gearMenu').classList.remove('active'); }
     function openProgressModal() { document.getElementById('gearMenu').classList.remove('active'); document.getElementById('progressModal').style.display = 'flex'; }
     function openHelpModal() { document.getElementById('gearMenu').classList.remove('active'); document.getElementById('helpModal').style.display = 'flex'; }
-    function bulkUpdateClosed() { document.getElementById('gearMenu').classList.remove('active'); if(!confirm("Zaktualizować nieczynne?")) return; const editor = document.getElementById('globalEditor').value; const today = new Date().toISOString().split('T')[0]; let count = 0; database.forEach(item => { const h = (item['godziny.pn_pt'] || "").toLowerCase(); if(h.includes('zamknięte') || h.includes('zamkniete') || h.includes('nieczynne')) { item['meta.kto'] = editor; item['meta.data'] = today; item._status = 'modified'; count++; } }); renderTable(); updateProgressBar(); showToast(`✅ Zaktualizowano ${count}`); }
-    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); }
-    function updateProgressBar() { const sessionModified = database.filter(i => i._status === 'modified' || i._status === 'new').length; const totalProgress = manualProgressOffset + sessionModified; const total = database.length; const display = Math.min(totalProgress, total); const percent = total > 0 ? (display / total) * 100 : 0; document.getElementById('progressBar').style.width = percent + '%'; document.getElementById('progressText').innerText = `${display} / ${total} (Sesja: ${sessionModified})`; }
+    function bulkFixData() { if(!confirm("Naprawić format (EPA na string, godziny)?")) return; let c = 0; database.forEach(i => { if (i.epa && typeof i.epa !== 'string') { i.epa = String(i.epa); i._status = 'modified'; c++; } ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(k => { if (i[k]) { const o = i[k]; let n = o.replace(/\./g, ':').replace(/\s*-\s*/g, '-').replace(/\s*;\s*/g, '; ').trim(); if (n !== o) { i[k] = n; i._status = 'modified'; c++; } } }); }); renderTable(); updateProgressBar(); showToast(`✅ Zoptymalizowano ${c} pól.`); document.getElementById('gearMenu').classList.remove('active'); }
+    function bulkUpdateClosed() { document.getElementById('gearMenu').classList.remove('active'); if(!confirm("Zaktualizować nieczynne?")) return; const e = document.getElementById('globalEditor').value; const t = new Date().toISOString().split('T')[0]; let c = 0; database.forEach(i => { const h = (i['godziny.pn_pt'] || "").toLowerCase(); if(h.includes('zamknięte') || h.includes('zamkniete') || h.includes('nieczynne')) { i['meta.kto'] = e; i['meta.data'] = t; i._status = 'modified'; c++; } }); renderTable(); updateProgressBar(); showToast(`✅ Zaktualizowano ${c}`); }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(e => e.style.display = 'none'); }
+    function updateProgressBar() { const m = database.filter(i => i._status === 'modified' || i._status === 'new').length; const tp = manualProgressOffset + m; const t = database.length; const d = Math.min(tp, t); const p = t > 0 ? (d / t) * 100 : 0; document.getElementById('progressBar').style.width = p + '%'; document.getElementById('progressText').innerText = `${d} / ${t} (Sesja: ${m})`; }
 </script>
 
 </body>

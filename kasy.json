@@ -15,7 +15,7 @@
   },
   {
     "stacja": "BABIAK",
-    "epa": 5023,
+    "epa": "5023",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -57,7 +57,7 @@
   },
   {
     "stacja": "BIAŁYSTOK ZIELONA WZGÓRZA",
-    "epa": 6623,
+    "epa": "6623",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -113,7 +113,7 @@
   },
   {
     "stacja": "BYDGOSZCZ LEŚNA",
-    "epa": 5075,
+    "epa": "5075",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -127,7 +127,7 @@
   },
   {
     "stacja": "BYDGOSZCZ WSCHÓD",
-    "epa": 501,
+    "epa": "501",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -141,7 +141,7 @@
   },
   {
     "stacja": "CHEŁMŻA",
-    "epa": 5089,
+    "epa": "5089",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -155,7 +155,7 @@
   },
   {
     "stacja": "CHOSZCZNO",
-    "epa": 19,
+    "epa": "19",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -225,7 +225,7 @@
   },
   {
     "stacja": "CZYŻEW",
-    "epa": 28,
+    "epa": "28",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -253,7 +253,7 @@
   },
   {
     "stacja": "DĄBROWA GÓRNICZA ZĄBKOWICE",
-    "epa": 4095,
+    "epa": "4095",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -267,7 +267,7 @@
   },
   {
     "stacja": "DĘBLIN",
-    "epa": 32,
+    "epa": "32",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -281,7 +281,7 @@
   },
   {
     "stacja": "DOBIEGNIEW",
-    "epa": 8094,
+    "epa": "8094",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -491,7 +491,7 @@
   },
   {
     "stacja": "GORZÓW WIELKOPOLSKI WSCHODNI",
-    "epa": 8122,
+    "epa": "8122",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -505,7 +505,7 @@
   },
   {
     "stacja": "GOSTYNIN",
-    "epa": 1137,
+    "epa": "1137",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -519,7 +519,7 @@
   },
   {
     "stacja": "GRABOWNO WIELKIE",
-    "epa": 6140,
+    "epa": "6140",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -589,7 +589,7 @@
   },
   {
     "stacja": "INOWROCŁAW RĄBINEK",
-    "epa": 5230,
+    "epa": "5230",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -617,7 +617,7 @@
   },
   {
     "stacja": "JAWORZNO SZCZAKOWA",
-    "epa": 60,
+    "epa": "60",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -687,7 +687,7 @@
   },
   {
     "stacja": "KOLUSZKI",
-    "epa": 76,
+    "epa": "76",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -799,7 +799,7 @@
   },
   {
     "stacja": "KROTOSZYN",
-    "epa": 88,
+    "epa": "88",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -827,7 +827,7 @@
   },
   {
     "stacja": "KRZYŻ",
-    "epa": 90,
+    "epa": "90",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -855,7 +855,7 @@
   },
   {
     "stacja": "KWIDZYN",
-    "epa": 5321,
+    "epa": "5321",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -911,7 +911,7 @@
   },
   {
     "stacja": "LUBLIN ZACHODNI",
-    "epa": 295,
+    "epa": "295",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -939,7 +939,7 @@
   },
   {
     "stacja": "ŁAPY",
-    "epa": 108,
+    "epa": "108",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -953,7 +953,7 @@
   },
   {
     "stacja": "ŁASK",
-    "epa": 1248,
+    "epa": "1248",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -967,7 +967,7 @@
   },
   {
     "stacja": "ŁĘCZYCA",
-    "epa": 1254,
+    "epa": "1254",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1009,7 +1009,7 @@
   },
   {
     "stacja": "ŁÓDŹ CHOJNY",
-    "epa": 111,
+    "epa": "111",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1107,7 +1107,7 @@
   },
   {
     "stacja": "ŁÓDŹ ŻABIENIEC",
-    "epa": 1262,
+    "epa": "1262",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1149,7 +1149,7 @@
   },
   {
     "stacja": "MIECHÓW",
-    "epa": 3173,
+    "epa": "3173",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1163,7 +1163,7 @@
   },
   {
     "stacja": "MILICZ",
-    "epa": 6270,
+    "epa": "6270",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1177,7 +1177,7 @@
   },
   {
     "stacja": "MŁAWA",
-    "epa": 422,
+    "epa": "422",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1205,7 +1205,7 @@
   },
   {
     "stacja": "MYSŁOWICE",
-    "epa": 4222,
+    "epa": "4222",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1233,7 +1233,7 @@
   },
   {
     "stacja": "NAKŁO NAD NOTECIĄ",
-    "epa": 512,
+    "epa": "512",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1247,7 +1247,7 @@
   },
   {
     "stacja": "NAŁĘCZÓW",
-    "epa": 130,
+    "epa": "130",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1261,7 +1261,7 @@
   },
   {
     "stacja": "NIDZICA",
-    "epa": 418,
+    "epa": "418",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1275,7 +1275,7 @@
   },
   {
     "stacja": "NOWE DREZDENKO",
-    "epa": 8253,
+    "epa": "8253",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1303,7 +1303,7 @@
   },
   {
     "stacja": "OLEŚNICA RATAJE",
-    "epa": 6311,
+    "epa": "6311",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1337,7 +1337,7 @@
     "godziny.sob": "5:40-20:00",
     "godziny.nd": "5:40-21:00",
     "przerwy.pn_pt": "8:40-9:15; 11:10-12:00; 16:40",
-    "przerwy.sob": "8:50-9:30; 13:50-14:15; 16:40- 16:55",
+    "przerwy.sob": "8:50-9:30; 13:50-14:15; 16:40-16:55",
     "przerwy.nd": "8:50-19:30; 13:50-14:15; 16:40-16:55",
     "uwagi": "KASA POLREGIO NR 1",
     "meta.kto": "PIOTR M",
@@ -1359,7 +1359,7 @@
   },
   {
     "stacja": "OLSZTYN ZACHODNI",
-    "epa": 5442,
+    "epa": "5442",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1373,7 +1373,7 @@
   },
   {
     "stacja": "OLSZTYNEK",
-    "epa": 5440,
+    "epa": "5440",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1387,7 +1387,7 @@
   },
   {
     "stacja": "OŁAWA",
-    "epa": 6314,
+    "epa": "6314",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1401,7 +1401,7 @@
   },
   {
     "stacja": "OPOCZNO POŁUDNIE",
-    "epa": 2172,
+    "epa": "2172",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1449,8 +1449,8 @@
     "godziny.sob": "7:10-20:10",
     "godziny.nd": "7:10-20:10",
     "przerwy.pn_pt": "Brak",
-    "przerwy.sob": "9:25-9:45; 13:15-13:35;17:15-17:35",
-    "przerwy.nd": "9:25-9:45; 13:15-13:35;17:15-17:35",
+    "przerwy.sob": "9:25-9:45; 13:15-13:35; 17:15-17:35",
+    "przerwy.nd": "9:25-9:45; 13:15-13:35; 17:15-17:35",
     "uwagi": "W dniach 24.12 / 25.12 / 26.12 / 31.12 / 01.01 kasa biletowa czynna w innych godzinach. Proszę weryfikować na stronie przewoźnika.",
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-08"
@@ -1471,7 +1471,7 @@
   },
   {
     "stacja": "OZORKÓW",
-    "epa": 1333,
+    "epa": "1333",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1527,7 +1527,7 @@
   },
   {
     "stacja": "PIOTRKÓW KUJAWSKI",
-    "epa": 5481,
+    "epa": "5481",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1546,9 +1546,9 @@
     "godziny.pn_pt": "6:15-20:35",
     "godziny.sob": "6:15-20:35",
     "godziny.nd": "6:15-20:35",
-    "przerwy.pn_pt": "8:55-9:10; 11:40-11:55; 14:00-14:25; 16:00-16:15; 18:05- 18:20",
-    "przerwy.sob": "8:55-9:10; 11:40-11:55; 14:00-14:25; 16:00-16:15; 18:05- 18:20",
-    "przerwy.nd": "8:55-9:10; 11:40-11:55; 14:00-14:25; 16:00-16:15; 18:05- 18:20",
+    "przerwy.pn_pt": "8:55-9:10; 11:40-11:55; 14:00-14:25; 16:00-16:15; 18:05-18:20",
+    "przerwy.sob": "8:55-9:10; 11:40-11:55; 14:00-14:25; 16:00-16:15; 18:05-18:20",
+    "przerwy.nd": "8:55-9:10; 11:40-11:55; 14:00-14:25; 16:00-16:15; 18:05-18:20",
     "uwagi": "",
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-08"
@@ -1569,7 +1569,7 @@
   },
   {
     "stacja": "PŁOCK",
-    "epa": 156,
+    "epa": "156",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1681,7 +1681,7 @@
   },
   {
     "stacja": "PRABUTY",
-    "epa": 160,
+    "epa": "160",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1723,7 +1723,7 @@
   },
   {
     "stacja": "SIERADZ",
-    "epa": 183,
+    "epa": "183",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1737,7 +1737,7 @@
   },
   {
     "stacja": "SIERPC",
-    "epa": 184,
+    "epa": "184",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1863,7 +1863,7 @@
   },
   {
     "stacja": "SOSNOWIEC POŁUDNIOWY",
-    "epa": 4315,
+    "epa": "4315",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1891,7 +1891,7 @@
   },
   {
     "stacja": "STAWIGUDA",
-    "epa": 5589,
+    "epa": "5589",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1905,7 +1905,7 @@
   },
   {
     "stacja": "STRZELCE OPOLSKIE",
-    "epa": 718,
+    "epa": "718",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -1989,7 +1989,7 @@
   },
   {
     "stacja": "SZEPIETOWO",
-    "epa": 208,
+    "epa": "208",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2003,7 +2003,7 @@
   },
   {
     "stacja": "SZTUM",
-    "epa": 5619,
+    "epa": "5619",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2073,7 +2073,7 @@
   },
   {
     "stacja": "TOMASZÓW MAZOWIECKI",
-    "epa": 225,
+    "epa": "225",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2129,7 +2129,7 @@
   },
   {
     "stacja": "TRZCIANKA",
-    "epa": 8409,
+    "epa": "8409",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2143,7 +2143,7 @@
   },
   {
     "stacja": "TRZEBINIA",
-    "epa": 228,
+    "epa": "228",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2157,7 +2157,7 @@
   },
   {
     "stacja": "TWARDOGÓRA",
-    "epa": 6482,
+    "epa": "6482",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2283,7 +2283,7 @@
   },
   {
     "stacja": "WIELEŃ",
-    "epa": 8435,
+    "epa": "8435",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2381,7 +2381,7 @@
   },
   {
     "stacja": "WROCŁAW MIKOŁAJÓW",
-    "epa": 6514,
+    "epa": "6514",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2395,7 +2395,7 @@
   },
   {
     "stacja": "WROCŁAW NADODRZE",
-    "epa": 6516,
+    "epa": "6516",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2437,7 +2437,7 @@
   },
   {
     "stacja": "WYRZYSK OSIEK",
-    "epa": 8447,
+    "epa": "8447",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2507,7 +2507,7 @@
   },
   {
     "stacja": "ZDUŃSKA WOLA",
-    "epa": 260,
+    "epa": "260",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2521,7 +2521,7 @@
   },
   {
     "stacja": "ZGIERZ",
-    "epa": 702,
+    "epa": "702",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2535,7 +2535,7 @@
   },
   {
     "stacja": "ZWIERZYN",
-    "epa": 8365,
+    "epa": "8365",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
     "godziny.sob": "Zamknięte",
@@ -2558,6 +2558,21 @@
     "przerwy.sob": "00:30-3:30",
     "przerwy.nd": "00:30-3:30",
     "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  },
+  {
+    "stacja": "ŻŻŻŻ- TEST",
+    "epa": "2137",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "PROSZĘ WERYFIKOWAĆ NA STRONIE PRZEWOŹNIKA",
+    "ukryty": true,
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-08"
   }
