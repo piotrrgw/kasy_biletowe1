@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-W05T4L1HFD');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="max-age=14400">
+    <title>Asystent Kas Biletowych</title>
+    <style>
+        /* --- Zmienne CSS --- */
+        :root {
+            --primary: #0056b3;
+            --bg: #f4f4f9;
+            --white: #ffffff;
+            --open: #28a745;
+            --closed: #dc3545;
+            --none: #6c757d; /* Kolor szary dla braku kasy */
+            --break: #ffc107;
+            --holiday: #6f42c1;
+            --note-bg: #fff3cd;
+            --note-text: #856404;
+            --old-data-bg: #f8d7da;
+            --old-data-text: #721c24;
+            --text: #333;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --warning-bg: #fff3cd; 
+            --warning-border: #ffeeba;
+            --warning-text: #856404;
+        }
+
+        /* --- Globalne style i reset --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 15px; 
+            padding-bottom: 100px; /* Więcej miejsca na stopkę */
+            padding-top: 70px; /* Miejsce na przyklejony nagłówek */
+        }
+
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            width: 100%;
+        }
+        
+        /* --- NOWY NAGŁÓWEK Z MENU --- */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .app-title {
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .settings-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+            transition: transform 0.3s;
+        }
+        .settings-btn:hover { transform: rotate(45deg); }
+
+        /* --- MENU ROZWIJANE --- */
+        .settings-menu {
+            display: none;
+            position: fixed;
+            top: 60px;
+            right: 15px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 280px;
+            z-index: 2001;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        
+        .settings-menu.active { display: flex; }
+
+        .menu-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background: none;
+            border-left: none; border-right: none; border-top: none;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text);
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .menu-item:hover { background-color: #f8f9fa; }
+        .menu-item:last-child { border-bottom: none; }
+        
+        .menu-header {
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        /* --- Ostrzeżenie WAŻNE --- */
+        .important-warning {
+            background-color: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: var(--warning-text);
+        }
+        .important-warning strong {
+            display: block;
+            font-size: 1.1rem;
+            color: #721c24;
+            margin-bottom: 5px;
+        }
+
+        /* --- Panel Awaryjny --- */
+        #recoveryPanel {
+            display: none;
+            background-color: #fff;
+            border: 2px solid var(--closed);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+        }
+        
+        /* --- Status sieci i Daty --- */
+        .top-info-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .network-msg { text-align: center; font-size: 0.8rem; font-weight: bold; }
+        .msg-online { color: var(--open); }
+        .msg-offline { color: var(--closed); }
+        .msg-none { color: var(--none); }
+        
+        .cache-status {
+            font-size: 0.8rem;
+            color: #555;
+            text-align: center;
+            font-style: italic;
+            margin-top: -5px;
+        }
+
+        .date-bar {
+            background: #e9ecef;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #555;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            line-height: 1.4;
+        }
+        .time-display { color: var(--primary); font-weight: 800; margin-left: 10px; }
+        .holiday-tag {
+            background-color: var(--holiday);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-left: 6px;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        /* --- Panel Sterowania --- */
+        .controls {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+        #localJsonFile { display: none; }
+        
+        .search-wrapper { position: relative; }
+        
+        .search-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .search-input:focus { border-color: var(--primary); outline: none; }
+
+        .search-results-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            list-style: none;
+            padding: 0;
+            margin-top: 5px;
+            display: none; 
+        }
+        .search-result-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover { background-color: #f1f8ff; }
+
+        /* --- GŁÓWNY BOX STATUSU --- */
+        #mainStatusBox {
+            display: none;
+            text-align: center;
+            padding: 25px 15px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 800;
+            font-size: 2rem;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            line-height: 1.1;
+        }
+        .bg-open { background: linear-gradient(135deg, var(--open), #1e7e34); }
+        .bg-break { background: linear-gradient(135deg, var(--break), #d39e00); color: #212529 !important; text-shadow: none !important; }
+        .bg-closed { background: linear-gradient(135deg, var(--closed), #bd2130); }
+        .bg-none { background: linear-gradient(135deg, var(--none), #495057); }
+
+        /* --- Kafelki Przewoźników (Widok Szczegółowy) --- */
+        .details-container { display: none; }
+        
+        .card {
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-left: 6px solid #ccc;
+        }
+        .card-header {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; 
+            gap: 10px;
+        }
+        .carrier-title { font-size: 1.1rem; font-weight: 700; color: #2c3e50; }
+        .epa-info { font-size: 0.8rem; color: #7f8c8d; margin-top: 2px; }
+        
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .notes-section {
+            background-color: var(--note-bg);
+            color: var(--note-text);
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            border-top: 1px solid #ffeb8f;
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        .data-age-warning {
+            background-color: var(--old-data-bg);
+            color: var(--old-data-text);
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            text-align: center;
+            font-weight: 600;
+            border-top: 1px solid #f5c6cb;
+        }
+
+        /* --- Tabela Danych (Detale) --- */
+        .details-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .details-table th, .details-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #f1f1f1;
+            vertical-align: top;
+        }
+        .details-table th { color: #666; width: 35%; font-weight: normal; } 
+        
+        .active-row { background-color: #e8f5e9; color: #1b5e20; }
+        .active-row th { color: #1b5e20; font-weight: 700; }
+        .active-row td { font-weight: 600; }
+
+        .btn-link {
+            display: block;
+            text-align: center;
+            margin: 15px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid #e9ecef;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .btn-link:active { background-color: #e2e6ea; border-color: #dae0e5; }
+
+        .meta-footer {
+            font-size: 0.7rem;
+            color: #95a5a6;
+            text-align: right;
+            padding: 8px 15px;
+            background: #fff;
+            border-top: 1px solid #f8f9fa;
+        }
+
+        /* --- STYLISTYKA TABELI ZBIORCZEJ (ALL STATIONS) --- */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .summary-table th {
+            background-color: #f1f1f1;
+            color: #555;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            padding: 12px;
+            text-align: left;
+        }
+        .summary-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+        .summary-table tr:last-child td { border-bottom: none; }
+        .summary-table tr:hover { background-color: #f8f9fa; cursor: pointer; }
+        
+        /* Kolorowe kropki statusu w tabeli */
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .dot-open { background-color: var(--open); }
+        .dot-closed { background-color: var(--closed); }
+        .dot-break { background-color: var(--break); }
+        .dot-none { background-color: var(--none); }
+
+        /* --- STOPKA --- */
+        .page-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.8rem;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            line-height: 1.5;
+        }
+        .page-footer a { color: #ccc; text-decoration: none; }
+        .page-footer a:hover { color: var(--white); }
+        .footer-credits { margin-bottom: 5px; font-weight: bold; }
+        .footer-editors { font-size: 0.75rem; opacity: 0.9; }
+
+        @media (max-width: 370px) {
+            .app-title { font-size: 1rem; }
+            #mainStatusBox { font-size: 1.6rem; padding: 20px 10px; }
+            th { width: 30%; font-size: 0.85rem; }
+            td { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="app-header">
+    <h1 class="app-title">🚆 Asystent Kas Biletowych</h1>
+    <button class="settings-btn" onclick="toggleMenu()">⚙️</button>
+</header>
+
+<div id="settingsMenu" class="settings-menu">
+    <div class="menu-header">Opcje</div>
+    <button class="menu-item" onclick="pokazWszystkieStacje()">
+        📋 Pokaż wszystkie stacje
+    </button>
+
+    <div class="menu-header">Zarządzanie Danymi</div>
+    
+    <button class="menu-item" onclick="pobierzDane(true); toggleMenu()">
+        🔄 Aktualizuj dane (z serwera)
+    </button>
+    
+    <button class="menu-item" onclick="pobierzPlikNaDysk(); toggleMenu()">
+        ⬇️ Pobierz plik kasy.json (na dysk)
+    </button>
+    
+    <button class="menu-item" onclick="document.getElementById('localJsonFile').click(); toggleMenu()">
+        📂 Wgraj lokalny plik JSON
+    </button>
+    
+    <input type="file" id="localJsonFile" accept=".json" onchange="wgrajLokalnyPlik(this)">
+</div>
+
+
+<div class="container">
+    
+    <div class="important-warning">
+       <center><strong>⚠️ WAŻNE: Strona jest wyłącznie NARZĘDZIEM POGLĄDOWYM</strong><br>
+        W przypadku wątpliwości informacje należy weryfikować na stronach przewoźników.</center>
+    </div>
+
+    <div id="recoveryPanel">
+        <h3>⚠️ Brak danych</h3>
+        <p>Nie udało się połączyć z serwerem ani wczytać pamięci. Wgraj plik ręcznie.</p>
+        <button style="background-color: var(--closed); color:white; padding:10px; border:none; border-radius:5px; cursor:pointer;" onclick="document.getElementById('localJsonFile').click()">📂 Wybierz plik z telefonu/dysku</button>
+    </div>
+
+    <div class="top-info-bar">
+        <div id="networkStatus" class="network-msg">Ładowanie systemu...</div>
+        <div id="cacheStatus" class="cache-status"></div>
+        <div id="dateBar" class="date-bar">...</div>
+    </div>
+
+    <div class="controls">
+        <label for="stationSearch">Wyszukaj stację lub nr EPA:</label>
+        <div class="search-wrapper">
+            <input type="text" id="stationSearch" class="search-input" placeholder="Wpisz nazwę stacji lub EPA..." oninput="filtrujStacje(this.value)">
+            <ul id="searchResults" class="search-results-list"></ul>
+        </div>
+    </div>
+
+    <div id="mainStatusBox">STATUS</div>
+
+    <div id="detailsList" class="details-container"></div>
+</div>
+
+<footer class="page-footer">
+    <div class="footer-credits">Autorzy: Piotr M. 🚂 (Dane & Wizja), Gemini (Kod & Implementacja)</div>
+    <div class="footer-editors">Edytorzy danych: Piotr M. 🚂 Anna S. Piotr S.</div>
+</footer>
+
+<script>
+    // ================= KONFIGURACJA =================
+    const URL_DANYCH = 'kasy.json'; 
+    const STORAGE_KEY = 'kasy_biletowe_v_final';
+    const MAX_DAYS_FRESH = 30;
+    let bazaDanych = [];
+
+    const BAZA_LINKOW = {
+        "PKP INTERCITY": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
+        "POLREGIO": "https://polregio.pl/pl/dla-podroznych/gdzie-kupic-bilet/kasy-biletowe/",
+        "ARRIVA RP": "https://arriva.pl/1032/kasy-biletowe",
+        "KOLEJE ŚLĄSKIE": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "KŚ": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "KOLEJE MAZOWIECKIE": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "KM": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "ŁÓDZKA KOLEJ AGLOMERACYJNA": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "ŁKA": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "KOLEJE WIELKOPOLSKIE": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "KW": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "KOLEJE DOLNOŚLĄSKIE": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "KD": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "KOLEJE MAŁOPOLSKIE": "https://www.kolejemalopolskie.com.pl/pl/dla-pasazera/gdzie-kupic-bilet-kolejowy",
+        "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
+        "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
+        "BRAK": null
+    };
+
+    const SWIETA_STALE = {
+        '01-01': 'Nowy Rok', '01-06': 'Trzech Króli', '05-01': 'Święto Pracy',
+        '05-03': '3 Maja', '08-15': 'Wniebowzięcie NMP',
+        '11-01': 'Wszystkich Świętych', '11-11': 'Niepodległości',
+        '12-24': 'Wielkanoc', '12-25': 'Boże Narodzenie', '12-26': 'Drugi dzień Bożego Narodzenia'
+    };
+    const SWIETA_RUCHOME = {
+        '2025-04-20': 'Wielkanoc', '2025-04-21': 'Pon. Wielkanocny', '2025-06-08': 'Zielone Świątki', '2025-06-19': 'Boże Ciało',
+        '2026-04-05': 'Wielkanoc', '2026-04-06': 'Pon. Wielkanocny', '2026-05-24': 'Zielone Świątki', '2026-06-04': 'Boże Ciało',
+        '2027-03-28': 'Wielkanoc', '2027-03-29': 'Pon. Wielkanocny', '2027-05-16': 'Zielone Świątki', '2027-05-27': 'Boże Ciało',
+        '2028-04-16': 'Wielkanoc', '2028-04-17': 'Pon. Wielkanocny', '2028-06-04': 'Zielone Świątki', '2028-06-15': 'Boże Ciało',
+        '2029-04-01': 'Wielkanoc', '2029-04-02': 'Pon. Wielkanocny', '2029-05-20': 'Zielone Świątki', '2029-05-31': 'Boże Ciało',
+        '2030-04-21': 'Wielkanoc', '2030-04-22': 'Pon. Wielkanocny', '2030-06-09': 'Zielone Świątki', '2030-06-20': 'Boże Ciało'
+    };
+
+    function sprawdzSwieto() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,'0');
+        const day = String(d.getDate()).padStart(2,'0');
+        const keyFixed = `${m}-${day}`;
+        const keyMoveable = `${y}-${m}-${day}`;
+        if(SWIETA_STALE[keyFixed]) return SWIETA_STALE[keyFixed];
+        if(SWIETA_RUCHOME[keyMoveable]) return SWIETA_RUCHOME[keyMoveable];
+        return null;
+    }
+
+    function checkDataAge(dataDateStr) {
+        if (!dataDateStr) return false;
+        const dataDate = new Date(dataDateStr);
+        const today = new Date();
+        dataDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+        const diffTime = Math.abs(today - dataDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        return diffDays > MAX_DAYS_FRESH;
+    }
+    
+    function transformData(data) {
+        if (!Array.isArray(data)) return data;
+        return data.map(item => {
+            const newItem = {};
+            const itemKeys = Object.keys(item);
+            itemKeys.forEach(key => {
+                const value = item[key];
+                const parts = key.split('.');
+                let current = newItem;
+                for (let i = 0; i < parts.length; i++) {
+                    const part = parts[i];
+                    if (i === parts.length - 1) {
+                        current[part] = value;
+                    } else {
+                        if (!current[part] || typeof current[part] !== 'object') {
+                            current[part] = {};
+                        }
+                        current = current[part];
+                    }
+                }
+            });
+            newItem.przewoznik = String(newItem.przewoznik || 'BRAK').toUpperCase();
+            newItem.epa = newItem.epa || 'Brak';
+            newItem.uwagi = (newItem.uwagi && String(newItem.uwagi).toLowerCase() !== 'nan') ? newItem.uwagi : '';
+            if (newItem.meta && newItem.meta.data) {
+                newItem.meta.data = String(newItem.meta.data);
+            }
+            return newItem;
+        });
+    }
+
+    function updateCacheStatus() {
+        const cacheStatusElement = document.getElementById('cacheStatus');
+        const cacheTime = localStorage.getItem(STORAGE_KEY + '_time');
+        if (cacheTime) {
+            const date = new Date(parseInt(cacheTime));
+            const dateStr = date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' });
+            const timeStr = date.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            cacheStatusElement.innerHTML = `Baza w pamięci przeglądarki z: ${dateStr}, ${timeStr}`;
+        } else {
+            cacheStatusElement.innerHTML = `Brak danych w pamięci.`;
+        }
+    }
+
+    function normalizeText(text) {
+        if (!text) return "";
+        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // ================= MENU I FUNKCJE PLIKÓW =================
+
+    function toggleMenu() {
+        const menu = document.getElementById('settingsMenu');
+        menu.classList.toggle('active');
+    }
+    
+    // NOWA FUNKCJA: Pokaż tabelę wszystkich stacji
+    function pokazWszystkieStacje() {
+        document.getElementById('stationSearch').value = ''; 
+        document.getElementById('searchResults').style.display = 'none';
+        toggleMenu(); 
+        
+        const mainBox = document.getElementById('mainStatusBox');
+        const listContainer = document.getElementById('detailsList');
+        
+        mainBox.style.display = 'none'; // Ukryj status główny
+        listContainer.style.display = 'block';
+        listContainer.innerHTML = '';
+
+        if(bazaDanych.length === 0) {
+            listContainer.innerHTML = '<p style="text-align:center">Brak danych w bazie.</p>';
+            return;
+        }
+
+        // Deduplikacja: Grupujemy wpisy po nazwie stacji
+        const stacjeMap = {};
+        bazaDanych.forEach(item => {
+            if(!stacjeMap[item.stacja]) {
+                stacjeMap[item.stacja] = [];
+            }
+            stacjeMap[item.stacja].push(item);
+        });
+
+        // Sortowanie nazw
+        const sortedNames = Object.keys(stacjeMap).sort((a,b) => a.localeCompare(b));
+
+        // Budowa tabeli
+        let tableHtml = `
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Stacja</th>
+                        <th>EPA</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        const d = new Date();
+        const swieto = sprawdzSwieto();
+        const day = d.getDay(); 
+
+        sortedNames.forEach(name => {
+            const entries = stacjeMap[name];
+            // Pobieramy EPA z pierwszego wpisu (zakładamy że są spójne dla stacji lub bierzemy reprezentanta)
+            const epaDisplay = (entries[0].epa && entries[0].epa !== 'Brak') ? entries[0].epa : '-';
+            
+            // Agregacja statusu: 
+            // - Jeśli choć jedna kasy "open" -> Stacja OPEN
+            // - Jeśli brak open, ale jest "break" -> Stacja BREAK
+            // - Jeśli wszystkie mają przewoźnika BRAK -> Stacja NONE
+            // - Inaczej CLOSED
+            
+            let isAnyOpen = false;
+            let isAnyBreak = false;
+            let allBrak = true;
+
+            entries.forEach(entry => {
+                if(entry.przewoznik !== 'BRAK') allBrak = false;
+                const st = obliczStatus(entry, swieto, day);
+                if(st.type === 'open') isAnyOpen = true;
+                if(st.type === 'break') isAnyBreak = true;
+            });
+
+            let finalStatus = { text: 'NIECZYNNA', colorClass: 'dot-closed' };
+            
+            if (allBrak) {
+                finalStatus = { text: 'Brak kasy', colorClass: 'dot-none' };
+            } else if (isAnyOpen) {
+                finalStatus = { text: 'Czynna', colorClass: 'dot-open' };
+            } else if (isAnyBreak) {
+                finalStatus = { text: 'Przerwa', colorClass: 'dot-break' };
+            }
+
+            tableHtml += `
+                <tr onclick="document.getElementById('stationSearch').value='${name}'; wyswietlStacje('${name}')">
+                    <td>${name}</td>
+                    <td>${epaDisplay}</td>
+                    <td><span class="status-dot ${finalStatus.colorClass}"></span> ${finalStatus.text}</td>
+                </tr>
+            `;
+        });
+
+        tableHtml += `</tbody></table>`;
+        listContainer.innerHTML = tableHtml;
+    }
+
+
+    document.addEventListener('click', function(e) {
+        const menu = document.getElementById('settingsMenu');
+        const btn = document.querySelector('.settings-btn');
+        if (e.target !== menu && e.target !== btn && !menu.contains(e.target)) {
+            menu.classList.remove('active');
+        }
+    });
+
+    function pobierzPlikNaDysk() {
+        if(bazaDanych.length === 0) {
+            alert("Brak danych do pobrania! Najpierw zaktualizuj bazę.");
+            return;
+        }
+        const dataStr = JSON.stringify(bazaDanych, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "kasy.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    async function pobierzDane(force = false) {
+        const netMsg = document.getElementById('networkStatus');
+        const recoveryPanel = document.getElementById('recoveryPanel');
+        
+        netMsg.innerText = "Łączenie z serwerem...";
+        recoveryPanel.style.display = 'none';
+
+        try {
+            const res = await fetch(URL_DANYCH, { cache: "no-store" });
+            if(!res.ok) throw new Error("Błąd HTTP");
+            const json = await res.json();
+            
+            const processedData = transformData(json);
+            const now = Date.now();
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(processedData));
+            localStorage.setItem(STORAGE_KEY + '_time', now.toString());
+            bazaDanych = processedData;
+            
+            netMsg.innerHTML = "<span class='msg-online'>✅ Dane pobrane pomyślnie!</span>";
+            if(force) alert("Dane zaktualizowane pomyślnie!");
+            updateCacheStatus();
+
+        } catch (e) {
+            console.warn("Offline fallback:", e);
+            const cached = localStorage.getItem(STORAGE_KEY);
+            if(cached) {
+                // AUTOMATYCZNE POBRANIE Z CACHE (Fallback)
+                bazaDanych = JSON.parse(cached);
+                bazaDanych = transformData(bazaDanych); 
+                netMsg.innerHTML = "<span class='msg-offline'>⚠️ Błąd serwera. Wczytano dane z pamięci.</span>";
+                updateCacheStatus();
+            } else {
+                netMsg.innerHTML = "<span class='msg-offline'>❌ BŁĄD SIECI / BRAK DANYCH</span>";
+                updateCacheStatus();
+                recoveryPanel.style.display = 'block';
+            }
+        }
+    }
+
+    function wgrajLokalnyPlik(input) {
+        const file = input.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const json = JSON.parse(e.target.result);
+                const processedData = transformData(json);
+                const now = Date.now();
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(processedData));
+                localStorage.setItem(STORAGE_KEY + '_time', now.toString());
+                bazaDanych = processedData;
+
+                alert("Plik lokalny wczytany pomyślnie!");
+                document.getElementById('recoveryPanel').style.display = 'none';
+                document.getElementById('networkStatus').innerHTML = "<span class='msg-online'>📁 Dane lokalne załadowane</span>";
+                updateCacheStatus();
+                
+            } catch(err) {
+                alert("Błąd: Wybrany plik nie jest poprawnym formatem JSON.");
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // ================= POZOSTAŁE FUNKCJE =================
+
+    function initZegar() {
+        const d = new Date();
+        const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        let dateStr = d.toLocaleDateString('pl-PL', optionsDate);
+        dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+        const timeStr = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const swieto = sprawdzSwieto();
+        const bar = document.getElementById('dateBar');
+        let htmlContent = `${dateStr} <span class="time-display">⏰ ${timeStr}</span>`;
+        if(swieto) {
+            htmlContent += ` <span class="holiday-tag">★ ${swieto}</span>`;
+            bar.style.borderColor = "var(--holiday)";
+        } else {
+            bar.style.borderColor = "#ddd";
+        }
+        bar.innerHTML = htmlContent;
+    }
+
+    function filtrujStacje(query) {
+        const list = document.getElementById('searchResults');
+        list.innerHTML = '';
+        
+        if (!query || query.length < 1) {
+            list.style.display = 'none';
+            return;
+        }
+        const normalizedQuery = normalizeText(query);
+        const unikalneStacje = [];
+        const seen = new Set();
+        bazaDanych.forEach(item => {
+            const nazwaNormalized = normalizeText(item.stacja);
+            const epa = String(item.epa).toLowerCase();
+            if (nazwaNormalized.includes(normalizedQuery) || epa.includes(normalizedQuery)) {
+                if (!seen.has(item.stacja)) {
+                    seen.add(item.stacja);
+                    unikalneStacje.push(item);
+                }
+            }
+        });
+        unikalneStacje.sort((a,b) => a.stacja.localeCompare(b.stacja));
+
+        if (unikalneStacje.length === 0) {
+            list.style.display = 'none';
+            return;
+        }
+
+        unikalneStacje.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'search-result-item';
+            const epaInfo = item.epa && item.epa !== 'Brak' ? `EPA: ${item.epa}` : '';
+            li.innerHTML = `<strong>${item.stacja}</strong> ${epaInfo ? `<small>${epaInfo}</small>` : ''}`;
+            li.onclick = () => {
+                document.getElementById('stationSearch').value = item.stacja;
+                wyswietlStacje(item.stacja);
+                list.style.display = 'none';
+            };
+            list.appendChild(li);
+        });
+        list.style.display = 'block';
+    }
+
+    document.addEventListener('click', function(e) {
+        const list = document.getElementById('searchResults');
+        const input = document.getElementById('stationSearch');
+        if (e.target !== list && e.target !== input) {
+            list.style.display = 'none';
+        }
+    });
+
+    function wyswietlStacje(nazwaWymuszona = null) {
+        const nazwa = nazwaWymuszona || document.getElementById('stationSearch').value;
+        const mainBox = document.getElementById('mainStatusBox');
+        const listContainer = document.getElementById('detailsList');
+        
+        listContainer.innerHTML = '';
+        if(!nazwa) {
+            mainBox.style.display = 'none';
+            listContainer.style.display = 'none';
+            return;
+        }
+
+        const kasy = bazaDanych.filter(k => k.stacja === nazwa);
+        
+        let anyOpen = false;
+        let anyBreak = false;
+        let allNone = true; // Flaga dla braku kasy
+
+        const d = new Date();
+        const swieto = sprawdzSwieto();
+        const day = d.getDay(); 
+        let dayType = 'pn_pt';
+        if(swieto || day === 0) dayType = 'nd';
+        else if(day === 6) dayType = 'sob';
+
+        kasy.forEach(k => {
+            if (k.przewoznik !== 'BRAK') allNone = false;
+            
+            const st = obliczStatus(k, swieto, day);
+            if(st.type === 'open') anyOpen = true;
+            if(st.type === 'break') anyBreak = true;
+            const isDataOld = checkDataAge(k.meta.data);
+            const linkPrzewoznika = BAZA_LINKOW[k.przewoznik] || null;
+            const uwagiHtml = (k.uwagi && String(k.uwagi).toLowerCase() !== 'nan') ? 
+                `<div class="notes-section"><strong>UWAGI:</strong> ${k.uwagi}</div>` : '';
+            const dataAgeWarningHtml = isDataOld ? 
+                `<div class="data-age-warning">⛔ Dane nieaktualne (starsze niż ${MAX_DAYS_FRESH} dni). Weryfikuj u przewoźnika!</div>` : '';
+
+            const html = `
+            <div class="card" style="border-left-color: ${st.color}">
+                <div class="card-header">
+                    <div>
+                        <div class="carrier-title">${k.przewoznik}</div>
+                        <div class="epa-info">EPA: ${k.epa || 'Brak danych'}</div>
+                    </div>
+                    <div class="status-pill" style="background-color: ${st.color}; color: ${st.type==='break'?'#333':'white'}">
+                        ${st.text}
+                    </div>
+                </div>
+                
+                ${dataAgeWarningHtml}
+                ${uwagiHtml}
+
+                <table class="details-table">
+                    <tr class="${dayType==='pn_pt'?'active-row':''}">
+                        <th>Pn - Pt</th>
+                        <td>${k.godziny.pn_pt} <br> <small style="color:#777">Przerwa: ${k.przerwy.pn_pt||'-'}</small></td>
+                    </tr>
+                    <tr class="${dayType==='sob'?'active-row':''}">
+                        <th>Sobota</th>
+                        <td>${k.godziny.sob} <br> <small style="color:#777">Przerwa: ${k.przerwy.sob||'-'}</small></td>
+                    </tr>
+                    <tr class="${dayType==='nd'?'active-row':''}">
+                        <th>Ndz / Św</th>
+                        <td>${k.godziny.nd} <br> <small style="color:#777">Przerwa: ${k.przerwy.nd||'-'}</small></td>
+                    </tr>
+                </table>
+                
+                ${linkPrzewoznika ? `<a href="${linkPrzewoznika}" target="_blank" class="btn-link">Wykaz kas: ${k.przewoznik} &raquo;</a>` : ''}
+
+                <div class="meta-footer">Data danych: ${k.meta.data} | Autor: ${k.meta.kto}</div>
+            </div>`;
+            listContainer.innerHTML += html;
+        });
+
+        mainBox.style.display = 'block';
+        mainBox.className = ''; 
+        
+        if (allNone) {
+            mainBox.innerText = "BRAK KASY BILETOWEJ";
+            mainBox.classList.add('bg-none');
+        } else if(anyOpen) {
+            mainBox.innerText = "KASA CZYNNA";
+            mainBox.classList.add('bg-open');
+        } else if(anyBreak) {
+            mainBox.innerText = "PRZERWA";
+            mainBox.classList.add('bg-break');
+        } else {
+            mainBox.innerText = "NIECZYNNE";
+            mainBox.classList.add('bg-closed');
+        }
+        
+        listContainer.style.display = 'block';
+    }
+
+    function obliczStatus(kasa, swieto, dayOfWeek) {
+        if (kasa.przewoznik === 'BRAK') {
+            return { type: 'none', text: 'BRAK KASY', color: '#6c757d' };
+        }
+
+        let hStr, bStr;
+        if(swieto || dayOfWeek === 0) {
+            hStr = kasa.godziny.nd;
+            bStr = kasa.przerwy.nd;
+        } else if(dayOfWeek === 6) {
+            hStr = kasa.godziny.sob;
+            bStr = kasa.przerwy.sob;
+        } else {
+            hStr = kasa.godziny.pn_pt;
+            bStr = kasa.przerwy.pn_pt;
+        }
+        const hStrLower = String(hStr).toLowerCase();
+        const is24h = hStrLower.includes('całodobowo');
+        
+        if(!hStr || hStrLower.includes('nieczynne') || hStrLower.includes('zamknięte')) {
+            return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
+        }
+        const now = new Date();
+        const min = now.getHours() * 60 + now.getMinutes();
+        
+        if (!is24h) {
+            const [open, close] = parseRange(hStr);
+            let isOpen = false;
+            if (open <= close) {
+                if(min >= open && min < close) isOpen = true;
+            } else {
+                if(min >= open || min < close) isOpen = true;
+            }
+            if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
+        }
+        const bStrLower = String(bStr).toLowerCase();
+        if(bStr && bStrLower.length > 3 && !bStrLower.includes('brak') && bStrLower !== 'nan') {
+            const breaks = String(bStr).split(';');
+            for(let br of breaks) {
+                const [bStart, bEnd] = parseRange(br.trim());
+                let isDuringBreak = false;
+                if (bStart <= bEnd) {
+                    if (min >= bStart && min < bEnd) isDuringBreak = true;
+                } else {
+                    if (min >= bStart || min < bEnd) isDuringBreak = true;
+                }
+                if(isDuringBreak) {
+                    return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
+                }
+            }
+        }
+        return { type: 'open', text: 'OTWARTA', color: '#28a745' };
+    }
+
+    function parseTime(t) {
+        if(!t) return 0;
+        const [h, m] = String(t).split(':').map(Number);
+        return h * 60 + m;
+    }
+    
+    function parseRange(str) {
+        if(!str || !String(str).includes('-')) return [0,0];
+        const parts = String(str).split('-');
+        return [parseTime(parts[0]), parseTime(parts[1])];
+    }
+
+    window.onload = () => {
+        initZegar();
+        pobierzDane(); 
+        setInterval(() => { initZegar(); }, 1000);
+        setInterval(() => { 
+            // Odświeżaj status tylko jeśli nie jesteśmy w trybie "Pokaż Wszystkie" (bo tam nie ma mainBox)
+            if(document.getElementById('mainStatusBox').style.display !== 'none') {
+                 wyswietlStacje(); 
+            }
+        }, 60000);
+    };
+</script>
+
+</body>
+</html>
