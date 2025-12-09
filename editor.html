@@ -98,6 +98,7 @@
         .btn-danger { background: var(--danger); color: white; }
         .btn-clone { background: #f1f3f5; color: #333; border: 1px solid #dee2e6; }
         .btn-clone:hover { background: #e9ecef; }
+        .btn-nav { font-size: 1.1rem; padding: 6px 12px; }
 
         .carrier-link-btn { display: inline-flex; text-decoration: none; background: #e7f1ff; color: var(--primary-light); border: 1px solid #b8daff; padding: 8px 12px; border-radius: 5px; font-size: 0.85rem; font-weight: 600; align-items: center; gap: 5px; transition: 0.2s; height: 42px; }
         .carrier-link-btn:hover { background: var(--primary-light); color: white; border-color: var(--primary-light); }
@@ -164,9 +165,13 @@
 
         /* --- TABLE --- */
         .table-wrap { background: white; border: 1px solid #dee2e6; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
+        .table-controls { padding: 10px 15px; border-bottom: 1px solid #dee2e6; background: #f8fafc; display: flex; gap: 15px; align-items: center; font-size: 0.85rem; color: #555; flex-wrap: wrap; }
+        .col-toggle { display: flex; gap: 5px; align-items: center; cursor: pointer; }
+        .col-toggle input { cursor: pointer; }
+        
         .table-scroll { max-height: 500px; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th { background: #f1f3f5; padding: 12px 15px; text-align: left; position: sticky; top: 0; font-weight: 700; border-bottom: 2px solid #dee2e6; color: #495057; }
+        th { background: #f1f3f5; padding: 12px 15px; text-align: left; position: sticky; top: 0; font-weight: 700; border-bottom: 2px solid #dee2e6; color: #495057; z-index: 10; }
         td { padding: 10px 15px; border-bottom: 1px solid #dee2e6; color: #333; }
         tr:hover { background: #f8f9fa; cursor: pointer; }
         .row-modified td { background: var(--row-modified); }
@@ -174,6 +179,11 @@
         .row-done td { background: var(--row-done); color: #6c757d; }
         .row-active td { background: var(--row-active) !important; color: #000; }
         .row-hidden td { opacity: 0.6; background: var(--row-hidden); font-style: italic; }
+        
+        /* Preview table row styling */
+        .preview-row { cursor: pointer; transition: background 0.2s; }
+        .preview-row:hover { background: #e9ecef; }
+        .preview-row.active { background: #d1e7dd; font-weight: bold; }
 
         /* --- FOOTER & MODALS --- */
         .footer { text-align: center; padding: 20px; font-size: 0.85rem; color: #666; margin-top: auto; border-top: 1px solid #dee2e6; background: white; }
@@ -233,9 +243,12 @@
         <select id="filterCarrier" class="toolbar-select" onchange="applyFilter()">
             <option value="ALL">Wszyscy przewoźnicy</option>
         </select>
+        <button class="btn btn-outline btn-nav" onclick="prevStation()" title="Poprzednia stacja (Shift + ←)">◀</button>
         <select id="stationSelect" class="toolbar-select" onchange="loadStation()">
             <option value="-1">⌛ Wczytywanie bazy...</option>
         </select>
+        <button class="btn btn-outline btn-nav" onclick="nextStation()" title="Następna stacja (Shift + →)">▶</button>
+        
         <button class="btn btn-outline" onclick="createNewStation()">+ Nowa</button>
         <button class="btn btn-clone" onclick="cloneStation()" title="Sklonuj bieżącą stację">👯 Klonuj</button>
         <button class="btn btn-danger" onclick="deleteStation()">Usuń</button>
@@ -420,10 +433,13 @@
     </form>
 
     <div class="table-wrap">
-        <div style="padding:15px; background:#f8fafc; border-bottom:1px solid #dee2e6; font-weight:700; color:#555;">📊 Podgląd Bazy Danych</div>
+        <div class="table-controls">
+            <strong>📊 Podgląd Bazy Danych | Pokaż kolumny:</strong>
+            <div id="colToggles" style="display:flex; gap:15px; flex-wrap:wrap;"></div>
+        </div>
         <div class="table-scroll">
-            <table>
-                <thead><tr><th>#</th><th>Stacja</th><th>Przewoźnik</th><th>Województwo</th><th>Uwagi</th><th>Edytor</th><th>Data</th></tr></thead>
+            <table id="mainTable">
+                <thead id="tableHead"></thead>
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
@@ -459,13 +475,12 @@
         <h3>❓ Instrukcja Obsługi i Bezpieczeństwo</h3>
         <div style="overflow-y:auto; max-height:400px; padding-right:10px;">
             <ul class="help-list">
-                <li><strong>1. Podgląd Stacji (NOWOŚĆ)</strong> Po wybraniu stacji, po prawej stronie (pod sekcją Meta Dane) wyświetli się lista wszystkich rekordów dla tej stacji. Ułatwia to identyfikację i edycję konkretnego rekordu przy stacjach wieloprzewoźnikowych (np. Poznań Główny).</li>
-                <li><strong>2. Persystencja Danych</strong> Dane są automatycznie zapisywane w pamięci sesji (sessionStorage) po każdej zmianie. <span class="help-warn">Nie zapomnij pobrać pliku JSON po zakończeniu pracy.</span></li>
-                <li><strong>3. Klonowanie Stacji (👯 Klonuj)</strong> Użyj tej funkcji, gdy dodajesz stację o podobnych godzinach co poprzednia. EPA zostanie zachowane, a przewoźnik wyczyszczony.</li>
-                <li><strong>4. Masowa Zamiana (🔎 Znajdź i Zamień)</strong> Użyj, gdy chcesz zmienić nazwę przewoźnika, województwo lub fragment uwag w całej bazie naraz. <span class="help-warn">UWAGA: To działanie jest nieodwracalne!</span></li>
-                <li><strong>5. Ukrywanie Rekordów (👁️ Ukryj)</strong> Zamiast usuwać stację, zaznacz opcję "Ukryj stację". Stacja pozostanie w bazie, ale nie będzie widoczna dla pasażerów.</li>
-                <li><strong>6. Naprawa Danych (🔧 Napraw Format)</strong> Zamienia kropki w godzinach na dwukropki, usuwa zbędne spacje i ujednolica numery EPA.</li>
-                <li><strong>7. Podgląd Segmentów</strong> W menu Podgląd JSON możesz przełączyć się na widok segmentów (plików JSON, które są używane przez Asystenta Kas).</li>
+                <li><strong>1. Nawigacja (NOWOŚĆ)</strong> Użyj przycisków ◀ ▶ aby przełączać się między stacjami. Działa to również ze skrótami klawiszowymi: Shift + Strzałka w Lewo / Prawo. Nawigacja respektuje wybrany filtr przewoźnika.</li>
+                <li><strong>2. Konfiguracja Tabeli (NOWOŚĆ)</strong> Nad tabelą podglądu możesz wybrać, które kolumny mają być widoczne (np. ukryć EPA lub Województwo).</li>
+                <li><strong>3. Aktywny Podgląd Stacji</strong> Kliknięcie wiersza w "Podglądzie Stacji" (prawe okienko) automatycznie przenosi edytor do tego rekordu.</li>
+                <li><strong>4. Persystencja Danych</strong> Dane są automatycznie zapisywane w pamięci sesji (sessionStorage) po każdej zmianie. <span class="help-warn">Nie zapomnij pobrać pliku JSON po zakończeniu pracy.</span></li>
+                <li><strong>5. Klonowanie Stacji (👯 Klonuj)</strong> Użyj tej funkcji, gdy dodajesz stację o podobnych godzinach co poprzednia. EPA zostanie zachowane, a przewoźnik wyczyszczony.</li>
+                <li><strong>6. Masowa Zamiana</strong> Użyj "Znajdź i Zamień" w menu zębatki do masowych zmian tekstowych.</li>
             </ul>
         </div>
         <button class="btn btn-outline" onclick="closeModals()" style="align-self: flex-end; margin-top:15px;">Zamknij</button>
@@ -480,8 +495,19 @@
     let manualProgressOffset = 0;
     let progressRefDate = null;
     
-    // ZMIENIONA KONFIGURACJA NA SEGMENTY
-    const DB_SESSION_KEY = 'editor_current_db'; // Klucz do zapisu w sessionStorage
+    // Konfiguracja kolumn
+    const columnsConfig = {
+        'id': { label: '#', show: false },
+        'stacja': { label: 'Stacja', show: true },
+        'przewoznik': { label: 'Przewoźnik', show: true },
+        'wojewodztwo': { label: 'Województwo', show: false },
+        'epa': { label: 'EPA', show: false },
+        'uwagi': { label: 'Uwagi', show: true },
+        'editor': { label: 'Edytor', show: true },
+        'data': { label: 'Data', show: true }
+    };
+
+    const DB_SESSION_KEY = 'editor_current_db'; 
 
     const DB_SEGMENT_URLS = [
         'data_pkp_intercity.json', 
@@ -496,7 +522,6 @@
         'data_skm.json',
         'data_brak_kasy.json'
     ];
-
 
     const carrierLinks = {
         "PKP INTERCITY": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
@@ -518,7 +543,6 @@
         "BRAK": null
     };
 
-    // MAPOWANIE PRZEWOŹNIKÓW NA NAZWY PLIKÓW SEGMENTÓW
     const SEGMENT_GROUPS = {
         'PKP INTERCITY': 'data_pkp_intercity.json',
         'POLREGIO': 'data_polregio.json',
@@ -542,7 +566,6 @@
 
     const isBreakField = (id) => id.includes('przerwy');
     
-    // Normalizacja do inputa (np. "8:00" -> "08:00")
     function normalizeTimeForInput(t) { 
         if(!t) return ''; 
         t = t.trim().replace('.', ':'); 
@@ -610,16 +633,27 @@
     function toggleMenu() { document.getElementById('gearMenu').classList.toggle('active'); }
     document.addEventListener('click', e => { if (!document.querySelector('.gear-wrapper').contains(e.target)) document.getElementById('gearMenu').classList.remove('active'); });
 
+    // Obsługa skrótów klawiszowych
+    document.addEventListener('keydown', function(event) {
+        if (event.shiftKey && event.key === 'ArrowLeft') {
+            event.preventDefault();
+            prevStation();
+        } else if (event.shiftKey && event.key === 'ArrowRight') {
+            event.preventDefault();
+            nextStation();
+        }
+    });
+
     window.onload = async function() {
         initTimer(); document.getElementById('meta.data').valueAsDate = new Date(); updateGlobalEditor();
+        renderColumnToggles();
         
-        // 1. Load from session storage (PERSISTENCE) - PRIORYTET
         const cachedDB = sessionStorage.getItem(DB_SESSION_KEY);
         if (cachedDB) {
             try {
                 database = JSON.parse(cachedDB);
                 showToast("✅ Wczytano stan z sesji!");
-                initData(true); // pass flag to skip remote fetch
+                initData(true); 
                 return;
             } catch (e) {
                 console.error("Błąd wczytywania session storage:", e);
@@ -627,55 +661,38 @@
             }
         }
 
-        // 2. Load from multiple remote segment files
         try { 
             const fetchPromises = DB_SEGMENT_URLS.map(url => 
                 fetch(url, { cache: "no-store" })
                 .then(res => {
-                    if (!res.ok) {
-                        console.warn(`Plik ${url} nie istnieje (HTTP ${res.status}). Ignorowanie.`);
-                        return []; 
-                    }
+                    if (!res.ok) { console.warn(`Plik ${url} nie istnieje.`); return []; }
                     return res.json();
                 })
-                .catch(err => {
-                    console.error(`Błąd podczas pobierania pliku ${url}:`, err);
-                    return [];
-                })
+                .catch(err => [])
             );
             
             const results = await Promise.all(fetchPromises);
-            
             let nowaBaza = [];
             results.forEach(arr => {
-                 // W trakcie łączenia, upewniamy się, że to tablica
                  if (Array.isArray(arr)) {
-                     // Filtrujemy, usuwając rekordy, które mogłyby mieć już status (np. jeśli Segmenty zostały wcześniej zapisane z Edytora)
-                     arr.forEach(item => {
-                        const { _status, ...cleanItem } = item;
-                        nowaBaza.push(cleanItem);
-                     });
+                     arr.forEach(item => { const { _status, ...cleanItem } = item; nowaBaza.push(cleanItem); });
                  }
             });
 
             database = nowaBaza;
-            
-            // Inicjalizacja statusu dla świeżo pobranej, połączonej bazy
-            database.forEach(item => {
-                if (item._status === undefined) item._status = 'clean';
-            });
+            database.forEach(item => { if (item._status === undefined) item._status = 'clean'; });
 
             if (database.length > 0) {
-                 initData(false); // Init data from file, not session
-                 showToast(`✅ Wczytano ${database.length} rekordów ze wszystkich segmentów.`);
+                 initData(false); 
+                 showToast(`✅ Wczytano ${database.length} rekordów.`);
             } else {
-                 throw new Error("Pobrano 0 rekordów ze wszystkich segmentów.");
+                 throw new Error("Pobrano 0 rekordów.");
             }
         } 
         catch(e) { 
-            console.warn("Błąd ładowania segmentów:", e); 
+            console.warn("Błąd:", e); 
             document.getElementById('offlineAlert').style.display = 'block'; 
-            document.getElementById('stationSelect').innerHTML = '<option>⚠️ Błąd ładowania segmentów. Wczytaj plik ręcznie.</option>'; 
+            document.getElementById('stationSelect').innerHTML = '<option>⚠️ Błąd ładowania.</option>'; 
         }
     };
 
@@ -685,76 +702,41 @@
             try { 
                 const j = JSON.parse(e.target.result); 
                 if (!Array.isArray(j)) throw new Error("Błąd formatu"); 
-                if (j.length > 0 && !j[0].hasOwnProperty('stacja')) throw new Error("Brak pola stacja"); 
                 database = j; 
-                
-                // Ustaw status dla wszystkich rekordów z załadowanego pliku
-                database.forEach(item => {
-                    if (item._status === undefined) item._status = 'clean';
-                });
-
+                database.forEach(item => { if (item._status === undefined) item._status = 'clean'; });
                 initData(); 
                 document.getElementById('offlineAlert').style.display = 'none'; 
                 showToast("✅ Plik wczytany"); 
                 sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
-            } catch(err) { 
-                alert("Błąd: " + err.message); 
-            } 
+            } catch(err) { alert("Błąd: " + err.message); } 
         }; reader.readAsText(file);
     }
 
     function initData(fromSession = false) {
         database.sort((a,b) => a.stacja.localeCompare(b.stacja)); 
-        
         populateCarrierFilter(); 
         populateSelect(); 
         renderTable();
-        
-        // Load default time editor views
         ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(id => renderTimeEditor(id, ''));
     }
 
     function populateCarrierFilter() {
         const f = document.getElementById('filterCarrier'); 
-        // Generujemy listę unikalnych, "czystych" przewoźników (bez aliasów, które są w select)
         const uniqueCarriers = new Set();
         database.forEach(i => { if(i.przewoznik) uniqueCarriers.add(i.przewoznik); });
-        
         const sorted = Array.from(uniqueCarriers).sort(); 
         f.innerHTML = '<option value="ALL">Wszyscy przewoźnicy</option>'; 
-        sorted.forEach(c => { 
-            const o = document.createElement('option'); 
-            o.value = c; 
-            o.text = c; 
-            f.appendChild(o); 
-        });
+        sorted.forEach(c => { const o = document.createElement('option'); o.value = c; o.text = c; f.appendChild(o); });
     }
 
     function applyFilter() { populateSelect(); renderTable(); }
     
-    // Zaktualizowana funkcja do obsługi select
     function updateCarrierBtn() { 
         const v = document.getElementById('przewoznik').value.toUpperCase(); 
         const b = document.getElementById('carrierBtn'); 
-        // Używamy oryginalnej nazwy przewoźnika, jeśli jest to alias
-        const cleanV = {
-             'KŚ': 'KOLEJE ŚLĄSKIE',
-             'KM': 'KOLEJE MAZOWIECKIE',
-             'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA',
-             'KW': 'KOLEJE WIELKOPOLSKIE',
-             'KD': 'KOLEJE DOLNOŚLĄSKIE',
-             'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE',
-             'BRAK': 'BRAK'
-        }[v] || v;
-
+        const cleanV = { 'KŚ': 'KOLEJE ŚLĄSKIE', 'KM': 'KOLEJE MAZOWIECKIE', 'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA', 'KW': 'KOLEJE WIELKOPOLSKIE', 'KD': 'KOLEJE DOLNOŚLĄSKIE', 'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE', 'BRAK': 'BRAK' }[v] || v;
         const l = carrierLinks[cleanV]; 
-        if (l) { 
-            b.href = l; 
-            b.classList.remove('disabled'); 
-        } else { 
-            b.href = "#"; 
-            b.classList.add('disabled'); 
-        } 
+        if (l) { b.href = l; b.classList.remove('disabled'); } else { b.href = "#"; b.classList.add('disabled'); } 
     }
 
     function updateTimeline() {
@@ -763,7 +745,6 @@
         drawTimelineBar('vis-nd', getTimeEditorValue('godziny.nd'), getTimeEditorValue('przerwy.nd'));
     }
 
-    // Nowa, pancerna funkcja parsowania czasu do wizualizacji
     function timeToMinutes(t) {
         if (!t) return null;
         const clean = t.replace(/[^0-9:]/g, '');
@@ -776,39 +757,99 @@
     function drawTimelineBar(eid, hStr, bStr) {
         const c = document.getElementById(eid); 
         c.querySelectorAll('.bar-open, .bar-break').forEach(el => el.remove());
-        
         const createBar = (s, e, type) => {
-            const sm = timeToMinutes(s); 
-            const em = timeToMinutes(e);
+            const sm = timeToMinutes(s); const em = timeToMinutes(e);
             if(sm === null || em === null) return;
-            
-            let d = em - sm; 
-            if (d < 0) d += 1440; 
+            let d = em - sm; if (d < 0) d += 1440; 
             const effEnd = (sm + d) > 1440 ? 1440 : (sm + d);
-            
-            const w = ((effEnd - sm) / 1440) * 100; 
-            const l = (sm / 1440) * 100;
-            
-            const div = document.createElement('div'); 
-            div.className = type === 'open' ? 'bar-open' : 'bar-break'; 
-            div.style.left = l + '%'; 
-            div.style.width = w + '%'; 
+            const w = ((effEnd - sm) / 1440) * 100; const l = (sm / 1440) * 100;
+            const div = document.createElement('div'); div.className = type === 'open' ? 'bar-open' : 'bar-break'; div.style.left = l + '%'; div.style.width = w + '%'; 
             c.appendChild(div);
         };
-
         if(hStr.toLowerCase().includes('całodobowo')) createBar("00:00", "24:00", 'open');
-        else hStr.split(';').forEach(r => { 
-            const p = r.trim().split('-'); 
-            if(p.length === 2) createBar(p[0], p[1], 'open'); 
+        else hStr.split(';').forEach(r => { const p = r.trim().split('-'); if(p.length === 2) createBar(p[0], p[1], 'open'); });
+        bStr.split(';').forEach(r => { const p = r.trim().split('-'); if(p.length === 2) createBar(p[0], p[1], 'break'); });
+    }
+
+    // --- FUNKCJE NAWIGACJI ---
+    function getFilteredIndices() {
+        const fv = document.getElementById('filterCarrier').value;
+        const indices = [];
+        database.forEach((item, index) => {
+            if (fv === 'ALL' || item.przewoznik === fv) {
+                indices.push(index);
+            }
         });
+        return indices;
+    }
+
+    function prevStation() {
+        if (database.length === 0) return;
+        const visibleIndices = getFilteredIndices();
+        if (visibleIndices.length === 0) return;
         
-        bStr.split(';').forEach(r => { 
-            const p = r.trim().split('-'); 
-            if(p.length === 2) createBar(p[0], p[1], 'break'); 
+        let currentPos = visibleIndices.indexOf(currentIndex);
+        if (currentPos === -1) {
+            // Jeśli obecny indeks nie jest widoczny w filtrze, idź do pierwszego widocznego
+            currentPos = 0;
+        } else {
+            currentPos--;
+            if (currentPos < 0) currentPos = visibleIndices.length - 1; // Zapętlenie
+        }
+        
+        const newIndex = visibleIndices[currentPos];
+        document.getElementById('stationSelect').value = newIndex;
+        loadStation();
+        showToast("Poprzednia stacja");
+    }
+
+    function nextStation() {
+        if (database.length === 0) return;
+        const visibleIndices = getFilteredIndices();
+        if (visibleIndices.length === 0) return;
+
+        let currentPos = visibleIndices.indexOf(currentIndex);
+        if (currentPos === -1) {
+            currentPos = 0;
+        } else {
+            currentPos++;
+            if (currentPos >= visibleIndices.length) currentPos = 0; // Zapętlenie
+        }
+
+        const newIndex = visibleIndices[currentPos];
+        document.getElementById('stationSelect').value = newIndex;
+        loadStation();
+        showToast("Następna stacja");
+    }
+    
+    // --- KONFIGURACJA KOLUMN ---
+    function renderColumnToggles() {
+        const container = document.getElementById('colToggles');
+        container.innerHTML = '';
+        Object.keys(columnsConfig).forEach(key => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'col-toggle';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `chk_${key}`;
+            checkbox.checked = columnsConfig[key].show;
+            checkbox.onchange = (e) => {
+                columnsConfig[key].show = e.target.checked;
+                renderTable();
+            };
+            
+            const label = document.createElement('label');
+            label.htmlFor = `chk_${key}`;
+            label.innerText = columnsConfig[key].label;
+            
+            wrapper.appendChild(checkbox);
+            wrapper.appendChild(label);
+            container.appendChild(wrapper);
         });
     }
 
-    // NOWA FUNKCJA PODGLĄDU REKORDÓW DLA DANEJ STACJI
+
     function renderStationPreview(stationName) {
         const previewNameEl = document.getElementById('previewStationName');
         const previewContentEl = document.getElementById('stationPreviewContent');
@@ -820,7 +861,10 @@
         }
 
         const normalizedStationName = stationName.toUpperCase().trim();
-        const filteredRecords = database.filter(item => item.stacja === normalizedStationName);
+        // Szukamy rekordów i ich oryginalnych indeksów
+        const filteredRecords = database.map((item, index) => ({ item, index }))
+                                      .filter(obj => obj.item.stacja === normalizedStationName);
+        
         previewNameEl.innerText = normalizedStationName;
 
         if (filteredRecords.length === 0) {
@@ -828,12 +872,11 @@
             return;
         }
 
-        // Sortowanie: aktywne/nowe/zmodyfikowane na górze, reszta alfabetycznie
         filteredRecords.sort((a, b) => {
-            const statusA = (a._status === 'modified' || a._status === 'new') ? 1 : 0;
-            const statusB = (b._status === 'modified' || b._status === 'new') ? 1 : 0;
-            if (statusA !== statusB) return statusB - statusA; // Sort by status (modified/new first)
-            return a.przewoznik.localeCompare(b.przewoznik); // Then by carrier name
+            const statusA = (a.item._status === 'modified' || a.item._status === 'new') ? 1 : 0;
+            const statusB = (b.item._status === 'modified' || b.item._status === 'new') ? 1 : 0;
+            if (statusA !== statusB) return statusB - statusA; 
+            return a.item.przewoznik.localeCompare(b.item.przewoznik); 
         });
 
         let html = `
@@ -849,20 +892,21 @@
                 <tbody>
         `;
 
-        filteredRecords.forEach(record => {
-            let rowClass = '';
-            if (record._status === 'modified') rowClass = 'row-modified';
-            else if (record._status === 'new') rowClass = 'row-new';
-            else if (record.ukryty) rowClass = 'row-hidden';
+        filteredRecords.forEach(obj => {
+            const record = obj.item;
+            const originalIndex = obj.index;
+            let rowClass = 'preview-row';
+            if (record._status === 'modified') rowClass += ' row-modified';
+            else if (record._status === 'new') rowClass += ' row-new';
+            else if (record.ukryty) rowClass += ' row-hidden';
             
-            // Highlight the currently edited row
-            if (record.stacja === database[currentIndex]?.stacja && record.przewoznik === database[currentIndex]?.przewoznik) {
-                 rowClass += ' row-active';
+            if (originalIndex === parseInt(currentIndex)) {
+                 rowClass += ' active row-active';
             }
 
-
+            // Dodano onclick z funkcją switchToRecord
             html += `
-                <tr class="${rowClass}">
+                <tr class="${rowClass}" onclick="switchToRecord(${originalIndex})" title="Kliknij, aby edytować ten rekord">
                     <td style="padding:5px 8px;">${record.przewoznik}</td>
                     <td style="padding:5px 8px;">${record.epa || '-'}</td>
                     <td style="padding:5px 8px;">${record._status === 'modified' ? '📝' : (record._status === 'new' ? '✨' : (record.ukryty ? '👁️' : '✔'))}</td>
@@ -874,7 +918,13 @@
         html += `</tbody></table>`;
         previewContentEl.innerHTML = html;
     }
-
+    
+    // Funkcja pomocnicza do przełączania z podglądu
+    function switchToRecord(index) {
+        document.getElementById('stationSelect').value = index;
+        loadStation();
+        showToast("Przełączono rekord");
+    }
 
     function loadStation() {
         const idx = document.getElementById('stationSelect').value; currentIndex = idx; renderTable();
@@ -885,7 +935,7 @@
             updateCarrierBtn(); 
             tf.forEach(id => renderTimeEditor(id, '')); 
             updateTimeline(); 
-            renderStationPreview(null); // Clear preview
+            renderStationPreview(null); 
             return; 
         }
 
@@ -899,9 +949,7 @@
         tf.forEach(id => renderTimeEditor(id, g(id)));
         document.getElementById('meta.kto').value = document.getElementById('globalEditor').value; document.getElementById('meta.data').valueAsDate = new Date();
         
-        // ADDED: Render station preview
         renderStationPreview(g('stacja'));
-
         setTimeout(() => { updateCarrierBtn(); updateTimeline(); }, 0);
     }
 
@@ -918,44 +966,35 @@
             "uwagi": getValue('uwagi'), "ukryty": document.getElementById('ukryty').checked, 
             "meta.kto": editor, "meta.data": getValue('meta.data')
         };
-        // Normalize przewoznik field to official names for consistency in data if old aliases were used
         const p = newItem.przewoznik;
         newItem.przewoznik = {
-             'KŚ': 'KOLEJE ŚLĄSKIE',
-             'KM': 'KOLEJE MAZOWIECKIE',
-             'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA',
-             'KW': 'KOLEJE WIELKOPOLSKIE',
-             'KD': 'KOLEJE DOLNOŚLĄSKIE',
-             'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE'
+             'KŚ': 'KOLEJE ŚLĄSKIE', 'KM': 'KOLEJE MAZOWIECKIE', 'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA', 'KW': 'KOLEJE WIELKOPOLSKIE', 'KD': 'KOLEJE DOLNOŚLĄSKIE', 'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE'
         }[p] || p;
 
         if(currentIndex === -1) { newItem._status = 'new'; database.push(newItem); showToast("✨ Dodano"); }
         else { const old = database[currentIndex]._status; newItem._status = (old === 'new') ? 'new' : 'modified'; database[currentIndex] = newItem; showToast("💾 Zapisano"); }
         
-        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); // PERSISTENCE
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
 
         database.sort((a,b) => a.stacja.localeCompare(b.stacja)); currentIndex = database.findIndex(x => x === newItem);
         populateCarrierFilter(); populateSelect(); document.getElementById('stationSelect').value = currentIndex; renderTable(); updateProgressBar();
-        renderStationPreview(newItem.stacja); // ADDED: Re-render station preview after save
+        renderStationPreview(newItem.stacja); 
     }
     
     function cloneStation() {
         if (currentIndex === -1) { alert("Wybierz stację do sklonowania!"); return; }
         const newItem = JSON.parse(JSON.stringify(database[currentIndex]));
-        newItem.przewoznik = ""; 
-        newItem.wojewodztwo = ""; 
-        newItem.uwagi = "";      
+        newItem.przewoznik = ""; newItem.wojewodztwo = ""; newItem.uwagi = "";      
         newItem._status = 'new';
         newItem['meta.kto'] = document.getElementById('globalEditor').value;
         newItem['meta.data'] = new Date().toISOString().split('T')[0];
         
         database.push(newItem);
-        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); // PERSISTENCE
-        
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
         database.sort((a,b) => a.stacja.localeCompare(b.stacja));
         currentIndex = database.indexOf(newItem);
         populateSelect(); document.getElementById('stationSelect').value = currentIndex; loadStation(); renderTable(); updateProgressBar(); showToast("👯 Sklonowano (EPA zachowane)!");
-        renderStationPreview(newItem.stacja); // ADDED: Re-render station preview after clone
+        renderStationPreview(newItem.stacja);
     }
 
     function openFindReplaceModal() { document.getElementById('gearMenu').classList.remove('active'); document.getElementById('findReplaceModal').style.display = 'flex'; }
@@ -965,11 +1004,9 @@
         if(!confirm(`Zamienić "${ft}" na "${rt}" w polu [${f}]?`)) return;
         let c = 0; const ed = document.getElementById('globalEditor').value; const td = new Date().toISOString().split('T')[0];
         database.forEach(i => { if(i[f] && i[f].includes(ft)) { i[f] = i[f].replace(new RegExp(ft, 'g'), rt); i['meta.kto'] = ed; i['meta.data'] = td; i._status = 'modified'; c++; } });
-        
-        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); // PERSISTENCE
-
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
         closeModals(); renderTable(); updateProgressBar(); populateCarrierFilter(); alert(`✅ Zmieniono ${c} rekordów.`);
-        renderStationPreview(database[currentIndex]?.stacja); // ADDED: Update preview after mass change
+        renderStationPreview(database[currentIndex]?.stacja);
     }
 
     function populateSelect() {
@@ -985,37 +1022,63 @@
     
     function calcProgressByDate() { const d = document.getElementById('dateOffset').value; if(!d) return; let c = 0; progressRefDate = d; database.forEach(i => { if(i['meta.data'] === d) c++; }); document.getElementById('manualOffset').value = c; alert(`Znaleziono: ${c}`); populateSelect(); renderTable(); }
     function saveProgressSettings() { manualProgressOffset = parseInt(document.getElementById('manualOffset').value) || 0; updateProgressBar(); closeModals(); }
+    
+    // ZMODYFIKOWANA FUNKCJA RENDER TABLE (Konfiguracja kolumn)
     function renderTable() {
-        const tb = document.getElementById('tableBody'); tb.innerHTML = ''; const fv = document.getElementById('filterCarrier').value;
+        const thead = document.getElementById('tableHead');
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = ''; thead.innerHTML = '';
+        const fv = document.getElementById('filterCarrier').value;
+
+        // Budowanie nagłówka
+        let headRow = '<tr>';
+        if(columnsConfig.id.show) headRow += `<th>${columnsConfig.id.label}</th>`;
+        if(columnsConfig.stacja.show) headRow += `<th>${columnsConfig.stacja.label}</th>`;
+        if(columnsConfig.przewoznik.show) headRow += `<th>${columnsConfig.przewoznik.label}</th>`;
+        if(columnsConfig.wojewodztwo.show) headRow += `<th>${columnsConfig.wojewodztwo.label}</th>`;
+        if(columnsConfig.epa.show) headRow += `<th>${columnsConfig.epa.label}</th>`;
+        if(columnsConfig.uwagi.show) headRow += `<th>${columnsConfig.uwagi.label}</th>`;
+        if(columnsConfig.editor.show) headRow += `<th>${columnsConfig.editor.label}</th>`;
+        if(columnsConfig.data.show) headRow += `<th>${columnsConfig.data.label}</th>`;
+        headRow += '</tr>';
+        thead.innerHTML = headRow;
+
+        const sh = t => t && t.length > 20 ? t.substring(0,17)+'...' : (t||'');
+
         database.forEach((item, i) => {
             if (fv !== 'ALL' && item.przewoznik !== fv) return;
             const tr = document.createElement('tr');
             if(item._status === 'modified') tr.className = 'row-modified'; else if(item._status === 'new') tr.className = 'row-new'; else if(progressRefDate && item['meta.data'] === progressRefDate) tr.className = 'row-done';
             if (item.ukryty) tr.classList.add('row-hidden');
             if(i == currentIndex) tr.classList.add('row-active');
+            
             tr.onclick = () => { 
                 const s = document.getElementById('stationSelect');
                 if(!s.querySelector(`option[value="${i}"]`)) { const o = document.createElement('option'); o.value = i; o.text = item.stacja; o.selected = true; s.appendChild(o); }
                 s.value = i; loadStation(); 
             };
-            const sh = t => t && t.length > 20 ? t.substring(0,17)+'...' : (t||'');
-            // Zmieniona struktura tabeli
-            tr.innerHTML = `<td>${i+1}</td><td><b>${item.stacja}</b></td><td>${item.przewoznik}</td><td>${item.wojewodztwo || '-'}</td><td>${sh(item.uwagi)}</td><td>${item['meta.kto']||'-'}</td><td>${item['meta.data']}</td>`;
-            tb.appendChild(tr);
+            
+            let rowHtml = '';
+            if(columnsConfig.id.show) rowHtml += `<td>${i+1}</td>`;
+            if(columnsConfig.stacja.show) rowHtml += `<td><b>${item.stacja}</b></td>`;
+            if(columnsConfig.przewoznik.show) rowHtml += `<td>${item.przewoznik}</td>`;
+            if(columnsConfig.wojewodztwo.show) rowHtml += `<td>${item.wojewodztwo || '-'}</td>`;
+            if(columnsConfig.epa.show) rowHtml += `<td>${item.epa || '-'}</td>`;
+            if(columnsConfig.uwagi.show) rowHtml += `<td>${sh(item.uwagi)}</td>`;
+            if(columnsConfig.editor.show) rowHtml += `<td>${item['meta.kto']||'-'}</td>`;
+            if(columnsConfig.data.show) rowHtml += `<td>${item['meta.data']}</td>`;
+            
+            tr.innerHTML = rowHtml;
+            tbody.appendChild(tr);
         });
     }
     
-    // FUNKCJA GRUPUJĄCA BAZĘ W SEGMENTY DLA PODGLĄDU I POBIERANIA
     function groupDatabaseBySegment() {
         const segments = {};
         database.forEach(item => {
             const przewoznik = item.przewoznik.toUpperCase();
             const segmentFileName = SEGMENT_GROUPS[przewoznik] || 'data_custom.json';
-
-            if (!segments[segmentFileName]) {
-                segments[segmentFileName] = [];
-            }
-            // Usunięcie _status przed zapisem do segmentu wyjściowego
+            if (!segments[segmentFileName]) segments[segmentFileName] = [];
             const { _status, ...cleanItem } = item;
             segments[segmentFileName].push(cleanItem);
         });
@@ -1024,81 +1087,46 @@
 
     function showCodePreview() { 
         document.getElementById('gearMenu').classList.remove('active');
-        
-        // 1. Prepare segment selector
         const segments = groupDatabaseBySegment();
         const selector = document.getElementById('segmentSelector');
         selector.innerHTML = '<option value="MASTER">Cała Baza (MASTER)</option>';
-
         const segmentNames = new Set(Object.values(SEGMENT_GROUPS));
         const sortedSegmentNames = Array.from(segmentNames).sort();
-
         sortedSegmentNames.forEach(name => {
              if (segments[name] && segments[name].length > 0) {
                  const option = document.createElement('option');
-                 option.value = name;
-                 option.text = `${name} (${segments[name].length})`;
-                 selector.appendChild(option);
+                 option.value = name; option.text = `${name} (${segments[name].length})`; selector.appendChild(option);
              }
         });
-        
-        // 2. Display MASTER by default
         showSegment('MASTER'); 
-        
         document.getElementById('codeModal').style.display = 'flex'; 
     }
     
     function showSegment(segmentName) {
         const previewEl = document.getElementById('jsonPreview');
         let dataToDisplay;
-        
-        if (segmentName === 'MASTER') {
-            dataToDisplay = database.map(i => { const {_status, ...r} = i; return r; });
-        } else {
-            const segments = groupDatabaseBySegment();
-            dataToDisplay = segments[segmentName] || [];
-        }
-        
+        if (segmentName === 'MASTER') dataToDisplay = database.map(i => { const {_status, ...r} = i; return r; });
+        else { const segments = groupDatabaseBySegment(); dataToDisplay = segments[segmentName] || []; }
         previewEl.innerHTML = syntaxHighlight(dataToDisplay);
     }
     
     function copyCodeToClipboard() { 
         const segmentName = document.getElementById('segmentSelector').value;
         let dataToCopy;
-        
-        if (segmentName === 'MASTER') {
-            dataToCopy = database.map(i => { const {_status, ...r} = i; return r; });
-        } else {
-            const segments = groupDatabaseBySegment();
-            dataToCopy = segments[segmentName] || [];
-        }
-        
+        if (segmentName === 'MASTER') dataToCopy = database.map(i => { const {_status, ...r} = i; return r; });
+        else { const segments = groupDatabaseBySegment(); dataToCopy = segments[segmentName] || []; }
         navigator.clipboard.writeText(JSON.stringify(dataToCopy, null, 2)).then(() => showToast(`✅ Skopiowano segment: ${segmentName}`)); 
     }
 
     function downloadJSON() { 
         const segmentName = document.getElementById('segmentSelector').value;
-        let dataToDownload;
-        let fileName;
-
-        if (segmentName === 'MASTER') {
-            dataToDownload = database.map(i => { const {_status, ...r} = i; return r; });
-            fileName = 'kasy_master.json'; 
-        } else {
-            const segments = groupDatabaseBySegment();
-            dataToDownload = segments[segmentName] || [];
-            fileName = segmentName;
-        }
-
+        let dataToDownload; let fileName;
+        if (segmentName === 'MASTER') { dataToDownload = database.map(i => { const {_status, ...r} = i; return r; }); fileName = 'kasy_master.json'; }
+        else { const segments = groupDatabaseBySegment(); dataToDownload = segments[segmentName] || []; fileName = segmentName; }
         if(dataToDownload.length === 0) { showToast("Brak danych do pobrania w tym segmencie."); return; }
-        
         const s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToDownload, null, 2)); 
-        const d = document.createElement('a'); 
-        d.setAttribute("href", s); 
-        d.setAttribute("download", fileName); 
-        d.click(); 
-        document.getElementById('gearMenu').classList.remove('active'); 
-        showToast(`💾 Pobrano: ${fileName}`);
+        const d = document.createElement('a'); d.setAttribute("href", s); d.setAttribute("download", fileName); d.click(); 
+        document.getElementById('gearMenu').classList.remove('active'); showToast(`💾 Pobrano: ${fileName}`);
     }
 
     function updateGlobalEditor() { const g = document.getElementById('globalEditor').value; const f = document.getElementById('meta.kto'); if(f) f.value = g; }
@@ -1106,74 +1134,44 @@
     function setValue(id, val) { document.getElementById(id).value = val; }
     function showToast(msg) { const t=document.getElementById('toast'); t.innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
     function createNewStation() { 
-        document.getElementById('editForm').reset(); 
-        document.getElementById('stationSelect').value = -1; 
-        currentIndex = -1; 
-        document.getElementById('meta.kto').value = document.getElementById('globalEditor').value; 
-        document.getElementById('meta.data').valueAsDate = new Date(); 
+        document.getElementById('editForm').reset(); document.getElementById('stationSelect').value = -1; currentIndex = -1; 
+        document.getElementById('meta.kto').value = document.getElementById('globalEditor').value; document.getElementById('meta.data').valueAsDate = new Date(); 
         ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(id => renderTimeEditor(id, '')); 
-        updateCarrierBtn(); 
-        updateTimeline(); 
-        renderStationPreview(null); // Clear preview
-        showToast("Nowa Stacja"); 
+        updateCarrierBtn(); updateTimeline(); renderStationPreview(null); showToast("Nowa Stacja"); 
     }
     function deleteStation() { 
         if(currentIndex===-1)return; 
         if(confirm("Usunąć?")){ 
-            database.splice(currentIndex,1); 
-            sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); // PERSISTENCE
-            populateSelect(); 
-            createNewStation(); 
-            renderTable(); 
-            updateProgressBar(); 
-            renderStationPreview(null); // Clear preview
-            showToast("🗑️ Usunięto"); 
+            database.splice(currentIndex,1); sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+            populateSelect(); createNewStation(); renderTable(); updateProgressBar(); renderStationPreview(null); showToast("🗑️ Usunięto"); 
         }
     }
     function syntaxHighlight(j) { if (typeof j != 'string') j = JSON.stringify(j, undefined, 2); j = j.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); return j.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => { let c = 'number'; if (/^"/.test(m)) { c = /:$/.test(m) ? 'key' : 'string'; } else if (/true|false/.test(m)) c = 'boolean'; else if (/null/.test(m)) c = 'null'; return '<span class="' + c + '">' + m + '</span>'; }); }
     function openProgressModal() { document.getElementById('gearMenu').classList.remove('active'); document.getElementById('progressModal').style.display = 'flex'; }
     function openHelpModal() { document.getElementById('gearMenu').classList.remove('active'); document.getElementById('helpModal').style.display = 'flex'; }
     function bulkFixData() { 
-        document.getElementById('gearMenu').classList.remove('active'); 
-        if(!confirm("Naprawić format (EPA na string, godziny)?")) return; 
-        let c = 0; 
+        document.getElementById('gearMenu').classList.remove('active'); if(!confirm("Naprawić format (EPA na string, godziny)?")) return; let c = 0; 
         database.forEach(i => { 
-            // Fix EPA
             if (i.epa && typeof i.epa !== 'string') { i.epa = String(i.epa); i._status = 'modified'; c++; } 
-            // Fix Hours
             ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(k => { 
                 if (i[k]) { const o = i[k]; let n = o.replace(/\./g, ':').replace(/\s*-\s*/g, '-').replace(/\s*;\s*/g, '; ').trim(); if (n !== o) { i[k] = n; i._status = 'modified'; c++; } } 
             }); 
-            // Normalize przewoznik field to official names for consistency in data if old aliases were used
             const p = i.przewoznik;
-            const newP = {
-                 'KŚ': 'KOLEJE ŚLĄSKIE',
-                 'KM': 'KOLEJE MAZOWIECKIE',
-                 'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA',
-                 'KW': 'KOLEJE WIELKOPOLSKIE',
-                 'KD': 'KOLEJE DOLNOŚLĄSKIE',
-                 'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE'
-            }[p] || p;
+            const newP = { 'KŚ': 'KOLEJE ŚLĄSKIE', 'KM': 'KOLEJE MAZOWIECKIE', 'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA', 'KW': 'KOLEJE WIELKOPOLSKIE', 'KD': 'KOLEJE DOLNOŚLĄSKIE', 'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE' }[p] || p;
             if (newP !== p) { i.przewoznik = newP; i._status = 'modified'; c++; }
-
         }); 
-        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); // PERSISTENCE
-        renderTable(); updateProgressBar(); populateCarrierFilter(); showToast(`✅ Zoptymalizowano ${c} pól.`); 
-        renderStationPreview(database[currentIndex]?.stacja); // Update preview
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); renderTable(); updateProgressBar(); populateCarrierFilter(); showToast(`✅ Zoptymalizowano ${c} pól.`); 
+        renderStationPreview(database[currentIndex]?.stacja);
     }
     function bulkUpdateClosed() { 
-        document.getElementById('gearMenu').classList.remove('active'); 
-        if(!confirm("Zaktualizować nieczynne?")) return; 
+        document.getElementById('gearMenu').classList.remove('active'); if(!confirm("Zaktualizować nieczynne?")) return; 
         const e = document.getElementById('globalEditor').value; const t = new Date().toISOString().split('T')[0]; let c = 0; 
         database.forEach(i => { 
             const h = (i['godziny.pn_pt'] || "").toLowerCase(); 
-            if(h.includes('zamknięte') || h.includes('zamkniete') || h.includes('nieczynne')) { 
-                i['meta.kto'] = e; i['meta.data'] = t; i._status = 'modified'; c++; 
-            } 
+            if(h.includes('zamknięte') || h.includes('zamkniete') || h.includes('nieczynne')) { i['meta.kto'] = e; i['meta.data'] = t; i._status = 'modified'; c++; } 
         }); 
-        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); // PERSISTENCE
-        renderTable(); updateProgressBar(); showToast(`✅ Zaktualizowano ${c}`); 
-        renderStationPreview(database[currentIndex]?.stacja); // Update preview
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); renderTable(); updateProgressBar(); showToast(`✅ Zaktualizowano ${c}`); 
+        renderStationPreview(database[currentIndex]?.stacja);
     }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(e => e.style.display = 'none'); }
     function updateProgressBar() { const m = database.filter(i => i._status === 'modified' || i._status === 'new').length; const tp = manualProgressOffset + m; const t = database.length; const d = Math.min(tp, t); const p = t > 0 ? (d / t) * 100 : 0; document.getElementById('progressBar').style.width = p + '%'; document.getElementById('progressText').innerText = `${d} / ${t} (Sesja: ${m})`; }
