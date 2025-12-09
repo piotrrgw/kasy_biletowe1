@@ -41,5 +41,6 @@ Projekt składa się z trzech głównych elementów:
 
 ### 🔗 LINKI
 
-Strona produkcyjna: `https://piotrrgw.github.io/kasy_biletowe1/index.html`
-Strona administratora: `https://piotrrgw.github.io/kasy_biletowe1/editor.html`
+Strona produkcyjna: https://piotrrgw.github.io/kasy_biletowe1/index.html
+
+Strona administratora: https://piotrrgw.github.io/kasy_biletowe1/editor.html
