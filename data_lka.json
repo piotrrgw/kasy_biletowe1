@@ -2,43 +2,49 @@
   {
     "stacja": "ŁÓDŹ FABRYCZNA",
     "epa": "112",
+    "wojewodztwo": "Łódzkie",
     "przewoznik": "ŁÓDZKA KOLEJ AGLOMERACYJNA",
-    "godziny.pn_pt": "6:30-18:00",
-    "godziny.sob": "6:30-18:00",
-    "godziny.nd": "6:30-18:00",
+    "godziny.pn_pt": "06:30-18:00",
+    "godziny.sob": "06:30-18:00",
+    "godziny.nd": "06:30-18:00",
     "przerwy.pn_pt": "Brak",
     "przerwy.sob": "Brak",
     "przerwy.nd": "Brak",
     "uwagi": "",
+    "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-08"
+    "meta.data": "2025-12-09"
   },
   {
     "stacja": "ŁÓDŹ KALISKA",
     "epa": "113",
+    "wojewodztwo": "Łódzkie",
     "przewoznik": "ŁÓDZKA KOLEJ AGLOMERACYJNA",
-    "godziny.pn_pt": "6:35-17:50",
-    "godziny.sob": "6:35-17:50",
-    "godziny.nd": "6:35-17:50",
+    "godziny.pn_pt": "06:35-17:50",
+    "godziny.sob": "06:35-17:50",
+    "godziny.nd": "06:35-17:50",
     "przerwy.pn_pt": "Brak",
     "przerwy.sob": "Brak",
     "przerwy.nd": "Brak",
     "uwagi": "",
+    "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-08"
+    "meta.data": "2025-12-09"
   },
   {
     "stacja": "PABIANICE",
     "epa": "148",
+    "wojewodztwo": "Łódzkie",
     "przewoznik": "ŁÓDZKA KOLEJ AGLOMERACYJNA",
-    "godziny.pn_pt": "6:00-18:00",
-    "godziny.sob": "9:00-13:00",
+    "godziny.pn_pt": "06:00-18:00",
+    "godziny.sob": "09:00-13:00",
     "godziny.nd": "Zamknięte",
     "przerwy.pn_pt": "Brak",
     "przerwy.sob": "Brak",
     "przerwy.nd": "Brak",
     "uwagi": "Kasa czynna w dwie pierwsze soboty miesiąca. \nW dniach 22-31.12.2025 r. kasa biletowa na dworcu w Pabianicach będzie czynna w godzinach 06:00-14:00",
+    "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-08"
+    "meta.data": "2025-12-09"
   }
 ]
