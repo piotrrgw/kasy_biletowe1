@@ -19,10 +19,10 @@
     <style>
         /* USTAWIENIA KOLORÓW */
         :root {
-            --primary: #1e6091; /* Główny kolor - bardziej profesjonalny niebieski */
+            --primary: #1e6091;
             --primary-light: #007bff;
             --primary-dark: #123e5a;
-            --bg-app: #f7f9fc; /* Jasne tło */
+            --bg-app: #f7f9fc;
             --white: #ffffff;
             --success: #28a745;
             --danger: #dc3545;
@@ -33,7 +33,7 @@
             --row-modified: #fff3cd;
             --row-new: #d4edda;
             --row-done: #e2e6ea;
-            --row-active: #e3f2fd; /* Jaśniejszy aktywny */
+            --row-active: #e3f2fd;
             --row-hidden: #f1f3f5;
         }
 
@@ -61,11 +61,14 @@
         .brand-area { display: flex; align-items: center; gap: 10px; }
         .brand-logo { font-size: 1.6rem; color: var(--primary); }
         .brand-name { font-weight: 700; font-size: 1.2rem; color: var(--text-main); }
-        .header-controls { display: flex; align-items: center; gap: 20px; }
+        .header-controls { display: flex; align-items: center; gap: 15px; }
 
-        .clock-display, .session-timer { font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #555; background: var(--bg-app); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); }
+        .clock-display, .session-timer, .cache-display { font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #555; background: var(--bg-app); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); }
         .session-timer { background: #e0f7fa; color: #00bcd4; font-weight: 600; cursor: pointer; border-color: #b2ebf2; }
         .session-timer:hover::after { content: " (Reset)"; font-size: 0.8em; color: #a0a0a0; }
+        
+        /* Styl dla wskaźnika pamięci */
+        .cache-display { background: #f3e5f5; color: #8e24aa; border-color: #e1bee7; cursor: help; }
 
         .global-editor-box { display: flex; align-items: center; gap: 5px; background: #e9ecef; padding: 4px 12px; border-radius: 20px; border: 1px solid #ced4da; }
         .global-editor-select { border: none; background: transparent; font-weight: 700; color: var(--primary-dark); font-size: 0.9rem; cursor: pointer; outline: none; }
@@ -214,6 +217,7 @@
     <div class="header-controls">
         <div class="clock-display" id="clockDisplay">--.--.---- --:--</div>
         <div class="session-timer" id="sessionTimer" onclick="resetSessionTimer()">Czas pracy: 00:00:00</div>
+        <div class="cache-display" id="cacheDisplay" title="Zajętość pamięci podręcznej">💾 0 B</div>
         <div class="global-editor-box">
             <span>👤</span>
             <select id="globalEditor" class="global-editor-select" onchange="updateGlobalEditor()">
@@ -229,6 +233,7 @@
                 <div class="menu-item" onclick="openHelpModal()">❓ Instrukcja Obsługi</div>
                 <div class="menu-item" onclick="bulkFixData()">🔧 Napraw Format Danych</div>
                 <div class="menu-item" onclick="bulkUpdateClosed()" style="color:var(--warning);">🔨 Aktualizuj "Nieczynne"</div>
+                <div class="menu-item" onclick="resetAppCache()" style="color:var(--danger); border-top:1px solid #eee;">🗑️ Resetuj Pamięć Aplikacji</div>
             </div>
         </div>
     </div>
@@ -476,9 +481,9 @@
         <div style="overflow-y:auto; max-height:400px; padding-right:10px;">
             <ul class="help-list">
                 <li><strong>1. Nawigacja (NOWOŚĆ)</strong> Użyj przycisków ◀ ▶ aby przełączać się między stacjami. Działa to również ze skrótami klawiszowymi: Shift + Strzałka w Lewo / Prawo. Nawigacja respektuje wybrany filtr przewoźnika.</li>
-                <li><strong>2. Konfiguracja Tabeli (NOWOŚĆ)</strong> Nad tabelą podglądu możesz wybrać, które kolumny mają być widoczne (np. ukryć EPA lub Województwo).</li>
+                <li><strong>2. Reset Pamięci (NOWOŚĆ)</strong> Jeśli aplikacja zwolni lub zacznie działać nieprawidłowo, możesz użyć opcji "Resetuj Pamięć Aplikacji" w menu. Uwaga: usunie to niezapisane zmiany!</li>
                 <li><strong>3. Aktywny Podgląd Stacji</strong> Kliknięcie wiersza w "Podglądzie Stacji" (prawe okienko) automatycznie przenosi edytor do tego rekordu.</li>
-                <li><strong>4. Persystencja Danych</strong> Dane są automatycznie zapisywane w pamięci sesji (sessionStorage) po każdej zmianie. <span class="help-warn">Nie zapomnij pobrać pliku JSON po zakończeniu pracy.</span></li>
+                <li><strong>4. Persystencja Danych</strong> Dane oraz postęp prac są automatycznie zapisywane po odświeżeniu strony. <span class="help-warn">Nie zapomnij pobrać pliku JSON po zakończeniu pracy.</span></li>
                 <li><strong>5. Klonowanie Stacji (👯 Klonuj)</strong> Użyj tej funkcji, gdy dodajesz stację o podobnych godzinach co poprzednia. EPA zostanie zachowane, a przewoźnik wyczyszczony.</li>
                 <li><strong>6. Masowa Zamiana</strong> Użyj "Znajdź i Zamień" w menu zębatki do masowych zmian tekstowych.</li>
             </ul>
@@ -507,7 +512,8 @@
         'data': { label: 'Data', show: true }
     };
 
-    const DB_SESSION_KEY = 'editor_current_db'; 
+    const DB_SESSION_KEY = 'editor_current_db';
+    const PROGRESS_KEY = 'editor_progress_offset'; // Nowy klucz do zapisu postępu
 
     const DB_SEGMENT_URLS = [
         'data_pkp_intercity.json', 
@@ -627,7 +633,10 @@
         const savedTime = localStorage.getItem('editorWorkTime'); if(savedTime) sessionSeconds = parseInt(savedTime, 10);
         setInterval(() => { sessionSeconds++; localStorage.setItem('editorWorkTime', sessionSeconds);
             const h = Math.floor(sessionSeconds / 3600).toString().padStart(2, '0'); const m = Math.floor((sessionSeconds % 3600) / 60).toString().padStart(2, '0');
-            const s = (sessionSeconds % 60).toString().padStart(2, '0'); document.getElementById('sessionTimer').innerText = `Czas pracy: ${h}:${m}:${s}`; }, 1000);
+            const s = (sessionSeconds % 60).toString().padStart(2, '0'); document.getElementById('sessionTimer').innerText = `Czas pracy: ${h}:${m}:${s}`; 
+            // Aktualizuj cache display co sekundę
+            if(sessionSeconds % 2 === 0) updateCacheUsage();
+        }, 1000);
     }
     function resetSessionTimer() { if(confirm("Wyzerować licznik?")) { sessionSeconds = 0; localStorage.setItem('editorWorkTime', 0); } }
     function toggleMenu() { document.getElementById('gearMenu').classList.toggle('active'); }
@@ -644,9 +653,41 @@
         }
     });
 
+    // --- NOWA FUNKCJA DO OBLICZANIA ROZMIARU CACHE ---
+    function getStorageSize(storage) {
+        let total = 0;
+        for (let x in storage) {
+            if (storage.hasOwnProperty(x)) total += ((storage[x].length + x.length) * 2);
+        }
+        return total;
+    }
+    
+    function updateCacheUsage() {
+        const sessionSize = getStorageSize(sessionStorage);
+        const localSize = getStorageSize(localStorage);
+        const total = sessionSize + localSize;
+        let s = '';
+        if(total < 1024) s = total + ' B';
+        else if(total < 1024*1024) s = (total/1024).toFixed(2) + ' KB';
+        else s = (total/(1024*1024)).toFixed(2) + ' MB';
+        document.getElementById('cacheDisplay').innerText = '💾 ' + s;
+    }
+    
+    // --- NOWA FUNKCJA RESETU ---
+    function resetAppCache() {
+        if(!confirm("⚠️ UWAGA: Ta operacja wyczyści całą pamięć podręczną aplikacji!\n\nStracisz wszystkie niezapisane zmiany oraz ustawienia postępu.\nCzy na pewno chcesz kontynuować?")) return;
+        sessionStorage.clear();
+        localStorage.removeItem('editorWorkTime');
+        location.reload();
+    }
+
     window.onload = async function() {
         initTimer(); document.getElementById('meta.data').valueAsDate = new Date(); updateGlobalEditor();
         renderColumnToggles();
+        
+        // 1. Ładowanie zapisanego offsetu postępu
+        const savedOffset = sessionStorage.getItem(PROGRESS_KEY);
+        if(savedOffset) manualProgressOffset = parseInt(savedOffset, 10);
         
         const cachedDB = sessionStorage.getItem(DB_SESSION_KEY);
         if (cachedDB) {
@@ -654,6 +695,7 @@
                 database = JSON.parse(cachedDB);
                 showToast("✅ Wczytano stan z sesji!");
                 initData(true); 
+                updateCacheUsage();
                 return;
             } catch (e) {
                 console.error("Błąd wczytywania session storage:", e);
@@ -694,6 +736,7 @@
             document.getElementById('offlineAlert').style.display = 'block'; 
             document.getElementById('stationSelect').innerHTML = '<option>⚠️ Błąd ładowania.</option>'; 
         }
+        updateCacheUsage();
     };
 
     function handleFileUpload(input) {
@@ -707,7 +750,8 @@
                 initData(); 
                 document.getElementById('offlineAlert').style.display = 'none'; 
                 showToast("✅ Plik wczytany"); 
-                sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+                sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database));
+                updateCacheUsage();
             } catch(err) { alert("Błąd: " + err.message); } 
         }; reader.readAsText(file);
     }
@@ -717,6 +761,7 @@
         populateCarrierFilter(); 
         populateSelect(); 
         renderTable();
+        updateProgressBar(); // Ensure progress bar is updated with loaded offset
         ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(id => renderTimeEditor(id, ''));
     }
 
@@ -788,7 +833,6 @@
         const visibleIndices = getFilteredIndices();
         if (visibleIndices.length === 0) return;
         
-        // POPRAWKA: Upewniamy się, że currentIndex jest liczbą
         let currentPos = visibleIndices.indexOf(parseInt(currentIndex));
         
         if (currentPos === -1) {
@@ -809,7 +853,6 @@
         const visibleIndices = getFilteredIndices();
         if (visibleIndices.length === 0) return;
 
-        // POPRAWKA: Upewniamy się, że currentIndex jest liczbą
         let currentPos = visibleIndices.indexOf(parseInt(currentIndex));
 
         if (currentPos === -1) {
@@ -928,10 +971,6 @@
 
     function loadStation() {
         const idx = document.getElementById('stationSelect').value; 
-        
-        // --- POPRAWKA TUTAJ: ---
-        // Konwertujemy idx (string) na liczbę całkowitą.
-        // Bez tego porównania w nextStation/prevStation nie działały.
         currentIndex = parseInt(idx, 10); 
         
         renderTable();
@@ -982,6 +1021,7 @@
         else { const old = database[currentIndex]._status; newItem._status = (old === 'new') ? 'new' : 'modified'; database[currentIndex] = newItem; showToast("💾 Zapisano"); }
         
         sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
 
         database.sort((a,b) => a.stacja.localeCompare(b.stacja)); currentIndex = database.findIndex(x => x === newItem);
         populateCarrierFilter(); populateSelect(); document.getElementById('stationSelect').value = currentIndex; renderTable(); updateProgressBar();
@@ -998,6 +1038,7 @@
         
         database.push(newItem);
         sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
         database.sort((a,b) => a.stacja.localeCompare(b.stacja));
         currentIndex = database.indexOf(newItem);
         populateSelect(); document.getElementById('stationSelect').value = currentIndex; loadStation(); renderTable(); updateProgressBar(); showToast("👯 Sklonowano (EPA zachowane)!");
@@ -1012,6 +1053,7 @@
         let c = 0; const ed = document.getElementById('globalEditor').value; const td = new Date().toISOString().split('T')[0];
         database.forEach(i => { if(i[f] && i[f].includes(ft)) { i[f] = i[f].replace(new RegExp(ft, 'g'), rt); i['meta.kto'] = ed; i['meta.data'] = td; i._status = 'modified'; c++; } });
         sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
         closeModals(); renderTable(); updateProgressBar(); populateCarrierFilter(); alert(`✅ Zmieniono ${c} rekordów.`);
         renderStationPreview(database[currentIndex]?.stacja);
     }
@@ -1028,7 +1070,13 @@
     }
     
     function calcProgressByDate() { const d = document.getElementById('dateOffset').value; if(!d) return; let c = 0; progressRefDate = d; database.forEach(i => { if(i['meta.data'] === d) c++; }); document.getElementById('manualOffset').value = c; alert(`Znaleziono: ${c}`); populateSelect(); renderTable(); }
-    function saveProgressSettings() { manualProgressOffset = parseInt(document.getElementById('manualOffset').value) || 0; updateProgressBar(); closeModals(); }
+    
+    function saveProgressSettings() { 
+        manualProgressOffset = parseInt(document.getElementById('manualOffset').value) || 0; 
+        sessionStorage.setItem(PROGRESS_KEY, manualProgressOffset); // Zapis do sesji
+        updateProgressBar(); 
+        closeModals(); 
+    }
     
     function renderTable() {
         const thead = document.getElementById('tableHead');
@@ -1149,6 +1197,7 @@
         if(currentIndex===-1)return; 
         if(confirm("Usunąć?")){ 
             database.splice(currentIndex,1); sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+            updateCacheUsage();
             populateSelect(); createNewStation(); renderTable(); updateProgressBar(); renderStationPreview(null); showToast("🗑️ Usunięto"); 
         }
     }
@@ -1166,7 +1215,9 @@
             const newP = { 'KŚ': 'KOLEJE ŚLĄSKIE', 'KM': 'KOLEJE MAZOWIECKIE', 'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA', 'KW': 'KOLEJE WIELKOPOLSKIE', 'KD': 'KOLEJE DOLNOŚLĄSKIE', 'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE' }[p] || p;
             if (newP !== p) { i.przewoznik = newP; i._status = 'modified'; c++; }
         }); 
-        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); renderTable(); updateProgressBar(); populateCarrierFilter(); showToast(`✅ Zoptymalizowano ${c} pól.`); 
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
+        renderTable(); updateProgressBar(); populateCarrierFilter(); showToast(`✅ Zoptymalizowano ${c} pól.`); 
         renderStationPreview(database[currentIndex]?.stacja);
     }
     function bulkUpdateClosed() { 
@@ -1176,7 +1227,9 @@
             const h = (i['godziny.pn_pt'] || "").toLowerCase(); 
             if(h.includes('zamknięte') || h.includes('zamkniete') || h.includes('nieczynne')) { i['meta.kto'] = e; i['meta.data'] = t; i._status = 'modified'; c++; } 
         }); 
-        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); renderTable(); updateProgressBar(); showToast(`✅ Zaktualizowano ${c}`); 
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
+        renderTable(); updateProgressBar(); showToast(`✅ Zaktualizowano ${c}`); 
         renderStationPreview(database[currentIndex]?.stacja);
     }
     function closeModals() { document.querySelectorAll('.modal-overlay').forEach(e => e.style.display = 'none'); }
