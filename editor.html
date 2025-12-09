@@ -245,8 +245,8 @@
 
 <div class="container">
     <div id="offlineAlert">
-        <strong>⚠️ Problem z plikiem:</strong> Nie udało się automatycznie wczytać pliku master. Spróbuj wczytać go ręcznie.<br>
-        Wybierz plik ręcznie z dysku: <input type="file" onchange="handleFileUpload(this)" accept=".json">
+        <strong>⚠️ Błąd:</strong> Nie udało się automatycznie wczytać wszystkich segmentów bazy. Upewnij się, że masz wszystkie pliki JSON w katalogu.<br>
+        Wybierz plik master (np. *kasy_master.json*) ręcznie z dysku: <input type="file" onchange="handleFileUpload(this)" accept=".json">
     </div>
 
     <form id="editForm" onsubmit="event.preventDefault();">
@@ -480,8 +480,23 @@
     let manualProgressOffset = 0;
     let progressRefDate = null;
     
-    const DB_FILE_URL = 'kasy.json'; // Domyślna nazwa pliku mastera
+    // ZMIENIONA KONFIGURACJA NA SEGMENTY
     const DB_SESSION_KEY = 'editor_current_db'; // Klucz do zapisu w sessionStorage
+
+    const DB_SEGMENT_URLS = [
+        'data_pkp_intercity.json', 
+        'data_polregio.json',
+        'data_arriva_rp.json',
+        'data_koleje_slaskie.json',
+        'data_koleje_mazowieckie.json',
+        'data_lka.json',
+        'data_koleje_wielkopolskie.json',
+        'data_koleje_dolnoslaskie.json', 
+        'data_koleje_malopolskie.json',
+        'data_skm.json',
+        'data_brak_kasy.json'
+    ];
+
 
     const carrierLinks = {
         "PKP INTERCITY": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
@@ -598,7 +613,7 @@
     window.onload = async function() {
         initTimer(); document.getElementById('meta.data').valueAsDate = new Date(); updateGlobalEditor();
         
-        // 1. Load from session storage (PERSISTENCE)
+        // 1. Load from session storage (PERSISTENCE) - PRIORYTET
         const cachedDB = sessionStorage.getItem(DB_SESSION_KEY);
         if (cachedDB) {
             try {
@@ -612,20 +627,55 @@
             }
         }
 
-        // 2. Load from remote file (original logic - kasy.json assumed master)
+        // 2. Load from multiple remote segment files
         try { 
-            const r = await fetch(DB_FILE_URL); 
-            if(!r.ok) throw new Error(r.status); 
-            const j = await r.json(); 
-            if(!Array.isArray(j)) throw new Error("Brak tablicy"); 
-            database = j; 
-            initData(); 
-            showToast(`✅ Wczytano ${database.length} rekordów z ${DB_FILE_URL}`);
+            const fetchPromises = DB_SEGMENT_URLS.map(url => 
+                fetch(url, { cache: "no-store" })
+                .then(res => {
+                    if (!res.ok) {
+                        console.warn(`Plik ${url} nie istnieje (HTTP ${res.status}). Ignorowanie.`);
+                        return []; 
+                    }
+                    return res.json();
+                })
+                .catch(err => {
+                    console.error(`Błąd podczas pobierania pliku ${url}:`, err);
+                    return [];
+                })
+            );
+            
+            const results = await Promise.all(fetchPromises);
+            
+            let nowaBaza = [];
+            results.forEach(arr => {
+                 // W trakcie łączenia, upewniamy się, że to tablica
+                 if (Array.isArray(arr)) {
+                     // Filtrujemy, usuwając rekordy, które mogłyby mieć już status (np. jeśli Segmenty zostały wcześniej zapisane z Edytora)
+                     arr.forEach(item => {
+                        const { _status, ...cleanItem } = item;
+                        nowaBaza.push(cleanItem);
+                     });
+                 }
+            });
+
+            database = nowaBaza;
+            
+            // Inicjalizacja statusu dla świeżo pobranej, połączonej bazy
+            database.forEach(item => {
+                if (item._status === undefined) item._status = 'clean';
+            });
+
+            if (database.length > 0) {
+                 initData(false); // Init data from file, not session
+                 showToast(`✅ Wczytano ${database.length} rekordów ze wszystkich segmentów.`);
+            } else {
+                 throw new Error("Pobrano 0 rekordów ze wszystkich segmentów.");
+            }
         } 
         catch(e) { 
-            console.warn("Błąd ładowania pliku master:", e); 
+            console.warn("Błąd ładowania segmentów:", e); 
             document.getElementById('offlineAlert').style.display = 'block'; 
-            document.getElementById('stationSelect').innerHTML = '<option>⚠️ Wczytaj plik ręcznie</option>'; 
+            document.getElementById('stationSelect').innerHTML = '<option>⚠️ Błąd ładowania segmentów. Wczytaj plik ręcznie.</option>'; 
         }
     };
 
@@ -637,6 +687,12 @@
                 if (!Array.isArray(j)) throw new Error("Błąd formatu"); 
                 if (j.length > 0 && !j[0].hasOwnProperty('stacja')) throw new Error("Brak pola stacja"); 
                 database = j; 
+                
+                // Ustaw status dla wszystkich rekordów z załadowanego pliku
+                database.forEach(item => {
+                    if (item._status === undefined) item._status = 'clean';
+                });
+
                 initData(); 
                 document.getElementById('offlineAlert').style.display = 'none'; 
                 showToast("✅ Plik wczytany"); 
@@ -649,12 +705,6 @@
 
     function initData(fromSession = false) {
         database.sort((a,b) => a.stacja.localeCompare(b.stacja)); 
-        // Ensure every item has _status property if loading from file for the first time
-        if (!fromSession) {
-            database.forEach(item => {
-                if (item._status === undefined) item._status = 'clean';
-            });
-        }
         
         populateCarrierFilter(); 
         populateSelect(); 
