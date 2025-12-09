@@ -434,20 +434,6 @@
     "meta.data": "2025-12-08"
   },
   {
-    "stacja": "WRONKI",
-    "epa": "249",
-    "przewoznik": "POLREGIO",
-    "godziny.pn_pt": "6:00-18:00",
-    "godziny.sob": "6:00-18:00",
-    "godziny.nd": "6:00-18:00",
-    "przerwy.pn_pt": "11:20-11:50; 13:35-14:00",
-    "przerwy.sob": "11:20-11:50; 13:35-14:00",
-    "przerwy.nd": "11:20-11:50; 13:35-14:00",
-    "uwagi": "PROSZĘ WERYFIKOWAĆ NA STRONIE PRZEWOŹNIKA",
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-08"
-  },
-  {
     "stacja": "WROCŁAW GŁÓWNY",
     "epa": "248",
     "przewoznik": "POLREGIO",
@@ -458,6 +444,20 @@
     "przerwy.sob": "Brak",
     "przerwy.nd": "Brak",
     "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  },
+  {
+    "stacja": "WRONKI",
+    "epa": "249",
+    "przewoznik": "POLREGIO",
+    "godziny.pn_pt": "6:00-18:00",
+    "godziny.sob": "6:00-18:00",
+    "godziny.nd": "6:00-18:00",
+    "przerwy.pn_pt": "11:20-11:50; 13:35-14:00",
+    "przerwy.sob": "11:20-11:50; 13:35-14:00",
+    "przerwy.nd": "11:20-11:50; 13:35-14:00",
+    "uwagi": "PROSZĘ WERYFIKOWAĆ NA STRONIE PRZEWOŹNIKA",
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-08"
   }

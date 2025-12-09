@@ -42,6 +42,34 @@
     "meta.data": "2025-12-08"
   },
   {
+    "stacja": "POZNAŃ GŁÓWNY",
+    "epa": "159",
+    "przewoznik": "KOLEJE WIELKOPOLSKIE",
+    "godziny.pn_pt": "8:40-20:00",
+    "godziny.sob": "8:40-20:00",
+    "godziny.nd": "8:40-20:00",
+    "przerwy.pn_pt": "12:00-12:10; 16:20-16:40",
+    "przerwy.sob": "12:00-12:10; 16:20-16:40",
+    "przerwy.nd": "12:00-12:10; 16:20-16:40",
+    "uwagi": "KASA KOLEI WIELKOPOLSKICH NR 1",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  },
+  {
+    "stacja": "POZNAŃ GŁÓWNY",
+    "epa": "159",
+    "przewoznik": "KOLEJE WIELKOPOLSKIE",
+    "godziny.pn_pt": "5:40-21:10",
+    "godziny.sob": "6:00-21:30",
+    "godziny.nd": "6:00-21:30",
+    "przerwy.pn_pt": "10:00-10:20; 13:10-13:40; 17:20-17:40",
+    "przerwy.sob": "10:00-10:20; 13:10-13:40; 17:20-17:40",
+    "przerwy.nd": "10:00-10:20; 13:10-13:40; 17:20-17:40",
+    "uwagi": "KASA KOLEI WIELKOPOLSKICH NR 2",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  },
+  {
     "stacja": "SŁUPCA",
     "epa": "7457",
     "przewoznik": "KOLEJE WIELKOPOLSKIE",
