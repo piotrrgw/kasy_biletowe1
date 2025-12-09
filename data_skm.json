@@ -1,0 +1,58 @@
+[
+  {
+    "stacja": "GDAŃSK GŁÓWNY",
+    "epa": "40",
+    "przewoznik": "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE",
+    "godziny.pn_pt": "6:00-20:00",
+    "godziny.sob": "6:00-20:00",
+    "godziny.nd": "7:00-19:00",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  },
+  {
+    "stacja": "GDAŃSK WRZESZCZ",
+    "epa": "5162",
+    "przewoznik": "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE",
+    "godziny.pn_pt": "6:00-19:00",
+    "godziny.sob": "6:00-18:00",
+    "godziny.nd": "8:00-18:00",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  },
+  {
+    "stacja": "GDYNIA GŁÓWNA",
+    "epa": "41",
+    "przewoznik": "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE",
+    "godziny.pn_pt": "6:00-20:00",
+    "godziny.sob": "7:00-18:00",
+    "godziny.nd": "7:00-18:00",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  },
+  {
+    "stacja": "SOPOT",
+    "epa": "190",
+    "przewoznik": "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE",
+    "godziny.pn_pt": "6:00-20:00",
+    "godziny.sob": "7:00-19:00",
+    "godziny.nd": "8:00-19:00",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  }
+]

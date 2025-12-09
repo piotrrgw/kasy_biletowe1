@@ -1,0 +1,30 @@
+[
+  {
+    "stacja": "BYDGOSZCZ GŁÓWNA",
+    "epa": "14",
+    "przewoznik": "ARRIVA RP",
+    "godziny.pn_pt": "5:45-18:45",
+    "godziny.sob": "6:15-17:15",
+    "godziny.nd": "6:15-17:15",
+    "przerwy.pn_pt": "9:15-9:45; 16:00-16:15",
+    "przerwy.sob": "10:15-10:30; 14:00-14:30",
+    "przerwy.nd": "10:15-10:30; 14:00-14:30",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  },
+  {
+    "stacja": "GRUDZIĄDZ",
+    "epa": "48",
+    "przewoznik": "ARRIVA RP",
+    "godziny.pn_pt": "7:00-15:30",
+    "godziny.sob": "7:00-15:30",
+    "godziny.nd": "7:00-15:30",
+    "przerwy.pn_pt": "11:35-12:05",
+    "przerwy.sob": "11:35-12:05",
+    "przerwy.nd": "11:35-12:05",
+    "uwagi": "",
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-08"
+  }
+]
