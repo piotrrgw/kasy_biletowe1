@@ -788,13 +788,14 @@
         const visibleIndices = getFilteredIndices();
         if (visibleIndices.length === 0) return;
         
-        let currentPos = visibleIndices.indexOf(currentIndex);
+        // POPRAWKA: Upewniamy się, że currentIndex jest liczbą
+        let currentPos = visibleIndices.indexOf(parseInt(currentIndex));
+        
         if (currentPos === -1) {
-            // Jeśli obecny indeks nie jest widoczny w filtrze, idź do pierwszego widocznego
             currentPos = 0;
         } else {
             currentPos--;
-            if (currentPos < 0) currentPos = visibleIndices.length - 1; // Zapętlenie
+            if (currentPos < 0) currentPos = visibleIndices.length - 1; 
         }
         
         const newIndex = visibleIndices[currentPos];
@@ -808,12 +809,14 @@
         const visibleIndices = getFilteredIndices();
         if (visibleIndices.length === 0) return;
 
-        let currentPos = visibleIndices.indexOf(currentIndex);
+        // POPRAWKA: Upewniamy się, że currentIndex jest liczbą
+        let currentPos = visibleIndices.indexOf(parseInt(currentIndex));
+
         if (currentPos === -1) {
             currentPos = 0;
         } else {
             currentPos++;
-            if (currentPos >= visibleIndices.length) currentPos = 0; // Zapętlenie
+            if (currentPos >= visibleIndices.length) currentPos = 0; 
         }
 
         const newIndex = visibleIndices[currentPos];
@@ -861,7 +864,6 @@
         }
 
         const normalizedStationName = stationName.toUpperCase().trim();
-        // Szukamy rekordów i ich oryginalnych indeksów
         const filteredRecords = database.map((item, index) => ({ item, index }))
                                       .filter(obj => obj.item.stacja === normalizedStationName);
         
@@ -904,7 +906,6 @@
                  rowClass += ' active row-active';
             }
 
-            // Dodano onclick z funkcją switchToRecord
             html += `
                 <tr class="${rowClass}" onclick="switchToRecord(${originalIndex})" title="Kliknij, aby edytować ten rekord">
                     <td style="padding:5px 8px;">${record.przewoznik}</td>
@@ -919,7 +920,6 @@
         previewContentEl.innerHTML = html;
     }
     
-    // Funkcja pomocnicza do przełączania z podglądu
     function switchToRecord(index) {
         document.getElementById('stationSelect').value = index;
         loadStation();
@@ -927,7 +927,14 @@
     }
 
     function loadStation() {
-        const idx = document.getElementById('stationSelect').value; currentIndex = idx; renderTable();
+        const idx = document.getElementById('stationSelect').value; 
+        
+        // --- POPRAWKA TUTAJ: ---
+        // Konwertujemy idx (string) na liczbę całkowitą.
+        // Bez tego porównania w nextStation/prevStation nie działały.
+        currentIndex = parseInt(idx, 10); 
+        
+        renderTable();
         document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
         const tf = ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'];
         if(idx == -1) { 
@@ -1023,7 +1030,6 @@
     function calcProgressByDate() { const d = document.getElementById('dateOffset').value; if(!d) return; let c = 0; progressRefDate = d; database.forEach(i => { if(i['meta.data'] === d) c++; }); document.getElementById('manualOffset').value = c; alert(`Znaleziono: ${c}`); populateSelect(); renderTable(); }
     function saveProgressSettings() { manualProgressOffset = parseInt(document.getElementById('manualOffset').value) || 0; updateProgressBar(); closeModals(); }
     
-    // ZMODYFIKOWANA FUNKCJA RENDER TABLE (Konfiguracja kolumn)
     function renderTable() {
         const thead = document.getElementById('tableHead');
         const tbody = document.getElementById('tableBody');
