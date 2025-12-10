@@ -1180,7 +1180,7 @@
                 
                 ${linkPrzewoznika ? `<a href="${linkPrzewoznika}" target="_blank" class="btn-link">Strona przewoźnika &raquo;</a>` : ''}
 
-                <div class="meta-footer">Aktualizacja: ${k['meta.data'] || '-'}</div>
+                <div class="meta-footer">Aktualizacja: ${k['meta.data'] || '-'} &bull; Edytor: ${k['meta.kto'] || '-'}</div>
             </div>`;
             listContainer.innerHTML += html;
         });
@@ -1296,6 +1296,5 @@
         }, 60000);
     };
 </script>
-
 </body>
 </html>
