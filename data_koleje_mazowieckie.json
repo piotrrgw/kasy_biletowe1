@@ -64,6 +64,38 @@
     "meta.data": "2025-12-09"
   },
   {
+    "stacja": "MIŃSK MAZOWIECKI",
+    "epa": "Brak",
+    "wojewodztwo": "Mazowieckie",
+    "przewoznik": "KOLEJE MAZOWIECKIE",
+    "godziny.pn_pt": "Całodobowo",
+    "godziny.sob": "Całodobowo",
+    "godziny.nd": "Całodobowo",
+    "przerwy.pn_pt": "00:30-03:30; 05:40-06:00; 17:40-18:00",
+    "przerwy.sob": "00:30-03:30; 05:40-06:00; 17:40-18:00",
+    "przerwy.nd": "00:30-03:30; 05:40-06:00; 17:40-18:00",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
+    "stacja": "MROZY",
+    "epa": "Brak",
+    "wojewodztwo": "Mazowieckie",
+    "przewoznik": "KOLEJE MAZOWIECKIE",
+    "godziny.pn_pt": "06:00-14:45",
+    "godziny.sob": "06:45-14:15",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
     "stacja": "NOWY DWÓR MAZOWIECKI",
     "epa": "1309",
     "wojewodztwo": "Mazowieckie",
@@ -110,6 +142,22 @@
     "ukryty": false,
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-09"
+  },
+  {
+    "stacja": "SIEDLCE",
+    "epa": "Brak",
+    "wojewodztwo": "Mazowieckie",
+    "przewoznik": "KOLEJE MAZOWIECKIE",
+    "godziny.pn_pt": "Całodobowo",
+    "godziny.sob": "Całodobowo",
+    "godziny.nd": "Całodobowo",
+    "przerwy.pn_pt": "01:00-03:00",
+    "przerwy.sob": "01:00-03:00",
+    "przerwy.nd": "01:00-03:00",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
   },
   {
     "stacja": "SOCHACZEW",

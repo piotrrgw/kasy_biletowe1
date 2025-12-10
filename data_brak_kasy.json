@@ -48,6 +48,22 @@
     "meta.data": "2025-12-09"
   },
   {
+    "stacja": "BIAŁA PISKA",
+    "epa": "Brak",
+    "wojewodztwo": "Warmińsko-Mazurskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
     "stacja": "BIAŁYSTOK ZIELONA WZGÓRZA",
     "epa": "6623",
     "wojewodztwo": "Podlaskie",
@@ -62,6 +78,22 @@
     "ukryty": false,
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-09"
+  },
+  {
+    "stacja": "BIELSK PODLASKI",
+    "epa": "Brak",
+    "wojewodztwo": "Podlaskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
   },
   {
     "stacja": "BYDGOSZCZ LEŚNA",
@@ -254,6 +286,38 @@
     "ukryty": false,
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-09"
+  },
+  {
+    "stacja": "GRAJEWO",
+    "epa": "Brak",
+    "wojewodztwo": "Podlaskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
+    "stacja": "HAJNÓWKA",
+    "epa": "Brak",
+    "wojewodztwo": "Podlaskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
   },
   {
     "stacja": "INOWROCŁAW RĄBINEK",
@@ -496,6 +560,22 @@
     "meta.data": "2025-12-09"
   },
   {
+    "stacja": "MOŃKI",
+    "epa": "Brak",
+    "wojewodztwo": "Podlaskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
     "stacja": "MYSŁOWICE",
     "epa": "4222",
     "wojewodztwo": "Śląskie",
@@ -560,6 +640,22 @@
     "meta.data": "2025-12-09"
   },
   {
+    "stacja": "NIEMOJKI",
+    "epa": "Brak",
+    "wojewodztwo": "Mazowieckie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
     "stacja": "NOWE DREZDENKO",
     "epa": "8253",
     "wojewodztwo": "Lubuskie",
@@ -574,6 +670,22 @@
     "ukryty": false,
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-09"
+  },
+  {
+    "stacja": "NURZEC",
+    "epa": "Brak",
+    "wojewodztwo": "Podlaskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
   },
   {
     "stacja": "OLEŚNICA RATAJE",
@@ -656,6 +768,22 @@
     "meta.data": "2025-12-09"
   },
   {
+    "stacja": "OSOWIEC",
+    "epa": "Brak",
+    "wojewodztwo": "Podlaskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
     "stacja": "OZORKÓW",
     "epa": "1333",
     "wojewodztwo": "Łódzkie",
@@ -688,6 +816,22 @@
     "meta.data": "2025-12-09"
   },
   {
+    "stacja": "PISZ",
+    "epa": "Brak",
+    "wojewodztwo": "Warmińsko-Mazurskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
     "stacja": "PŁOCK",
     "epa": "156",
     "wojewodztwo": "Mazowieckie",
@@ -718,6 +862,54 @@
     "ukryty": false,
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-09"
+  },
+  {
+    "stacja": "RUCIANE-NIDA",
+    "epa": "Brak",
+    "wojewodztwo": "Warmińsko-Mazurskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
+    "stacja": "SARNAKI",
+    "epa": "Brak",
+    "wojewodztwo": "Mazowieckie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
+  },
+  {
+    "stacja": "SIEMIATYCZE",
+    "epa": "Brak",
+    "wojewodztwo": "Podlaskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
   },
   {
     "stacja": "SIERADZ",
@@ -830,6 +1022,22 @@
     "ukryty": false,
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-09"
+  },
+  {
+    "stacja": "SZCZYTNO",
+    "epa": "Brak",
+    "wojewodztwo": "Warmińsko-Mazurskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-10"
   },
   {
     "stacja": "SZEPIETOWO",
