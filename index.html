@@ -793,7 +793,7 @@
             const date = new Date(parseInt(cacheTime));
             const dateStr = date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' });
             const totalRecords = bazaDanych.length;
-            cacheStatusElement.innerHTML = `Baza z dnia: <strong>${dateStr}</strong><br>Liczba stacji: ${totalRecords}`;
+            cacheStatusElement.innerHTML = `Baza pobrana dnia: <strong>${dateStr}</strong><br>Liczba wpisów w bazie: ${totalRecords}`;
         } else {
             cacheStatusElement.innerHTML = `Brak danych w pamięci urządzenia.`;
         }
