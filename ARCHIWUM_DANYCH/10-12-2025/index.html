@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asystent Kas Biletowych</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-W05T4L1HFD');
+    </script>
+    <style>
+        /* USTAWIENIA KOLORÓW */
+        :root {
+            --open: #28a745; /* Zielony */
+            --break: #ffc107; /* Żółty */
+            --closed: #dc3545; /* Czerwony */
+            --none: #6c757d; /* Szary */
+            --holiday: #007bff; /* Niebieski - Święta/Akcent */
+            --bg-light: #f8f9fa;
+            --bg-dark: #343a40;
+            --text-dark: #212529;
+            --text-light: #f8f9fa;
+            --border-color: #dee2e6;
+        }
+
+        /* PODSTAWOWY STYL */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* NAGŁÓWEK */
+        header {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* MENU USTAWIEŃ */
+        .settings-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .settings-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 250px;
+            display: none;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .settings-menu.active {
+            display: block;
+        }
+
+        .settings-menu button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .settings-menu button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .settings-menu input[type="file"] {
+            display: none; 
+        }
+
+        /* GŁÓWNA ZAWARTOŚĆ */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        /* PASEK DATY/CZASU */
+        #dateBar {
+            background-color: white;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            font-size: 1.1em;
+            text-align: center;
+            border-left: 5px solid var(--border-color);
+        }
+
+        .time-display {
+            font-weight: bold;
+            color: var(--holiday);
+            margin-left: 10px;
+        }
+
+        .holiday-tag {
+            background-color: var(--holiday);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        /* WYSZUKIWARKA */
+        #searchContainer {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #stationSearch {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        #stationSearch:focus {
+            border-color: var(--holiday);
+        }
+
+        #searchResults {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 50;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .search-result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-result-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* GŁÓWNY STATUS BOX */
+        #mainStatusBox {
+            padding: 20px;
+            color: white;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        #mainStatusBox.bg-open { background-color: var(--open); }
+        #mainStatusBox.bg-break { background-color: var(--break); color: var(--text-dark); }
+        #mainStatusBox.bg-closed { background-color: var(--closed); }
+        #mainStatusBox.bg-none { background-color: var(--none); }
+
+        /* LISTA SZCZEGÓŁÓW KAS (KARTY) */
+        #detailsList {
+            display: grid;
+            gap: 15px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid; /* Dynamiczny kolor statusu */
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .carrier-title {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .epa-info {
+            font-size: 0.9em;
+            color: var(--none);
+        }
+
+        .status-pill {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1em;
+            text-transform: uppercase;
+        }
+
+        /* TABELA GODZIN */
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        
+        .details-table th, .details-table td {
+            padding: 8px 0;
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        .details-table th {
+            width: 30%;
+            font-weight: bold;
+            color: var(--bg-dark);
+            padding-right: 10px;
+        }
+        
+        .details-table .active-row {
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+
+        .details-table .active-row th, .details-table .active-row td {
+            padding-left: 5px;
+        }
+
+        /* WIADOMOŚCI */
+        .notes-section {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            border-left: 3px solid #ffeeba;
+        }
+        
+        .data-age-warning {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            font-weight: bold;
+            border-left: 3px solid #f5c6cb;
+        }
+
+        /* METADANE */
+        .meta-footer {
+            margin-top: 10px;
+            padding-top: 5px;
+            border-top: 1px dashed #eee;
+            font-size: 0.75em;
+            color: var(--none);
+            text-align: right;
+        }
+
+        #networkStatus {
+            font-size: 0.9em;
+            margin-top: 10px;
+            color: var(--text-dark);
+        }
+        
+        .msg-online { color: var(--open); font-weight: bold; }
+        .msg-offline { color: var(--closed); font-weight: bold; }
+
+        .btn-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: var(--holiday);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        /* PANEL ODZYSKIWANIA / BŁĘDU */
+        #recoveryPanel {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        /* TABELA PODSUMOWUJĄCA WSZYSTKIE STACJE */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .summary-table th, .summary-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .summary-table th {
+            background-color: #f0f0f0;
+            font-size: 0.9em;
+            color: var(--bg-dark);
+        }
+
+        .summary-table tbody tr:hover {
+            background-color: #f8f8f8;
+            cursor: pointer;
+        }
+        
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .dot-open { background-color: var(--open); }
+        .dot-break { background-color: var(--break); }
+        .dot-closed { background-color: var(--closed); }
+        .dot-none { background-color: var(--none); }
+
+        /* MODAL / HELP */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* STOPKA */
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: var(--none);
+            border-top: 1px solid #eee;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Asystent Kas Biletowych</h1>
+        <button class="settings-btn" onclick="toggleMenu()">⚙️</button>
+        <div class="settings-menu" id="settingsMenu">
+            <button onclick="pobierzDane(true)">🔄 Wymuś aktualizację bazy (online)</button>
+            <button onclick="pokazWszystkieStacje()">📋 Pokaż wszystkie stacje</button>
+            <button onclick="document.getElementById('fileInput').click()">📁 Wgraj lokalny plik JSON</button>
+            <input type="file" id="fileInput" onchange="wgrajLokalnyPlik(this)" accept=".json">
+            <button onclick="pobierzPlikNaDysk()">💾 Pobierz bazę na dysk</button>
+            <button onclick="pokazInstrukcje()">❓ Instrukcja/Informacja</button>
+            <div style="padding: 10px; font-size: 0.9em; color: #6c757d;">
+                <span id="cacheStatus"></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="dateBar"></div>
+
+        <div id="searchContainer">
+            <input type="text" id="stationSearch" placeholder="Wyszukaj stację lub EPA..." oninput="filtrujStacje(this.value)" autocomplete="off">
+            <ul id="searchResults"></ul>
+        </div>
+        
+        <div id="statusMessage">
+            <div id="networkStatus">Ładowanie danych...</div>
+            
+            <div id="recoveryPanel">
+                <p>Nie udało się pobrać danych online.</p>
+                <p>Aby działać w trybie offline, wgraj plik lokalny lub spróbuj ponownie.</p>
+                <button onclick="document.getElementById('fileInput').click()" style="background-color: var(--closed); color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">Wgraj lokalny plik JSON</button>
+            </div>
+        </div>
+
+        <div id="mainStatusBox"></div>
+
+        <div id="detailsList">
+            </div>
+        
+        <div style="margin-top: 20px; padding: 10px; background-color: #f0f0f0; border-radius: 5px; font-size: 0.85em; text-align: center; color: #6c757d;">
+            OSTRZEŻENIE: Informacje mają charakter POGLĄDOWY. Zawsze weryfikuj godziny otwarcia u przewoźnika.
+        </div>
+
+    </div>
+    
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="zamknijInstrukcje()">&times;</span>
+            <h2>Instrukcja i informacje</h2>
+            <p><strong>Asystent Kas Biletowych</strong> to narzędzie wspierające Drużyny Konduktorskie w szybkim dostępie do informacji o kasach biletowych.</p>
+            <p><strong>Działanie:</strong> Aplikacja na podstawie aktualnego czasu i daty (w tym świąt ruchomych) oraz danych z bazy JSON, dynamicznie oblicza status każdej kasy.</p>
+            <p><strong>Kolory Statusu:</strong></p>
+            <ul>
+                <li><span class="status-dot dot-open"></span> **OTWARTA:** Kasa jest w godzinach pracy i nie ma przerwy.</li>
+                <li><span class="status-dot dot-break"></span> **PRZERWA:** Kasa jest w godzinach pracy, ale obecnie trwa zaplanowana przerwa.</li>
+                <li><span class="status-dot dot-closed"></span> **ZAMKNIĘTA / NIECZYNNE:** Kasa jest poza godzinami pracy lub zamknięta danego dnia.</li>
+                <li><span class="status-dot dot-none"></span> **BRAK KASY:** Rekord stacji ma oznaczenie "BRAK".</li>
+            </ul>
+            <p><strong>Tryb Offline:</strong> Aplikacja działa bez internetu po pierwszym załadowaniu danych (pobierzDane()). Działanie jest możliwe dzięki przechowywaniu połączonej bazy w pamięci wewnętrznej przeglądarki.</p>
+            <p><strong>Aktualizacja:</strong> Aby mieć najświeższe dane, należy użyć opcji "Wymuś aktualizację bazy (online)" lub połączyć się z internetem przy starcie aplikacji.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Współautorzy: Gemini (AI) oraz Piotr M 🚂</p>
+    </footer>
+
+<script>
+    // ================= KONFIGURACJA ZMIENIONA =================
+    // Lista plików do załadowania (podział wg przewoźników).
+    // Dodano plik data_brak_kasy.json, aby stacje bez kas pojawiały się w Asystencie.
+    const PLIKI_DANYCH = [
+        'data_pkp_intercity.json', 
+        'data_polregio.json',
+        'data_arriva_rp.json',
+        'data_koleje_slaskie.json',
+        'data_koleje_mazowieckie.json',
+        'data_lka.json',
+        'data_koleje_wielkopolskie.json',
+        'data_koleje_dolnoslaskie.json', 
+        'data_koleje_malopolskie.json',
+        'data_skm.json',
+        'data_brak_kasy.json' // DODANE - REKORDY Z BRAKIEM KASY
+    ];
+    
+    // Klucz do zapisu w pamięci przeglądarki
+    const STORAGE_KEY = 'kasy_biletowe_v_final'; 
+    const MAX_DAYS_FRESH = 30;
+    let bazaDanych = []; // Globalna zmienna przechowująca SCALONĄ bazę
+
+    const BAZA_LINKOW = {
+        "PKP INTERCITY": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
+        "POLREGIO": "https://polregio.pl/pl/dla-podroznych/gdzie-kupic-bilet/kasy-biletowe/",
+        "ARRIVA RP": "https://arriva.pl/1032/kasy-biletowe",
+        "KOLEJE ŚLĄSKIE": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "KŚ": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "KOLEJE MAZOWIECKIE": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "KM": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "ŁÓDZKA KOLEJ AGLOMERACYJNA": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "ŁKA": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "KOLEJE WIELKOPOLSKIE": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "KW": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "KOLEJE DOLNOŚLĄSKIE": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "KD": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "KOLEJE MAŁOPOLSKIE": "https://www.kolejemalopolskie.com.pl/pl/dla-pasazera/gdzie-kupic-bilet-kolejowy",
+        "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-biletomatow",
+        "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-biletomatow",
+        "BRAK": null
+    };
+
+    const SWIETA_STALE = {
+        '01-01': 'Nowy Rok', '01-06': 'Trzech Króli', '05-01': 'Święto Pracy',
+        '05-03': '3 Maja', '08-15': 'Wniebowzięcie NMP',
+        '11-01': 'Wszystkich Świętych', '11-11': 'Niepodległości',
+        '12-25': 'Boże Narodzenie', '12-26': 'Drugi dzień Bożego Narodzenia'
+    };
+
+    // Algorytm obliczania Wielkanocy
+    function getEasterDate(year) {
+        const a = year % 19;
+        const b = Math.floor(year / 100);
+        const c = year % 100;
+        const d = Math.floor(b / 4);
+        const e = b % 4;
+        const f = Math.floor((b + 8) / 25);
+        const g = Math.floor((b - f + 1) / 3);
+        const h = (19 * a + b - d - g + 15) % 30;
+        const i = Math.floor(c / 4);
+        const k = c % 4;
+        const l = (32 + 2 * e + 2 * i - h - k) % 7;
+        const m = Math.floor((a + 11 * h + 22 * l) / 451);
+        const month = Math.floor((h + l - 7 * m + 114) / 31);
+        const day = ((h + l - 7 * m + 114) % 31) + 1;
+        return new Date(year, month - 1, day);
+    }
+
+    function addDays(date, days) {
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+
+    function sprawdzSwieto() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,'0');
+        const day = String(d.getDate()).padStart(2,'0');
+        const keyFixed = `${m}-${day}`;
+        
+        // Sprawdź stałe
+        if(SWIETA_STALE[keyFixed]) return SWIETA_STALE[keyFixed];
+
+        // Oblicz ruchome
+        const easter = getEasterDate(y);
+        const easterMon = addDays(easter, 1);
+        const corpusChristi = addDays(easter, 60);
+        const pentecost = addDays(easter, 49); // Zielone Świątki
+
+        const check = (dateObj) => {
+            return dateObj.getDate() === d.getDate() && dateObj.getMonth() === d.getMonth();
+        };
+
+        if(check(easter)) return 'Wielkanoc';
+        if(check(easterMon)) return 'Pon. Wielkanocny';
+        if(check(corpusChristi)) return 'Boże Ciało';
+        if(check(pentecost)) return 'Zielone Świątki';
+
+        return null;
+    }
+
+    function checkDataAge(dataDateStr) {
+        if (!dataDateStr) return false;
+        // Wymaga formatu YYYY-MM-DD
+        if (dataDateStr.length !== 10) return false;
+
+        const [y, m, d] = dataDateStr.split('-').map(Number);
+        const dataDate = new Date(y, m - 1, d);
+        const today = new Date();
+
+        dataDate.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        const diffTime = Math.abs(today - dataDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        return diffDays > MAX_DAYS_FRESH;
+    }
+
+    function updateCacheStatus() {
+        const cacheStatusElement = document.getElementById('cacheStatus');
+        const cacheTime = localStorage.getItem(STORAGE_KEY + '_time');
+        if (cacheTime) {
+            const date = new Date(parseInt(cacheTime));
+            const dateStr = date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' });
+            const timeStr = date.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+            const totalRecords = bazaDanych.length;
+            cacheStatusElement.innerHTML = `Baza w pamięci z: ${dateStr}, ${timeStr} (${totalRecords} rekordów)`;
+        } else {
+            cacheStatusElement.innerHTML = `Brak danych w pamięci.`;
+        }
+    }
+
+    function normalizeText(text) {
+        if (!text) return "";
+        return String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // ================= MENU I FUNKCJE PLIKÓW =================
+
+    function toggleMenu() {
+        const menu = document.getElementById('settingsMenu');
+        menu.classList.toggle('active');
+    }
+    
+    function pokazInstrukcje() {
+        document.getElementById('helpModal').style.display = 'flex';
+    }
+    
+    function zamknijInstrukcje() {
+        document.getElementById('helpModal').style.display = 'none';
+    }
+
+    function pokazWszystkieStacje() {
+        document.getElementById('stationSearch').value = ''; 
+        document.getElementById('searchResults').style.display = 'none';
+        toggleMenu(); 
+        
+        const mainBox = document.getElementById('mainStatusBox');
+        const listContainer = document.getElementById('detailsList');
+        
+        mainBox.style.display = 'none'; 
+        listContainer.style.display = 'block';
+        listContainer.innerHTML = '';
+
+        if(bazaDanych.length === 0) {
+            listContainer.innerHTML = '<p style="text-align:center">Brak danych w bazie. Spróbuj zaktualizować online.</p>';
+            return;
+        }
+
+        const stacjeMap = {};
+        bazaDanych.forEach(item => {
+            if(item.ukryty) return; 
+            
+            if(!stacjeMap[item.stacja]) {
+                stacjeMap[item.stacja] = [];
+            }
+            stacjeMap[item.stacja].push(item);
+        });
+
+        const sortedNames = Object.keys(stacjeMap).sort((a,b) => a.localeCompare(b));
+
+        let tableHtml = `
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Stacja</th>
+                        <th>EPA</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        const d = new Date();
+        const swieto = sprawdzSwieto();
+        const day = d.getDay(); 
+
+        sortedNames.forEach(name => {
+            const entries = stacjeMap[name];
+            const epaDisplay = (entries[0].epa && String(entries[0].epa) !== 'Brak') ? entries[0].epa : '-';
+            
+            let isAnyOpen = false;
+            let isAnyBreak = false;
+            let allBrak = true;
+
+            entries.forEach(entry => {
+                if(entry.przewoznik !== 'BRAK') allBrak = false;
+                const st = obliczStatus(entry, swieto, day);
+                if(st.type === 'open') isAnyOpen = true;
+                if(st.type === 'break') isAnyBreak = true;
+            });
+
+            let finalStatus = { text: 'NIECZYNNA', colorClass: 'dot-closed' };
+            
+            if (allBrak) {
+                finalStatus = { text: 'Brak kasy', colorClass: 'dot-none' };
+            } else if (isAnyOpen) {
+                finalStatus = { text: 'Czynna', colorClass: 'dot-open' };
+            } else if (isAnyBreak) {
+                finalStatus = { text: 'Przerwa', colorClass: 'dot-break' };
+            }
+
+            tableHtml += `
+                <tr onclick="document.getElementById('stationSearch').value='${name}'; wyswietlStacje('${name}')">
+                    <td>${name}</td>
+                    <td>${epaDisplay}</td>
+                    <td><span class="status-dot ${finalStatus.colorClass}"></span> ${finalStatus.text}</td>
+                </tr>
+            `;
+        });
+
+        tableHtml += `</tbody></table>`;
+        listContainer.innerHTML = tableHtml;
+    }
+
+    document.addEventListener('click', function(e) {
+        const menu = document.getElementById('settingsMenu');
+        const btn = document.querySelector('.settings-btn');
+        if (e.target !== menu && e.target !== btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+            menu.classList.remove('active');
+        }
+    });
+
+    function pobierzPlikNaDysk() {
+        if(bazaDanych.length === 0) {
+            alert("Brak danych do pobrania! Najpierw zaktualizuj bazę.");
+            return;
+        }
+        // Pobieramy połączoną bazę danych, która jest w pamięci
+        const dataStr = JSON.stringify(bazaDanych, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "kasy_polaczona_baza.json"; 
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // ZMODYFIKOWANA FUNKCJA POBIERANIA DANYCH DO OBSŁUGI WIELU PLIKÓW
+    async function pobierzDane(force = false) {
+        const netMsg = document.getElementById('networkStatus');
+        const recoveryPanel = document.getElementById('recoveryPanel');
+        
+        netMsg.innerText = "Łączenie z serwerem i pobieranie segmentów...";
+        recoveryPanel.style.display = 'none';
+
+        try {
+            // Tworzymy tablicę obietnic (Promises) dla każdego pliku
+            const fetchPromises = PLIKI_DANYCH.map(url => 
+                fetch(url, { cache: "no-store" })
+                .then(res => {
+                    if (!res.ok) {
+                        console.warn(`Plik ${url} nie istnieje (HTTP ${res.status}). Ignorowanie.`);
+                        return []; 
+                    }
+                    return res.json();
+                })
+                .catch(err => {
+                    console.error(`Błąd podczas pobierania pliku ${url}:`, err);
+                    return [];
+                })
+            );
+            
+            // Czekamy, aż wszystkie obietnice się spełnią
+            const results = await Promise.all(fetchPromises);
+            
+            let nowaBaza = [];
+            results.forEach(arr => {
+                 if (Array.isArray(arr)) {
+                     nowaBaza = nowaBaza.concat(arr);
+                 }
+            });
+            
+            // FILTROWANIE ZMIENIONE: Włączono rekordy z "BRAK", usunięto tylko te z flagą ukryty=true
+            bazaDanych = nowaBaza.filter(item => item.ukryty !== true); 
+            
+            // Zapisujemy całą, połączoną bazę do localStorage
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(bazaDanych));
+            localStorage.setItem(STORAGE_KEY + '_time', Date.now().toString());
+            
+            netMsg.innerHTML = "<span class='msg-online'>✅ Dane załadowane pomyślnie ze wszystkich segmentów!</span>";
+            if(force) alert("Dane zaktualizowane pomyślnie!");
+            updateCacheStatus();
+
+        } catch (e) {
+            console.warn("Offline/Błąd sieci podczas ładowania segmentów, próba wczytania cache'u:", e);
+            const cached = localStorage.getItem(STORAGE_KEY);
+            if(cached) {
+                bazaDanych = JSON.parse(cached);
+                netMsg.innerHTML = "<span class='msg-offline'>⚠️ Brak internetu. Dane z pamięci (połączone segmenty).</span>";
+                updateCacheStatus();
+            } else {
+                netMsg.innerHTML = "<span class='msg-offline'>❌ BŁĄD SIECI / BRAK DANYCH</span>";
+                updateCacheStatus();
+                recoveryPanel.style.display = 'block';
+            }
+        }
+    }
+
+    function wgrajLokalnyPlik(input) {
+        const file = input.files[0];
+        if(!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const json = JSON.parse(e.target.result);
+                const now = Date.now();
+
+                // FILTROWANIE ZMIENIONE: Włączono rekordy z "BRAK", usunięto tylko te z flagą ukryty=true
+                bazaDanych = json.filter(item => item.ukryty !== true);
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(bazaDanych));
+                localStorage.setItem(STORAGE_KEY + '_time', now.toString());
+                
+
+                alert("Plik lokalny wczytany pomyślnie! Baza gotowa do użycia.");
+                document.getElementById('recoveryPanel').style.display = 'none';
+                document.getElementById('networkStatus').innerHTML = "<span class='msg-online'>📁 Dane lokalne załadowane</span>";
+                updateCacheStatus();
+                document.getElementById('stationSearch').value = ''; 
+                document.getElementById('detailsList').innerHTML = '';
+
+            } catch(err) {
+                alert("Błąd: Wybrany plik nie jest poprawnym formatem JSON. Upewnij się, że jest to kompletna baza danych (np. z Panelu Edytora).");
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // ================= POZOSTAŁE FUNKCJE (logika czasu i wyświetlania) =================
+
+    function initZegar() {
+        const d = new Date();
+        const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        let dateStr = d.toLocaleDateString('pl-PL', optionsDate);
+        dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+        const timeStr = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const swieto = sprawdzSwieto();
+        const bar = document.getElementById('dateBar');
+        let htmlContent = `${dateStr} <span class="time-display">⏰ ${timeStr}</span>`;
+        if(swieto) {
+            htmlContent += ` <span class="holiday-tag">★ ${swieto}</span>`;
+            bar.style.borderColor = "var(--holiday)";
+        } else {
+            bar.style.borderColor = "#ddd";
+        }
+        bar.innerHTML = htmlContent;
+    }
+
+    function filtrujStacje(query) {
+        const list = document.getElementById('searchResults');
+        list.innerHTML = '';
+        
+        if (!query || query.length < 1) {
+            list.style.display = 'none';
+            return;
+        }
+        const normalizedQuery = normalizeText(query);
+        const unikalneStacje = [];
+        const seen = new Set();
+        
+        bazaDanych.forEach(item => {
+            if(item.ukryty) return; 
+
+            const nazwaNormalized = normalizeText(item.stacja);
+            const epa = String(item.epa || "").toLowerCase();
+            
+            if (nazwaNormalized.includes(normalizedQuery) || epa.includes(normalizedQuery)) {
+                if (!seen.has(item.stacja)) {
+                    seen.add(item.stacja);
+                    unikalneStacje.push(item);
+                }
+            }
+        });
+        unikalneStacje.sort((a,b) => a.stacja.localeCompare(b.stacja));
+
+        if (unikalneStacje.length === 0) {
+            list.style.display = 'none';
+            return;
+        }
+
+        unikalneStacje.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'search-result-item';
+            const epaInfo = (item.epa && String(item.epa) !== 'Brak') ? `EPA: ${item.epa}` : '';
+            li.innerHTML = `<strong>${item.stacja}</strong> ${epaInfo ? `<small>${epaInfo}</small>` : ''}`;
+            li.onclick = () => {
+                document.getElementById('stationSearch').value = item.stacja;
+                wyswietlStacje(item.stacja);
+                list.style.display = 'none';
+            };
+            list.appendChild(li);
+        });
+        list.style.display = 'block';
+    }
+
+    document.addEventListener('click', function(e) {
+        const list = document.getElementById('searchResults');
+        const input = document.getElementById('stationSearch');
+        if (e.target !== list && e.target !== input) {
+            list.style.display = 'none';
+        }
+    });
+
+    function wyswietlStacje(nazwaWymuszona = null) {
+        const nazwa = nazwaWymuszona || document.getElementById('stationSearch').value;
+        const mainBox = document.getElementById('mainStatusBox');
+        const listContainer = document.getElementById('detailsList');
+        
+        listContainer.innerHTML = '';
+        if(!nazwa) {
+            mainBox.style.display = 'none';
+            listContainer.style.display = 'none';
+            return;
+        }
+
+        const kasy = bazaDanych.filter(k => k.stacja === nazwa && !k.ukryty); 
+        
+        if(kasy.length === 0) {
+            mainBox.style.display = 'none';
+            listContainer.style.display = 'none';
+            return;
+        }
+
+        let anyOpen = false;
+        let anyBreak = false;
+        let allNone = true;
+
+        const d = new Date();
+        const swieto = sprawdzSwieto();
+        const day = d.getDay(); 
+        let dayType = 'pn_pt';
+        if(swieto || day === 0) dayType = 'nd';
+        else if(day === 6) dayType = 'sob';
+
+        kasy.forEach(k => {
+            if (k.przewoznik !== 'BRAK') allNone = false;
+            
+            const st = obliczStatus(k, swieto, day);
+            if(st.type === 'open') anyOpen = true;
+            if(st.type === 'break') anyBreak = true;
+            
+            const isDataOld = checkDataAge(k['meta.data']);
+            const linkPrzewoznika = BAZA_LINKOW[k.przewoznik] || null;
+            const uwagiHtml = (k.uwagi && String(k.uwagi).toLowerCase() !== 'nan' && String(k.uwagi).trim().length > 0) ? 
+                `<div class="notes-section"><strong>UWAGI:</strong> ${k.uwagi}</div>` : '';
+            const dataAgeWarningHtml = isDataOld ? 
+                `<div class="data-age-warning">⛔ Dane nieaktualne (starsze niż ${MAX_DAYS_FRESH} dni). Weryfikuj u przewoźnika!</div>` : '';
+
+            const h_pnpt = k['godziny.pn_pt'] || '-';
+            const h_sob = k['godziny.sob'] || '-';
+            const h_nd = k['godziny.nd'] || '-';
+            
+            const p_pnpt = k['przerwy.pn_pt'] || '-';
+            const p_sob = k['przerwy.sob'] || '-';
+            const p_nd = k['przerwy.nd'] || '-';
+
+            const html = `
+            <div class="card" style="border-left-color: ${st.color}">
+                <div class="card-header">
+                    <div>
+                        <div class="carrier-title">${k.przewoznik}</div>
+                        <div class="epa-info">EPA: ${k.epa || 'Brak danych'}</div>
+                    </div>
+                    <div class="status-pill" style="background-color: ${st.color}; color: ${st.type==='break'?'#333':'white'}">
+                        ${st.text}
+                    </div>
+                </div>
+                
+                ${dataAgeWarningHtml}
+                ${uwagiHtml}
+
+                <table class="details-table">
+                    <tr class="${dayType==='pn_pt'?'active-row':''}">
+                        <th>Pn - Pt</th>
+                        <td>${h_pnpt} <br> <small style="color:#777">Przerwa: ${p_pnpt}</small></td>
+                    </tr>
+                    <tr class="${dayType==='sob'?'active-row':''}">
+                        <th>Sobota</th>
+                        <td>${h_sob} <br> <small style="color:#777">Przerwa: ${p_sob}</small></td>
+                    </tr>
+                    <tr class="${dayType==='nd'?'active-row':''}">
+                        <th>Ndz / Św</th>
+                        <td>${h_nd} <br> <small style="color:#777">Przerwa: ${p_nd}</small></td>
+                    </tr>
+                </table>
+                
+                ${linkPrzewoznika ? `<a href="${linkPrzewoznika}" target="_blank" class="btn-link">Wykaz kas: ${k.przewoznik} &raquo;</a>` : ''}
+
+                <div class="meta-footer">Data danych: ${k['meta.data'] || '-'} | Autor: ${k['meta.kto'] || '-'}</div>
+            </div>`;
+            listContainer.innerHTML += html;
+        });
+
+        mainBox.style.display = 'block';
+        mainBox.className = ''; 
+        
+        if (allNone) {
+            mainBox.innerText = "BRAK KASY BILETOWEJ";
+            mainBox.classList.add('bg-none');
+        } else if(anyOpen) {
+            mainBox.innerText = "KASA CZYNNA";
+            mainBox.classList.add('bg-open');
+        } else if(anyBreak) {
+            mainBox.innerText = "PRZERWA";
+            mainBox.classList.add('bg-break');
+        } else {
+            mainBox.innerText = "NIECZYNNE";
+            mainBox.classList.add('bg-closed');
+        }
+        
+        listContainer.style.display = 'grid';
+    }
+
+    function obliczStatus(kasa, swieto, dayOfWeek) {
+        if (kasa.przewoznik === 'BRAK') {
+            return { type: 'none', text: 'BRAK KASY', color: '#6c757d' };
+        }
+
+        let hStr, bStr;
+        if(swieto || dayOfWeek === 0) {
+            hStr = kasa['godziny.nd'];
+            bStr = kasa['przerwy.nd'];
+        } else if(dayOfWeek === 6) {
+            hStr = kasa['godziny.sob'];
+            bStr = kasa['przerwy.sob'];
+        } else {
+            hStr = kasa['godziny.pn_pt'];
+            bStr = kasa['przerwy.pn_pt'];
+        }
+        
+        const hStrLower = String(hStr || "").toLowerCase();
+        const is24h = hStrLower.includes('całodobowo');
+        
+        if(!hStr || hStrLower.includes('nieczynne') || hStrLower.includes('zamknięte')) {
+            return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
+        }
+        const now = new Date();
+        const min = now.getHours() * 60 + now.getMinutes();
+        
+        if (!is24h) {
+            const [open, close] = parseRange(hStr);
+            let isOpen = false;
+            // Obsługa godzin otwarcia przechodzących przez północ (np. 23:00-05:00)
+            if (open <= close) {
+                if(min >= open && min < close) isOpen = true;
+            } else {
+                if(min >= open || min < close) isOpen = true;
+            }
+            if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
+        }
+
+        const bStrLower = String(bStr || "").toLowerCase();
+        if(bStr && bStrLower.length > 3 && !bStrLower.includes('brak') && bStrLower !== 'nan') {
+            const breaks = String(bStr).split(';');
+            for(let br of breaks) {
+                const [bStart, bEnd] = parseRange(br.trim());
+                let isDuringBreak = false;
+                // Obsługa przerw przechodzących przez północ
+                if (bStart <= bEnd) {
+                    if (min >= bStart && min < bEnd) isDuringBreak = true;
+                } else {
+                    if (min >= bStart || min < bEnd) isDuringBreak = true;
+                }
+                if(isDuringBreak) {
+                    return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
+                }
+            }
+        }
+        
+        return { type: 'open', text: 'OTWARTA', color: '#28a745' };
+    }
+
+    function parseTime(t) {
+        if(!t) return 0;
+        const cleanT = String(t).replace('.', ':').trim();
+        const [h, m] = cleanT.split(':').map(Number);
+        if (isNaN(h) || isNaN(m)) return 0;
+        return h * 60 + m;
+    }
+    
+    function parseRange(str) {
+        if(!str || !String(str).includes('-')) return [0,0];
+        const parts = String(str).split('-');
+        return [parseTime(parts[0]), parseTime(parts[1])];
+    }
+
+    // Inicjalizacja: W pierwszej kolejności ładuj dane z pamięci, a następnie spróbuj pobrać z sieci.
+    window.onload = () => {
+        initZegar();
+        const cached = localStorage.getItem(STORAGE_KEY);
+        if(cached) {
+            bazaDanych = JSON.parse(cached);
+            document.getElementById('networkStatus').innerHTML = "Ładowanie... Wczytano dane z pamięci.";
+            updateCacheStatus();
+        }
+        
+        pobierzDane(); // Spróbuj pobrać najnowsze dane
+        
+        setInterval(() => { initZegar(); }, 1000); // Aktualizacja zegara co sekundę
+        setInterval(() => { 
+            // Ponowne przeliczenie statusu dla widocznej stacji co minutę
+            if(document.getElementById('detailsList').style.display !== 'none' && document.getElementById('stationSearch').value) {
+                 wyswietlStacje(); 
+            }
+        }, 60000);
+    };
+</script>
+
+</body>
+</html>

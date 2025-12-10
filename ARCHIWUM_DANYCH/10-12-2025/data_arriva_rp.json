@@ -1,0 +1,34 @@
+[
+  {
+    "stacja": "BYDGOSZCZ GŁÓWNA",
+    "epa": "14",
+    "wojewodztwo": "Kujawsko-pomorskie",
+    "przewoznik": "ARRIVA RP",
+    "godziny.pn_pt": "05:45-18:45",
+    "godziny.sob": "06:15-17:15",
+    "godziny.nd": "06:15-17:15",
+    "przerwy.pn_pt": "09:15-09:45; 16:00-16:15",
+    "przerwy.sob": "10:15-10:30; 14:00-14:30",
+    "przerwy.nd": "10:15-10:30; 14:00-14:30",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-09"
+  },
+  {
+    "stacja": "GRUDZIĄDZ",
+    "epa": "48",
+    "wojewodztwo": "Kujawsko-pomorskie",
+    "przewoznik": "ARRIVA RP",
+    "godziny.pn_pt": "07:00-15:30",
+    "godziny.sob": "07:00-15:30",
+    "godziny.nd": "07:00-15:30",
+    "przerwy.pn_pt": "11:35-12:05",
+    "przerwy.sob": "11:35-12:05",
+    "przerwy.nd": "11:35-12:05",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-09"
+  }
+]

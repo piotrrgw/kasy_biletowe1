@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-W05T4L1HFD');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Edytora Danych</title>
+    
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* USTAWIENIA KOLORÓW */
+        :root {
+            --primary: #1e6091;
+            --primary-light: #007bff;
+            --primary-dark: #123e5a;
+            --bg-app: #f7f9fc;
+            --white: #ffffff;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --text-main: #343a40;
+            --border: #e9ecef;
+            
+            --row-modified: #fff3cd;
+            --row-new: #d4edda;
+            --row-done: #e2e6ea;
+            --row-active: #e3f2fd;
+            --row-hidden: #f1f3f5;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: var(--bg-app);
+            color: var(--text-main);
+            margin: 0;
+            padding-bottom: 50px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- HEADER --- */
+        .app-header {
+            background: var(--white);
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .brand-area { display: flex; align-items: center; gap: 10px; }
+        .brand-logo { font-size: 1.6rem; color: var(--primary); }
+        .brand-name { font-weight: 700; font-size: 1.2rem; color: var(--text-main); }
+        .header-controls { display: flex; align-items: center; gap: 15px; }
+
+        .clock-display, .session-timer, .cache-display { font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #555; background: var(--bg-app); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); }
+        .session-timer { background: #e0f7fa; color: #00bcd4; font-weight: 600; cursor: pointer; border-color: #b2ebf2; }
+        .session-timer:hover::after { content: " (Reset)"; font-size: 0.8em; color: #a0a0a0; }
+        
+        /* Styl dla wskaźnika pamięci */
+        .cache-display { background: #f3e5f5; color: #8e24aa; border-color: #e1bee7; cursor: help; }
+
+        .global-editor-box { display: flex; align-items: center; gap: 5px; background: #e9ecef; padding: 4px 12px; border-radius: 20px; border: 1px solid #ced4da; }
+        .global-editor-select { border: none; background: transparent; font-weight: 700; color: var(--primary-dark); font-size: 0.9rem; cursor: pointer; outline: none; }
+
+        .gear-wrapper { position: relative; }
+        .gear-btn { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #6c757d; display: flex; align-items: center; transition: color 0.2s; }
+        .gear-btn:hover { color: var(--primary-light); }
+        .dropdown-menu { position: absolute; top: 130%; right: 0; background: var(--white); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); width: 280px; display: none; flex-direction: column; z-index: 2000; }
+        .dropdown-menu.active { display: flex; }
+        .menu-item { padding: 10px 15px; border-bottom: 1px solid #f1f1f1; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--text-main); }
+        .menu-item:hover { background: #f8f9fa; color: var(--primary); padding-left: 20px; }
+
+        /* --- TOOLBAR --- */
+        .toolbar { background: var(--white); padding: 15px 30px; border-bottom: 1px solid var(--border); display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .progress-section { flex-basis: 100%; max-width: 100%; margin-bottom: 5px; }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 600; color: #555; margin-bottom: 3px; }
+        .progress-track { background: #e9ecef; height: 8px; border-radius: 4px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, var(--success) 0%, #20c997 100%); height: 100%; width: 0%; transition: width 0.4s; }
+        
+        .main-controls { display: flex; gap: 10px; flex-grow: 1; align-items: center; flex-wrap: wrap; }
+        .toolbar-select { padding: 8px; border-radius: 5px; border: 1px solid #ced4da; font-size: 0.95rem; max-width: 400px; background: white; }
+        #filterCarrier { max-width: 200px; font-weight: 500; color: var(--primary-dark); }
+        #stationSelect { flex-grow: 1; min-width: 250px; }
+
+        .btn { padding: 8px 16px; border-radius: 5px; font-weight: 600; cursor: pointer; border: none; font-size: 0.9rem; white-space: nowrap; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-outline { background: white; border: 1px solid #ced4da; color: #555; }
+        .btn-outline:hover { background: #f8f9fa; border-color: #adb5bd; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-clone { background: #f1f3f5; color: #333; border: 1px solid #dee2e6; }
+        .btn-clone:hover { background: #e9ecef; }
+        .btn-nav { font-size: 1.1rem; padding: 6px 12px; }
+
+        .carrier-link-btn { display: inline-flex; text-decoration: none; background: #e7f1ff; color: var(--primary-light); border: 1px solid #b8daff; padding: 8px 12px; border-radius: 5px; font-size: 0.85rem; font-weight: 600; align-items: center; gap: 5px; transition: 0.2s; height: 42px; }
+        .carrier-link-btn:hover { background: var(--primary-light); color: white; border-color: var(--primary-light); }
+        .carrier-link-btn.disabled { background: #fff5f5; color: #dc3545; border-color: #f5c6cb; text-decoration: line-through; cursor: not-allowed; pointer-events: none; opacity: 0.8; }
+
+        /* --- FORM LAYOUT --- */
+        .container { max-width: 1400px; margin: 20px auto; padding: 0 20px; width: 100%; flex-grow: 1; }
+        .editor-form { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 30px; }
+        .card { background: white; border-radius: 10px; border: 1px solid var(--border); padding: 20px; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
+        .card-header { font-weight: 700; margin-bottom: 15px; border-bottom: 2px solid #f1f1f1; padding-bottom: 8px; color: var(--primary); font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; }
+        
+        .col-span-12 { grid-column: span 12; }
+        .col-span-6 { grid-column: span 6; }
+        .col-span-3 { grid-column: span 3; }
+        @media (max-width: 900px) { .col-span-3 { grid-column: span 6; } }
+        @media (max-width: 600px) { .col-span-6, .col-span-3 { grid-column: span 12; } .toolbar { flex-direction: column; align-items: stretch; } }
+
+        .form-group { margin-bottom: 15px; }
+        .form-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .form-label { font-size: 0.85rem; font-weight: 700; color: #555; }
+        .form-input { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 0.95rem; background: #fff; transition: border-color 0.2s; }
+        .form-input:focus { border-color: var(--primary-light); outline: none; box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25); }
+        .form-input.is-invalid { border-color: var(--danger); background-color: #fff8f8; }
+        .error-msg { color: var(--danger); font-size: 0.75rem; font-weight: 600; display: none; margin-top: 2px; }
+        .form-input.is-invalid + .error-msg { display: block; }
+        textarea.form-input { resize: vertical; min-height: 80px; }
+
+        .mini-btn { background: #f8f9fa; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.75rem; padding: 4px 10px; cursor: pointer; color: #666; transition: 0.2s; font-weight: 500; }
+        .mini-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .suggestions-box { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .suggestion-chip { background: #e9ecef; border: 1px solid #dee2e6; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; color: #495057; cursor: pointer; transition: 0.2s; }
+        .suggestion-chip:hover { background: #dee2e6; color: var(--primary); border-color: #adb5bd; }
+
+        /* --- TIME BUILDER STYLES --- */
+        .time-editor-wrapper { background: #fff; }
+        .mode-buttons { display: flex; gap: 4px; margin-bottom: 8px; }
+        .mode-btn { flex: 1; padding: 6px; font-size: 0.75rem; border: 1px solid #ced4da; background: #f8f9fa; cursor: pointer; border-radius: 4px; color: #555; font-weight: 600; text-align: center; }
+        .mode-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .mode-btn[data-mode="closed"].active { background: #6c757d; border-color: #6c757d; }
+        .mode-btn[data-mode="24h"].active { background: #17a2b8; border-color: #17a2b8; }
+        .mode-btn[data-mode="custom"].active { background: var(--success); border-color: var(--success); }
+
+        .time-rows-container { display: flex; flex-direction: column; gap: 8px; }
+        .time-row { display: flex; align-items: center; gap: 8px; }
+        .time-input { padding: 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 0.9rem; font-family: 'Fira Code', monospace; flex: 1; }
+        .time-separator { color: #888; font-weight: bold; }
+        .remove-row-btn { background: #fff0f0; border: 1px solid #ffccd5; color: var(--danger); width: 30px; height: 30px; border-radius: 4px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.2rem; }
+        .remove-row-btn:hover { background: var(--danger); color: white; }
+        .add-row-btn { width: 100%; padding: 6px; background: #e9ecef; border: 1px dashed #ced4da; margin-top: 10px; color: #666; font-size: 0.85rem; cursor: pointer; border-radius: 4px; }
+        .add-row-btn:hover { background: #dee2e6; color: var(--primary); border-color: var(--primary); }
+        .hidden { display: none; }
+
+        /* --- VISUALIZATION STYLES --- */
+        .timeline-wrapper { margin-top: 10px; display: flex; flex-direction: column; gap: 12px; }
+        .timeline-row { display: flex; align-items: center; font-size: 0.85rem; color: #555; }
+        .timeline-label { width: 60px; font-weight: bold; flex-shrink: 0; }
+        .timeline-track { flex-grow: 1; height: 20px; background: #e9ecef; border-radius: 4px; position: relative; overflow: hidden; border: 1px solid #dee2e6; }
+        .timeline-ruler { position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: flex; justify-content: space-between; pointer-events: none; padding: 0 2px; }
+        .ruler-mark { height: 100%; border-left: 1px solid rgba(0,0,0,0.1); font-size: 0.7rem; color: #999; padding-left: 2px; line-height: 20px; }
+        
+        .bar-open { position: absolute; height: 100%; background: #28a745; opacity: 0.7; top: 0; z-index: 1; border-radius: 2px; }
+        .bar-break { position: absolute; height: 100%; background: #ffc107; opacity: 0.9; top: 0; z-index: 2; border-left: 1px solid rgba(0,0,0,0.2); border-right: 1px solid rgba(0,0,0,0.2); }
+
+        /* --- TABLE --- */
+        .table-wrap { background: white; border: 1px solid #dee2e6; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
+        .table-controls { padding: 10px 15px; border-bottom: 1px solid #dee2e6; background: #f8fafc; display: flex; gap: 15px; align-items: center; font-size: 0.85rem; color: #555; flex-wrap: wrap; }
+        .col-toggle { display: flex; gap: 5px; align-items: center; cursor: pointer; }
+        .col-toggle input { cursor: pointer; }
+        
+        .table-scroll { max-height: 500px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { background: #f1f3f5; padding: 12px 15px; text-align: left; position: sticky; top: 0; font-weight: 700; border-bottom: 2px solid #dee2e6; color: #495057; z-index: 10; }
+        td { padding: 10px 15px; border-bottom: 1px solid #dee2e6; color: #333; }
+        tr:hover { background: #f8f9fa; cursor: pointer; }
+        .row-modified td { background: var(--row-modified); }
+        .row-new td { background: var(--row-new); }
+        .row-done td { background: var(--row-done); color: #6c757d; }
+        .row-active td { background: var(--row-active) !important; color: #000; }
+        .row-hidden td { opacity: 0.6; background: var(--row-hidden); font-style: italic; }
+        
+        /* Preview table row styling */
+        .preview-row { cursor: pointer; transition: background 0.2s; }
+        .preview-row:hover { background: #e9ecef; }
+        .preview-row.active { background: #d1e7dd; font-weight: bold; }
+
+        /* --- FOOTER & MODALS --- */
+        .footer { text-align: center; padding: 20px; font-size: 0.85rem; color: #666; margin-top: auto; border-top: 1px solid #dee2e6; background: white; }
+        #offlineAlert { display: none; background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; border-left: 5px solid var(--warning); }
+        #toast { position: fixed; bottom: 20px; right: 20px; background: #343a40; color: white; padding: 12px 25px; border-radius: 5px; transform: translateY(150%); transition: 0.3s; z-index: 5000; }
+        #toast.show { transform: translateY(0); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; justify-content: center; align-items: center; }
+        .modal { background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px; display: flex; flex-direction: column; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        .modal-large { max-width: 800px; width: 95%; }
+        .code-preview-box { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px; font-family: 'Fira Code', monospace; max-height: 400px; overflow: auto; margin: 10px 0; }
+        .key { color: #9cdcfe; } .string { color: #ce9178; } .number { color: #b5cea8; } .boolean { color: #569cd6; } .null { color: #569cd6; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; background: none; border: none; color: #999; }
+        
+        .help-list { list-style: none; padding: 0; margin: 0; font-size: 0.95rem; line-height: 1.6; }
+        .help-list li { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .help-list strong { color: var(--primary); display: block; margin-bottom: 4px; font-size: 1rem; }
+        .help-warn { color: #d63384; font-weight: bold; }
+        
+        .checkbox-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 8px; border: 1px dashed #ced4da; border-radius: 5px; background: #fdfdfd; }
+        .checkbox-wrapper input { width: 18px; height: 18px; cursor: pointer; }
+        .checkbox-wrapper label { cursor: pointer; font-size: 0.9rem; font-weight: 600; color: #555; }
+    </style>
+</head>
+<body>
+
+<header class="app-header">
+    <div class="brand-area"><span class="brand-logo">🚂</span><span class="brand-name">Panel Edytora Danych Kas</span></div>
+    <div class="header-controls">
+        <div class="clock-display" id="clockDisplay">--.--.---- --:--</div>
+        <div class="session-timer" id="sessionTimer" onclick="resetSessionTimer()">Czas pracy: 00:00:00</div>
+        <div class="cache-display" id="cacheDisplay" title="Zajętość pamięci podręcznej">💾 0 B</div>
+        <div class="global-editor-box">
+            <span>👤</span>
+            <select id="globalEditor" class="global-editor-select" onchange="updateGlobalEditor()">
+                <option value="PIOTR M">PIOTR M</option><option value="PIOTR S">PIOTR S</option><option value="ANNA S">ANNA S</option>
+            </select>
+        </div>
+        <div class="gear-wrapper">
+            <button class="gear-btn" onclick="toggleMenu()">⚙️</button>
+            <div class="dropdown-menu" id="gearMenu">
+                <div class="menu-item" onclick="showCodePreview()">👁️ Podgląd/Pobierz JSON</div>
+                <div class="menu-item" onclick="openProgressModal()">📊 Skonfiguruj Postęp</div>
+                <div class="menu-item" onclick="openFindReplaceModal()">🔎 Znajdź i Zamień</div>
+                <div class="menu-item" onclick="openHelpModal()">❓ Instrukcja Obsługi</div>
+                <div class="menu-item" onclick="bulkFixData()">🔧 Napraw Format Danych</div>
+                <div class="menu-item" onclick="bulkUpdateClosed()" style="color:var(--warning);">🔨 Aktualizuj "Nieczynne"</div>
+                <div class="menu-item" onclick="resetAppCache()" style="color:var(--danger); border-top:1px solid #eee;">🗑️ Resetuj Pamięć Aplikacji</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="toolbar">
+    <div class="progress-section">
+        <div class="progress-labels"><span>Postęp prac</span><span id="progressText">0 / 0</span></div>
+        <div class="progress-track"><div class="progress-fill" id="progressBar" style="width: 0%"></div></div>
+    </div>
+    <div class="main-controls">
+        <select id="filterCarrier" class="toolbar-select" onchange="applyFilter()">
+            <option value="ALL">Wszyscy przewoźnicy</option>
+        </select>
+        <button class="btn btn-outline btn-nav" onclick="prevStation()" title="Poprzednia stacja (Shift + ←)">◀</button>
+        <select id="stationSelect" class="toolbar-select" onchange="loadStation()">
+            <option value="-1">⌛ Wczytywanie bazy...</option>
+        </select>
+        <button class="btn btn-outline btn-nav" onclick="nextStation()" title="Następna stacja (Shift + →)">▶</button>
+        
+        <button class="btn btn-outline" onclick="createNewStation()">+ Nowa</button>
+        <button class="btn btn-clone" onclick="cloneStation()" title="Sklonuj bieżącą stację">👯 Klonuj</button>
+        <button class="btn btn-danger" onclick="deleteStation()">Usuń</button>
+    </div>
+    <button class="btn btn-primary" onclick="saveChanges()">💾 Zapisz Zmiany</button>
+</div>
+
+<div class="container">
+    <div id="offlineAlert">
+        <strong>⚠️ Błąd:</strong> Nie udało się automatycznie wczytać wszystkich segmentów bazy. Upewnij się, że masz wszystkie pliki JSON w katalogu.<br>
+        Wybierz plik master (np. *kasy_master.json*) ręcznie z dysku: <input type="file" onchange="handleFileUpload(this)" accept=".json">
+    </div>
+
+    <form id="editForm" onsubmit="event.preventDefault();">
+        <div class="editor-form">
+            <div class="card col-span-6">
+                <div class="card-header">📍 Dane Stacji</div>
+                <div class="form-group">
+                    <label class="form-label">Nazwa Stacji</label>
+                    <input type="text" id="stacja" class="form-input" required onblur="renderStationPreview(this.value)">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div class="form-group">
+                        <label class="form-label">Numer EPA</label>
+                        <input type="text" id="epa" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Województwo</label>
+                        <select id="wojewodztwo" class="form-input">
+                            <option value="">-- Wybierz --</option>
+                            <option value="Dolnośląskie">Dolnośląskie</option>
+                            <option value="Kujawsko-pomorskie">Kujawsko-pomorskie</option>
+                            <option value="Lubelskie">Lubelskie</option>
+                            <option value="Lubuskie">Lubuskie</option>
+                            <option value="Łódzkie">Łódzkie</option>
+                            <option value="Małopolskie">Małopolskie</option>
+                            <option value="Mazowieckie">Mazowieckie</option>
+                            <option value="Opolskie">Opolskie</option>
+                            <option value="Podkarpackie">Podkarpackie</option>
+                            <option value="Podlaskie">Podlaskie</option>
+                            <option value="Pomorskie">Pomorskie</option>
+                            <option value="Śląskie">Śląskie</option>
+                            <option value="Świętokrzyskie">Świętokrzyskie</option>
+                            <option value="Warmińsko-Mazurskie">Warmińsko-Mazurskie</option>
+                            <option value="Wielkopolskie">Wielkopolskie</option>
+                            <option value="Zachodniopomorskie">Zachodniopomorskie</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Przewoźnik</label>
+                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                        <div style="flex-grow:1;">
+                            <select id="przewoznik" class="form-input" required onchange="updateCarrierBtn()">
+                                <option value="">-- Wybierz przewoźnika --</option>
+                                <option value="PKP INTERCITY">PKP INTERCITY</option>
+                                <option value="POLREGIO">POLREGIO</option>
+                                <option value="ARRIVA RP">ARRIVA RP</option>
+                                <option value="KOLEJE MAZOWIECKIE">KOLEJE MAZOWIECKIE</option>
+                                <option value="KOLEJE ŚLĄSKIE">KOLEJE ŚLĄSKIE</option>
+                                <option value="KOLEJE WIELKOPOLSKIE">KOLEJE WIELKOPOLSKIE</option>
+                                <option value="KOLEJE DOLNOŚLĄSKIE">KOLEJE DOLNOŚLĄSKIE</option>
+                                <option value="ŁÓDZKA KOLEJ AGLOMERACYJNA">ŁÓDZKA KOLEJ AGLOMERACYJNA</option>
+                                <option value="KOLEJE MAŁOPOLSKIE">KOLEJE MAŁOPOLSKIE</option>
+                                <option value="SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE">SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE</option>
+                                <option value="PKP SKM">PKP SKM (SKM w Trójmieście)</option>
+                                <option value="KŚ">KŚ (Alias - Koleje Śląskie)</option>
+                                <option value="KM">KM (Alias - Koleje Mazowieckie)</option>
+                                <option value="ŁKA">ŁKA (Alias - Łódzka KA)</option>
+                                <option value="KW">KW (Alias - Koleje Wielkopolskie)</option>
+                                <option value="KD">KD (Alias - Koleje Dolnośląskie)</option>
+                                <option value="BRAK">BRAK KASY BILETOWEJ</option>
+                            </select>
+                        </div>
+                        <a id="carrierBtn" href="#" target="_blank" class="carrier-link-btn disabled" title="Otwórz stronę przewoźnika">🔗 WWW</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card col-span-6">
+                <div class="card-header">⚙️ Meta Dane</div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div class="form-group">
+                        <label class="form-label">Edytor</label>
+                        <input type="text" id="meta.kto" class="form-input" readonly style="background:#e9ecef; font-weight:bold; color:var(--primary);">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data Aktualizacji</label>
+                        <input type="date" id="meta.data" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Uwagi</label>
+                    <textarea id="uwagi" class="form-input" placeholder="Wpisz uwagi..."></textarea>
+                    
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="ukryty">
+                        <label for="ukryty">👁️ Ukryj tę stację w podglądzie (zamiast usuwać)</label>
+                    </div>
+
+                    <div class="suggestions-box">
+                        <div class="suggestion-chip" onclick="insertSuggestion('PROSZĘ WERYFIKOWAĆ NA STRONIE PRZEWOŹNIKA')">PROSZĘ WERYFIKOWAĆ...</div>
+                        <div class="suggestion-chip" onclick="insertSuggestion('CENTRUM OBSŁUGI KLIENTA')">CENTRUM OBSŁUGI KLIENTA</div>
+                        <div class="suggestion-chip" onclick="insertSuggestion('Uwaga!! Kasa nieczynna do odwołania z powodu awarii.')">Awaria / Do odwołania</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card col-span-6" id="stationPreviewCard">
+                <div class="card-header">📋 Podgląd Stacji: <span id="previewStationName" style="font-weight:700; color:var(--text-main);">--</span></div>
+                <div id="stationPreviewContent" style="max-height: 480px; overflow-y: auto;">
+                    <p style="text-align:center; color:#999; margin:40px 0;">Wybierz stację, aby zobaczyć wszystkie jej rekordy w bazie.</p>
+                </div>
+            </div>
+            <div class="card col-span-6">
+                <div class="card-header">🕒 Godziny i Przerwy</div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div>
+                        <div class="form-group">
+                            <label class="form-label">Pn-Pt (Godziny)</label>
+                            <div id="godziny.pn_pt" class="time-editor-wrapper"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-label-row">
+                                <label class="form-label">Sobota (Godziny)</label>
+                                <button type="button" class="mini-btn" onclick="copyTime('godziny.pn_pt', 'godziny.sob')">📋 Kopiuj z Pn-Pt</button>
+                            </div>
+                            <div id="godziny.sob" class="time-editor-wrapper"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-label-row">
+                                <label class="form-label">Niedziela (Godziny)</label>
+                                <div style="display:flex; gap:5px;">
+                                    <button type="button" class="mini-btn" onclick="copyTime('godziny.pn_pt', 'godziny.nd')">📋 z Pn-Pt</button>
+                                    <button type="button" class="mini-btn" onclick="copyTime('godziny.sob', 'godziny.nd')">📋 z Sob</button>
+                                </div>
+                            </div>
+                            <div id="godziny.nd" class="time-editor-wrapper"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label class="form-label">Pn-Pt (Przerwy)</label>
+                            <div id="przerwy.pn_pt" class="time-editor-wrapper"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-label-row">
+                                <label class="form-label">Sobota (Przerwy)</label>
+                                <button type="button" class="mini-btn" onclick="copyTime('przerwy.pn_pt', 'przerwy.sob')">📋 Kopiuj z Pn-Pt</button>
+                            </div>
+                            <div id="przerwy.sob" class="time-editor-wrapper"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-label-row">
+                                <label class="form-label">Niedziela (Przerwy)</label>
+                                <div style="display:flex; gap:5px;">
+                                    <button type="button" class="mini-btn" onclick="copyTime('przerwy.pn_pt', 'przerwy.nd')">📋 z Pn-Pt</button>
+                                    <button type="button" class="mini-btn" onclick="copyTime('przerwy.sob', 'przerwy.nd')">📋 z Sob</button>
+                                </div>
+                            </div>
+                            <div id="przerwy.nd" class="time-editor-wrapper"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card col-span-12">
+                <div class="card-header">📊 Wizualizacja dostępności</div>
+                <div class="timeline-wrapper">
+                    <div class="timeline-row"><div class="timeline-label">Pn-Pt</div><div class="timeline-track" id="vis-pn-pt"><div class="timeline-ruler"><span class="ruler-mark">00</span><span class="ruler-mark">06</span><span class="ruler-mark">12</span><span class="ruler-mark">18</span><span class="ruler-mark">24</span></div></div></div>
+                    <div class="timeline-row"><div class="timeline-label">Sobota</div><div class="timeline-track" id="vis-sob"><div class="timeline-ruler"><span class="ruler-mark">00</span><span class="ruler-mark">06</span><span class="ruler-mark">12</span><span class="ruler-mark">18</span><span class="ruler-mark">24</span></div></div></div>
+                    <div class="timeline-row"><div class="timeline-label">Nd</div><div class="timeline-track" id="vis-nd"><div class="timeline-ruler"><span class="ruler-mark">00</span><span class="ruler-mark">06</span><span class="ruler-mark">12</span><span class="ruler-mark">18</span><span class="ruler-mark">24</span></div></div></div>
+                </div>
+                <div style="margin-top:10px; font-size:0.75rem; color:#666; display:flex; gap:15px;">
+                    <span style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#28a745;"></div> Otwarte</span>
+                    <span style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#ffc107;"></div> Przerwa</span>
+                    <span style="display:flex;align-items:center;gap:5px;"><div style="width:12px;height:12px;background:#e9ecef;border:1px solid #ccc;"></div> Zamknięte</span>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+    <div class="table-wrap">
+        <div class="table-controls">
+            <strong>📊 Podgląd Bazy Danych | Pokaż kolumny:</strong>
+            <div id="colToggles" style="display:flex; gap:15px; flex-wrap:wrap;"></div>
+        </div>
+        <div class="table-scroll">
+            <table id="mainTable">
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer class="footer"><p>Projekt i wykonanie: <strong>Piotr M 🚂</strong> & Gemini (AI)</p></footer>
+
+<div class="modal-overlay" id="codeModal">
+    <div class="modal modal-large">
+        <button class="close-modal" onclick="closeModals()">&times;</button>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>👁️ Podgląd/Pobierz JSON</h3>
+            <div style="display:flex; gap:10px;">
+                <select id="segmentSelector" class="toolbar-select" onchange="showSegment(this.value)" style="font-size: 0.9rem; max-width: 250px;">
+                    <option value="MASTER">Cała Baza (MASTER)</option>
+                </select>
+                <button class="btn btn-primary" onclick="copyCodeToClipboard()">📋 Kopiuj</button>
+                <button class="btn btn-outline" onclick="downloadJSON()">⬇️ Pobierz Segment</button>
+            </div>
+        </div>
+        <pre class="code-preview-box"><code id="jsonPreview"></code></pre>
+        <button class="btn btn-outline" onclick="closeModals()" style="align-self: flex-end;">Zamknij</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="progressModal"><div class="modal"><button class="close-modal" onclick="closeModals()">&times;</button><h3>📊 Ustawienia Postępu</h3><div class="form-group"><label class="form-label">Opcja A: Ręcznie</label><input type="number" id="manualOffset" class="form-input" value="0"></div><hr style="margin:15px 0;"><div class="form-group"><label class="form-label">Opcja B: Wg daty</label><div style="display:flex; gap:10px;"><input type="date" id="dateOffset" class="form-input"><button class="btn btn-outline" onclick="calcProgressByDate()">Oznacz</button></div></div><button class="btn btn-primary" onclick="saveProgressSettings()" style="width:100%; margin-top:15px;">Zapisz</button></div></div>
+<div class="modal-overlay" id="findReplaceModal"><div class="modal"><button class="close-modal" onclick="closeModals()">&times;</button><h3>🔎 Znajdź i Zamień</h3><p style="font-size:0.85rem; color:#666;">Ta operacja zmieni dane we wszystkich rekordach. Bądź ostrożny!</p><div class="form-group"><label class="form-label">Gdzie szukać?</label><select id="fr_field" class="form-input"><option value="przewoznik">Przewoźnik</option><option value="stacja">Nazwa Stacji</option><option value="uwagi">Uwagi</option><option value="wojewodztwo">Województwo</option></select></div><div class="form-group"><label class="form-label">Znajdź (tekst):</label><input type="text" id="fr_find" class="form-input" placeholder="np. Przewozy Regionalne"></div><div class="form-group"><label class="form-label">Zamień na:</label><input type="text" id="fr_replace" class="form-input" placeholder="np. POLREGIO"></div><div style="display:flex; gap:10px; margin-top:15px;"><button class="btn btn-primary" onclick="applyFindReplace()" style="flex:1;">Wykonaj</button><button class="btn btn-outline" onclick="closeModals()">Anuluj</button></div></div></div>
+
+<div class="modal-overlay" id="helpModal">
+    <div class="modal modal-large">
+        <button class="close-modal" onclick="closeModals()">&times;</button>
+        <h3>❓ Instrukcja Obsługi i Bezpieczeństwo</h3>
+        <div style="overflow-y:auto; max-height:400px; padding-right:10px;">
+            <ul class="help-list">
+                <li><strong>1. Nawigacja (NOWOŚĆ)</strong> Użyj przycisków ◀ ▶ aby przełączać się między stacjami. Działa to również ze skrótami klawiszowymi: Shift + Strzałka w Lewo / Prawo. Nawigacja respektuje wybrany filtr przewoźnika.</li>
+                <li><strong>2. Reset Pamięci (NOWOŚĆ)</strong> Jeśli aplikacja zwolni lub zacznie działać nieprawidłowo, możesz użyć opcji "Resetuj Pamięć Aplikacji" w menu. Uwaga: usunie to niezapisane zmiany!</li>
+                <li><strong>3. Aktywny Podgląd Stacji</strong> Kliknięcie wiersza w "Podglądzie Stacji" (prawe okienko) automatycznie przenosi edytor do tego rekordu.</li>
+                <li><strong>4. Persystencja Danych</strong> Dane oraz postęp prac są automatycznie zapisywane po odświeżeniu strony. <span class="help-warn">Nie zapomnij pobrać pliku JSON po zakończeniu pracy.</span></li>
+                <li><strong>5. Klonowanie Stacji (👯 Klonuj)</strong> Użyj tej funkcji, gdy dodajesz stację o podobnych godzinach co poprzednia. EPA zostanie zachowane, a przewoźnik wyczyszczony.</li>
+                <li><strong>6. Masowa Zamiana</strong> Użyj "Znajdź i Zamień" w menu zębatki do masowych zmian tekstowych.</li>
+            </ul>
+        </div>
+        <button class="btn btn-outline" onclick="closeModals()" style="align-self: flex-end; margin-top:15px;">Zamknij</button>
+    </div>
+</div>
+
+<div id="toast">Komunikat</div>
+
+<script>
+    let database = [];
+    let currentIndex = -1;
+    let manualProgressOffset = 0;
+    let progressRefDate = null;
+    
+    // Konfiguracja kolumn
+    const columnsConfig = {
+        'id': { label: '#', show: false },
+        'stacja': { label: 'Stacja', show: true },
+        'przewoznik': { label: 'Przewoźnik', show: true },
+        'wojewodztwo': { label: 'Województwo', show: false },
+        'epa': { label: 'EPA', show: false },
+        'uwagi': { label: 'Uwagi', show: true },
+        'editor': { label: 'Edytor', show: true },
+        'data': { label: 'Data', show: true }
+    };
+
+    const DB_SESSION_KEY = 'editor_current_db';
+    const PROGRESS_KEY = 'editor_progress_offset'; // Nowy klucz do zapisu postępu
+
+    const DB_SEGMENT_URLS = [
+        'data_pkp_intercity.json', 
+        'data_polregio.json',
+        'data_arriva_rp.json',
+        'data_koleje_slaskie.json',
+        'data_koleje_mazowieckie.json',
+        'data_lka.json',
+        'data_koleje_wielkopolskie.json',
+        'data_koleje_dolnoslaskie.json', 
+        'data_koleje_malopolskie.json',
+        'data_skm.json',
+        'data_brak_kasy.json'
+    ];
+
+    const carrierLinks = {
+        "PKP INTERCITY": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
+        "POLREGIO": "https://polregio.pl/pl/dla-podroznych/gdzie-kupic-bilet/kasy-biletowe/",
+        "ARRIVA RP": "https://arriva.pl/1032/kasy-biletowe",
+        "KOLEJE ŚLĄSKIE": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "KOLEJE MAZOWIECKIE": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "ŁÓDZKA KOLEJ AGLOMERACYJNA": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "KOLEJE WIELKOPOLSKIE": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "KOLEJE DOLNOŚLĄSKIE": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "KOLEJE MAŁOPOLSKIE": "https://www.kolejemalopolskie.com.pl/pl/dla-pasazera/gdzie-kupic-bilet-kolejowy",
+        "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
+        "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow",
+        "KŚ": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "KM": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "ŁKA": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "KW": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "KD": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "BRAK": null
+    };
+
+    const SEGMENT_GROUPS = {
+        'PKP INTERCITY': 'data_pkp_intercity.json',
+        'POLREGIO': 'data_polregio.json',
+        'ARRIVA RP': 'data_arriva_rp.json',
+        'KOLEJE ŚLĄSKIE': 'data_koleje_slaskie.json',
+        'KŚ': 'data_koleje_slaskie.json',
+        'KOLEJE MAZOWIECKIE': 'data_koleje_mazowieckie.json',
+        'KM': 'data_koleje_mazowieckie.json',
+        'ŁÓDZKA KOLEJ AGLOMERACYJNA': 'data_lka.json',
+        'ŁKA': 'data_lka.json',
+        'KOLEJE WIELKOPOLSKIE': 'data_koleje_wielkopolskie.json',
+        'KW': 'data_koleje_wielkopolskie.json',
+        'KOLEJE DOLNOŚLĄSKIE': 'data_koleje_dolnoslaskie.json',
+        'KD': 'data_koleje_dolnoslaskie.json',
+        'KOLEJE MAŁOPOLSKIE': 'data_koleje_malopolskie.json',
+        'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE': 'data_skm.json',
+        'PKP SKM': 'data_skm.json',
+        'BRAK': 'data_brak_kasy.json'
+    };
+
+
+    const isBreakField = (id) => id.includes('przerwy');
+    
+    function normalizeTimeForInput(t) { 
+        if(!t) return ''; 
+        t = t.trim().replace('.', ':'); 
+        const p = t.split(':'); 
+        return p.length===2 ? `${p[0].padStart(2,'0')}:${p[1].padStart(2,'0')}` : ''; 
+    }
+
+    function renderTimeEditor(containerId, valueString) {
+        const container = document.getElementById(containerId); container.innerHTML = '';
+        const isBreak = isBreakField(containerId); let cleanVal = (valueString || '').trim().replace(/–/g, '-');
+        let mode = 'custom'; const valLower = cleanVal.toLowerCase();
+        if (valLower.includes('zamknięte') || valLower.includes('nieczynne') || valLower.includes('brak')) mode = 'closed';
+        else if (valLower.includes('całodobowo')) mode = '24h';
+        else if (cleanVal === '' && isBreak) mode = 'closed';
+
+        const btnGroup = document.createElement('div'); btnGroup.className = 'mode-buttons';
+        const createBtn = (label, mName) => {
+            const btn = document.createElement('div'); btn.className = `mode-btn ${mode === mName ? 'active' : ''}`; btn.innerText = label; btn.dataset.mode = mName;
+            btn.onclick = () => {
+                btnGroup.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+                const rc = container.querySelector('.time-rows-container'); const ab = container.querySelector('.add-row-btn');
+                if (mName === 'custom') { rc.classList.remove('hidden'); ab.classList.remove('hidden'); if(rc.children.length === 0) addTimeRow(rc); }
+                else { rc.classList.add('hidden'); ab.classList.add('hidden'); }
+                updateTimeline(); 
+            }; return btn;
+        };
+        btnGroup.appendChild(createBtn(isBreak ? 'Brak' : 'Zamknięte', 'closed'));
+        if(!isBreak) btnGroup.appendChild(createBtn('Całodobowo', '24h'));
+        btnGroup.appendChild(createBtn(isBreak ? 'Przerwa' : 'Godziny', 'custom'));
+        container.appendChild(btnGroup);
+
+        const rowsContainer = document.createElement('div'); rowsContainer.className = `time-rows-container ${mode !== 'custom' ? 'hidden' : ''}`; container.appendChild(rowsContainer);
+        if (mode === 'custom') { cleanVal.split(';').forEach(p => { const t = p.split('-'); if(t.length === 2) { const t1 = normalizeTimeForInput(t[0]); const t2 = normalizeTimeForInput(t[1]); if(t1 && t2) addTimeRow(rowsContainer, t1, t2); } }); if (rowsContainer.children.length === 0) addTimeRow(rowsContainer); }
+        const addBtn = document.createElement('button'); addBtn.className = `add-row-btn ${mode !== 'custom' ? 'hidden' : ''}`; addBtn.innerText = '+ Dodaj kolejny przedział'; addBtn.onclick = () => addTimeRow(rowsContainer); container.appendChild(addBtn);
+    }
+
+    function addTimeRow(container, s = '', e = '') {
+        const row = document.createElement('div'); row.className = 'time-row';
+        const i1 = document.createElement('input'); i1.type = 'time'; i1.className = 'time-input'; i1.value = s; i1.oninput = updateTimeline;
+        const sp = document.createElement('span'); sp.className = 'time-separator'; sp.innerText = '-';
+        const i2 = document.createElement('input'); i2.type = 'time'; i2.className = 'time-input'; i2.value = e; i2.oninput = updateTimeline;
+        const db = document.createElement('div'); db.className = 'remove-row-btn'; db.innerHTML = '&times;'; db.onclick = () => { row.remove(); updateTimeline(); };
+        row.append(i1, sp, i2, db); container.appendChild(row);
+    }
+
+    function getTimeEditorValue(cid) {
+        const c = document.getElementById(cid); const mode = c.querySelector('.mode-btn.active')?.dataset.mode || 'closed'; const isBreak = isBreakField(cid);
+        if (mode === 'closed') return isBreak ? 'Brak' : 'Zamknięte'; if (mode === '24h') return 'Całodobowo';
+        const rows = c.querySelectorAll('.time-row'); let p = []; rows.forEach(r => { const i = r.querySelectorAll('input'); if(i[0].value && i[1].value) p.push(`${i[0].value}-${i[1].value}`); });
+        return p.length === 0 ? (isBreak ? 'Brak' : 'Zamknięte') : p.join('; ');
+    }
+    
+    function copyTime(sid, tid) { renderTimeEditor(tid, getTimeEditorValue(sid)); updateTimeline(); showToast("Skopiowano!"); }
+    function insertSuggestion(t) { document.getElementById('uwagi').value = t; }
+
+    let sessionSeconds = 0;
+    function initTimer() {
+        setInterval(() => { document.getElementById('clockDisplay').innerText = new Date().toLocaleString('pl-PL'); }, 1000);
+        const savedTime = localStorage.getItem('editorWorkTime'); if(savedTime) sessionSeconds = parseInt(savedTime, 10);
+        setInterval(() => { sessionSeconds++; localStorage.setItem('editorWorkTime', sessionSeconds);
+            const h = Math.floor(sessionSeconds / 3600).toString().padStart(2, '0'); const m = Math.floor((sessionSeconds % 3600) / 60).toString().padStart(2, '0');
+            const s = (sessionSeconds % 60).toString().padStart(2, '0'); document.getElementById('sessionTimer').innerText = `Czas pracy: ${h}:${m}:${s}`; 
+            // Aktualizuj cache display co sekundę
+            if(sessionSeconds % 2 === 0) updateCacheUsage();
+        }, 1000);
+    }
+    function resetSessionTimer() { if(confirm("Wyzerować licznik?")) { sessionSeconds = 0; localStorage.setItem('editorWorkTime', 0); } }
+    function toggleMenu() { document.getElementById('gearMenu').classList.toggle('active'); }
+    document.addEventListener('click', e => { if (!document.querySelector('.gear-wrapper').contains(e.target)) document.getElementById('gearMenu').classList.remove('active'); });
+
+    // Obsługa skrótów klawiszowych
+    document.addEventListener('keydown', function(event) {
+        if (event.shiftKey && event.key === 'ArrowLeft') {
+            event.preventDefault();
+            prevStation();
+        } else if (event.shiftKey && event.key === 'ArrowRight') {
+            event.preventDefault();
+            nextStation();
+        }
+    });
+
+    // --- NOWA FUNKCJA DO OBLICZANIA ROZMIARU CACHE ---
+    function getStorageSize(storage) {
+        let total = 0;
+        for (let x in storage) {
+            if (storage.hasOwnProperty(x)) total += ((storage[x].length + x.length) * 2);
+        }
+        return total;
+    }
+    
+    function updateCacheUsage() {
+        const sessionSize = getStorageSize(sessionStorage);
+        const localSize = getStorageSize(localStorage);
+        const total = sessionSize + localSize;
+        let s = '';
+        if(total < 1024) s = total + ' B';
+        else if(total < 1024*1024) s = (total/1024).toFixed(2) + ' KB';
+        else s = (total/(1024*1024)).toFixed(2) + ' MB';
+        document.getElementById('cacheDisplay').innerText = '💾 ' + s;
+    }
+    
+    // --- NOWA FUNKCJA RESETU ---
+    function resetAppCache() {
+        if(!confirm("⚠️ UWAGA: Ta operacja wyczyści całą pamięć podręczną aplikacji!\n\nStracisz wszystkie niezapisane zmiany oraz ustawienia postępu.\nCzy na pewno chcesz kontynuować?")) return;
+        sessionStorage.clear();
+        localStorage.removeItem('editorWorkTime');
+        location.reload();
+    }
+
+    window.onload = async function() {
+        initTimer(); document.getElementById('meta.data').valueAsDate = new Date(); updateGlobalEditor();
+        renderColumnToggles();
+        
+        // 1. Ładowanie zapisanego offsetu postępu
+        const savedOffset = sessionStorage.getItem(PROGRESS_KEY);
+        if(savedOffset) manualProgressOffset = parseInt(savedOffset, 10);
+        
+        const cachedDB = sessionStorage.getItem(DB_SESSION_KEY);
+        if (cachedDB) {
+            try {
+                database = JSON.parse(cachedDB);
+                showToast("✅ Wczytano stan z sesji!");
+                initData(true); 
+                updateCacheUsage();
+                return;
+            } catch (e) {
+                console.error("Błąd wczytywania session storage:", e);
+                sessionStorage.removeItem(DB_SESSION_KEY);
+            }
+        }
+
+        try { 
+            const fetchPromises = DB_SEGMENT_URLS.map(url => 
+                fetch(url, { cache: "no-store" })
+                .then(res => {
+                    if (!res.ok) { console.warn(`Plik ${url} nie istnieje.`); return []; }
+                    return res.json();
+                })
+                .catch(err => [])
+            );
+            
+            const results = await Promise.all(fetchPromises);
+            let nowaBaza = [];
+            results.forEach(arr => {
+                 if (Array.isArray(arr)) {
+                     arr.forEach(item => { const { _status, ...cleanItem } = item; nowaBaza.push(cleanItem); });
+                 }
+            });
+
+            database = nowaBaza;
+            database.forEach(item => { if (item._status === undefined) item._status = 'clean'; });
+
+            if (database.length > 0) {
+                 initData(false); 
+                 showToast(`✅ Wczytano ${database.length} rekordów.`);
+            } else {
+                 throw new Error("Pobrano 0 rekordów.");
+            }
+        } 
+        catch(e) { 
+            console.warn("Błąd:", e); 
+            document.getElementById('offlineAlert').style.display = 'block'; 
+            document.getElementById('stationSelect').innerHTML = '<option>⚠️ Błąd ładowania.</option>'; 
+        }
+        updateCacheUsage();
+    };
+
+    function handleFileUpload(input) {
+        const file = input.files[0]; if(!file) return; const reader = new FileReader();
+        reader.onload = function(e) { 
+            try { 
+                const j = JSON.parse(e.target.result); 
+                if (!Array.isArray(j)) throw new Error("Błąd formatu"); 
+                database = j; 
+                database.forEach(item => { if (item._status === undefined) item._status = 'clean'; });
+                initData(); 
+                document.getElementById('offlineAlert').style.display = 'none'; 
+                showToast("✅ Plik wczytany"); 
+                sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database));
+                updateCacheUsage();
+            } catch(err) { alert("Błąd: " + err.message); } 
+        }; reader.readAsText(file);
+    }
+
+    function initData(fromSession = false) {
+        database.sort((a,b) => a.stacja.localeCompare(b.stacja)); 
+        populateCarrierFilter(); 
+        populateSelect(); 
+        renderTable();
+        updateProgressBar(); // Ensure progress bar is updated with loaded offset
+        ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(id => renderTimeEditor(id, ''));
+    }
+
+    function populateCarrierFilter() {
+        const f = document.getElementById('filterCarrier'); 
+        const uniqueCarriers = new Set();
+        database.forEach(i => { if(i.przewoznik) uniqueCarriers.add(i.przewoznik); });
+        const sorted = Array.from(uniqueCarriers).sort(); 
+        f.innerHTML = '<option value="ALL">Wszyscy przewoźnicy</option>'; 
+        sorted.forEach(c => { const o = document.createElement('option'); o.value = c; o.text = c; f.appendChild(o); });
+    }
+
+    function applyFilter() { populateSelect(); renderTable(); }
+    
+    function updateCarrierBtn() { 
+        const v = document.getElementById('przewoznik').value.toUpperCase(); 
+        const b = document.getElementById('carrierBtn'); 
+        const cleanV = { 'KŚ': 'KOLEJE ŚLĄSKIE', 'KM': 'KOLEJE MAZOWIECKIE', 'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA', 'KW': 'KOLEJE WIELKOPOLSKIE', 'KD': 'KOLEJE DOLNOŚLĄSKIE', 'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE', 'BRAK': 'BRAK' }[v] || v;
+        const l = carrierLinks[cleanV]; 
+        if (l) { b.href = l; b.classList.remove('disabled'); } else { b.href = "#"; b.classList.add('disabled'); } 
+    }
+
+    function updateTimeline() {
+        drawTimelineBar('vis-pn-pt', getTimeEditorValue('godziny.pn_pt'), getTimeEditorValue('przerwy.pn_pt'));
+        drawTimelineBar('vis-sob', getTimeEditorValue('godziny.sob'), getTimeEditorValue('przerwy.sob'));
+        drawTimelineBar('vis-nd', getTimeEditorValue('godziny.nd'), getTimeEditorValue('przerwy.nd'));
+    }
+
+    function timeToMinutes(t) {
+        if (!t) return null;
+        const clean = t.replace(/[^0-9:]/g, '');
+        if (!clean.includes(':')) return null;
+        const [h, m] = clean.split(':').map(Number);
+        if (isNaN(h) || isNaN(m)) return null;
+        return h * 60 + m;
+    }
+
+    function drawTimelineBar(eid, hStr, bStr) {
+        const c = document.getElementById(eid); 
+        c.querySelectorAll('.bar-open, .bar-break').forEach(el => el.remove());
+        const createBar = (s, e, type) => {
+            const sm = timeToMinutes(s); const em = timeToMinutes(e);
+            if(sm === null || em === null) return;
+            let d = em - sm; if (d < 0) d += 1440; 
+            const effEnd = (sm + d) > 1440 ? 1440 : (sm + d);
+            const w = ((effEnd - sm) / 1440) * 100; const l = (sm / 1440) * 100;
+            const div = document.createElement('div'); div.className = type === 'open' ? 'bar-open' : 'bar-break'; div.style.left = l + '%'; div.style.width = w + '%'; 
+            c.appendChild(div);
+        };
+        if(hStr.toLowerCase().includes('całodobowo')) createBar("00:00", "24:00", 'open');
+        else hStr.split(';').forEach(r => { const p = r.trim().split('-'); if(p.length === 2) createBar(p[0], p[1], 'open'); });
+        bStr.split(';').forEach(r => { const p = r.trim().split('-'); if(p.length === 2) createBar(p[0], p[1], 'break'); });
+    }
+
+    // --- FUNKCJE NAWIGACJI ---
+    function getFilteredIndices() {
+        const fv = document.getElementById('filterCarrier').value;
+        const indices = [];
+        database.forEach((item, index) => {
+            if (fv === 'ALL' || item.przewoznik === fv) {
+                indices.push(index);
+            }
+        });
+        return indices;
+    }
+
+    function prevStation() {
+        if (database.length === 0) return;
+        const visibleIndices = getFilteredIndices();
+        if (visibleIndices.length === 0) return;
+        
+        let currentPos = visibleIndices.indexOf(parseInt(currentIndex));
+        
+        if (currentPos === -1) {
+            currentPos = 0;
+        } else {
+            currentPos--;
+            if (currentPos < 0) currentPos = visibleIndices.length - 1; 
+        }
+        
+        const newIndex = visibleIndices[currentPos];
+        document.getElementById('stationSelect').value = newIndex;
+        loadStation();
+        showToast("Poprzednia stacja");
+    }
+
+    function nextStation() {
+        if (database.length === 0) return;
+        const visibleIndices = getFilteredIndices();
+        if (visibleIndices.length === 0) return;
+
+        let currentPos = visibleIndices.indexOf(parseInt(currentIndex));
+
+        if (currentPos === -1) {
+            currentPos = 0;
+        } else {
+            currentPos++;
+            if (currentPos >= visibleIndices.length) currentPos = 0; 
+        }
+
+        const newIndex = visibleIndices[currentPos];
+        document.getElementById('stationSelect').value = newIndex;
+        loadStation();
+        showToast("Następna stacja");
+    }
+    
+    // --- KONFIGURACJA KOLUMN ---
+    function renderColumnToggles() {
+        const container = document.getElementById('colToggles');
+        container.innerHTML = '';
+        Object.keys(columnsConfig).forEach(key => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'col-toggle';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `chk_${key}`;
+            checkbox.checked = columnsConfig[key].show;
+            checkbox.onchange = (e) => {
+                columnsConfig[key].show = e.target.checked;
+                renderTable();
+            };
+            
+            const label = document.createElement('label');
+            label.htmlFor = `chk_${key}`;
+            label.innerText = columnsConfig[key].label;
+            
+            wrapper.appendChild(checkbox);
+            wrapper.appendChild(label);
+            container.appendChild(wrapper);
+        });
+    }
+
+
+    function renderStationPreview(stationName) {
+        const previewNameEl = document.getElementById('previewStationName');
+        const previewContentEl = document.getElementById('stationPreviewContent');
+        
+        if (!stationName) {
+            previewNameEl.innerText = '--';
+            previewContentEl.innerHTML = '<p style="text-align:center; color:#999; margin:40px 0;">Wybierz stację, aby zobaczyć wszystkie jej rekordy w bazie.</p>';
+            return;
+        }
+
+        const normalizedStationName = stationName.toUpperCase().trim();
+        const filteredRecords = database.map((item, index) => ({ item, index }))
+                                      .filter(obj => obj.item.stacja === normalizedStationName);
+        
+        previewNameEl.innerText = normalizedStationName;
+
+        if (filteredRecords.length === 0) {
+            previewContentEl.innerHTML = `<p style="text-align:center; color:#999; margin:40px 0;">Brak rekordów dla stacji "${normalizedStationName}".</p>`;
+            return;
+        }
+
+        filteredRecords.sort((a, b) => {
+            const statusA = (a.item._status === 'modified' || a.item._status === 'new') ? 1 : 0;
+            const statusB = (b.item._status === 'modified' || b.item._status === 'new') ? 1 : 0;
+            if (statusA !== statusB) return statusB - statusA; 
+            return a.item.przewoznik.localeCompare(b.item.przewoznik); 
+        });
+
+        let html = `
+            <table style="width:100%; border-collapse: collapse; font-size:0.8rem; margin-top:5px;">
+                <thead>
+                    <tr style="background:#f1f3f5;">
+                        <th style="padding:5px 8px; border-bottom:1px solid #dee2e6;">Przewoźnik</th>
+                        <th style="padding:5px 8px; border-bottom:1px solid #dee2e6;">EPA</th>
+                        <th style="padding:5px 8px; border-bottom:1px solid #dee2e6;">Status</th>
+                        <th style="padding:5px 8px; border-bottom:1px solid #dee2e6;">Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        filteredRecords.forEach(obj => {
+            const record = obj.item;
+            const originalIndex = obj.index;
+            let rowClass = 'preview-row';
+            if (record._status === 'modified') rowClass += ' row-modified';
+            else if (record._status === 'new') rowClass += ' row-new';
+            else if (record.ukryty) rowClass += ' row-hidden';
+            
+            if (originalIndex === parseInt(currentIndex)) {
+                 rowClass += ' active row-active';
+            }
+
+            html += `
+                <tr class="${rowClass}" onclick="switchToRecord(${originalIndex})" title="Kliknij, aby edytować ten rekord">
+                    <td style="padding:5px 8px;">${record.przewoznik}</td>
+                    <td style="padding:5px 8px;">${record.epa || '-'}</td>
+                    <td style="padding:5px 8px;">${record._status === 'modified' ? '📝' : (record._status === 'new' ? '✨' : (record.ukryty ? '👁️' : '✔'))}</td>
+                    <td style="padding:5px 8px;">${record['meta.data'] || '-'}</td>
+                </tr>
+            `;
+        });
+
+        html += `</tbody></table>`;
+        previewContentEl.innerHTML = html;
+    }
+    
+    function switchToRecord(index) {
+        document.getElementById('stationSelect').value = index;
+        loadStation();
+        showToast("Przełączono rekord");
+    }
+
+    function loadStation() {
+        const idx = document.getElementById('stationSelect').value; 
+        currentIndex = parseInt(idx, 10); 
+        
+        renderTable();
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        const tf = ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'];
+        if(idx == -1) { 
+            document.getElementById('editForm').reset(); 
+            updateCarrierBtn(); 
+            tf.forEach(id => renderTimeEditor(id, '')); 
+            updateTimeline(); 
+            renderStationPreview(null); 
+            return; 
+        }
+
+        const item = database[idx]; const g = k => item[k] || '';
+        setValue('stacja', g('stacja')); 
+        setValue('epa', g('epa')); 
+        setValue('wojewodztwo', g('wojewodztwo')); 
+        setValue('przewoznik', g('przewoznik')); 
+        setValue('uwagi', g('uwagi'));
+        document.getElementById('ukryty').checked = item.ukryty === true;
+        tf.forEach(id => renderTimeEditor(id, g(id)));
+        document.getElementById('meta.kto').value = document.getElementById('globalEditor').value; document.getElementById('meta.data').valueAsDate = new Date();
+        
+        renderStationPreview(g('stacja'));
+        setTimeout(() => { updateCarrierBtn(); updateTimeline(); }, 0);
+    }
+
+    function saveChanges() {
+        if(database.length === 0) return; const stacja = getValue('stacja'); if(!stacja) { alert("Nazwa stacji wymagana"); return; }
+        const editor = document.getElementById('globalEditor').value;
+        const newItem = {
+            "stacja": stacja.toUpperCase(), 
+            "epa": String(getValue('epa') || "Brak"), 
+            "wojewodztwo": getValue('wojewodztwo'),
+            "przewoznik": getValue('przewoznik').toUpperCase(),
+            "godziny.pn_pt": getTimeEditorValue('godziny.pn_pt'), "godziny.sob": getTimeEditorValue('godziny.sob'), "godziny.nd": getTimeEditorValue('godziny.nd'),
+            "przerwy.pn_pt": getTimeEditorValue('przerwy.pn_pt'), "przerwy.sob": getTimeEditorValue('przerwy.sob'), "przerwy.nd": getTimeEditorValue('przerwy.nd'),
+            "uwagi": getValue('uwagi'), "ukryty": document.getElementById('ukryty').checked, 
+            "meta.kto": editor, "meta.data": getValue('meta.data')
+        };
+        const p = newItem.przewoznik;
+        newItem.przewoznik = {
+             'KŚ': 'KOLEJE ŚLĄSKIE', 'KM': 'KOLEJE MAZOWIECKIE', 'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA', 'KW': 'KOLEJE WIELKOPOLSKIE', 'KD': 'KOLEJE DOLNOŚLĄSKIE', 'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE'
+        }[p] || p;
+
+        if(currentIndex === -1) { newItem._status = 'new'; database.push(newItem); showToast("✨ Dodano"); }
+        else { const old = database[currentIndex]._status; newItem._status = (old === 'new') ? 'new' : 'modified'; database[currentIndex] = newItem; showToast("💾 Zapisano"); }
+        
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
+
+        database.sort((a,b) => a.stacja.localeCompare(b.stacja)); currentIndex = database.findIndex(x => x === newItem);
+        populateCarrierFilter(); populateSelect(); document.getElementById('stationSelect').value = currentIndex; renderTable(); updateProgressBar();
+        renderStationPreview(newItem.stacja); 
+    }
+    
+    function cloneStation() {
+        if (currentIndex === -1) { alert("Wybierz stację do sklonowania!"); return; }
+        const newItem = JSON.parse(JSON.stringify(database[currentIndex]));
+        newItem.przewoznik = ""; newItem.wojewodztwo = ""; newItem.uwagi = "";      
+        newItem._status = 'new';
+        newItem['meta.kto'] = document.getElementById('globalEditor').value;
+        newItem['meta.data'] = new Date().toISOString().split('T')[0];
+        
+        database.push(newItem);
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
+        database.sort((a,b) => a.stacja.localeCompare(b.stacja));
+        currentIndex = database.indexOf(newItem);
+        populateSelect(); document.getElementById('stationSelect').value = currentIndex; loadStation(); renderTable(); updateProgressBar(); showToast("👯 Sklonowano (EPA zachowane)!");
+        renderStationPreview(newItem.stacja);
+    }
+
+    function openFindReplaceModal() { document.getElementById('gearMenu').classList.remove('active'); document.getElementById('findReplaceModal').style.display = 'flex'; }
+    function applyFindReplace() {
+        const f = document.getElementById('fr_field').value; const ft = document.getElementById('fr_find').value; const rt = document.getElementById('fr_replace').value;
+        if(!ft) { alert("Wpisz tekst"); return; }
+        if(!confirm(`Zamienić "${ft}" na "${rt}" w polu [${f}]?`)) return;
+        let c = 0; const ed = document.getElementById('globalEditor').value; const td = new Date().toISOString().split('T')[0];
+        database.forEach(i => { if(i[f] && i[f].includes(ft)) { i[f] = i[f].replace(new RegExp(ft, 'g'), rt); i['meta.kto'] = ed; i['meta.data'] = td; i._status = 'modified'; c++; } });
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
+        closeModals(); renderTable(); updateProgressBar(); populateCarrierFilter(); alert(`✅ Zmieniono ${c} rekordów.`);
+        renderStationPreview(database[currentIndex]?.stacja);
+    }
+
+    function populateSelect() {
+        const s = document.getElementById('stationSelect'); const fv = document.getElementById('filterCarrier').value; const old = s.value;
+        s.innerHTML = '<option value="-1">-- Wybierz stację --</option>';
+        database.forEach((item, i) => {
+            if (fv !== 'ALL' && item.przewoznik !== fv) return;
+            let t = item.stacja; if(item._status === 'modified') t += ' (📝)'; if(item._status === 'new') t += ' (✨)'; if(item.ukryty) t += ' (👁️)'; if(progressRefDate && item['meta.data'] === progressRefDate) t += ' (✔)';
+            const o = document.createElement('option'); o.value = i; o.text = t; s.appendChild(o);
+        });
+        if(old && old != -1) { if (s.querySelector(`option[value="${old}"]`)) s.value = old; }
+    }
+    
+    function calcProgressByDate() { const d = document.getElementById('dateOffset').value; if(!d) return; let c = 0; progressRefDate = d; database.forEach(i => { if(i['meta.data'] === d) c++; }); document.getElementById('manualOffset').value = c; alert(`Znaleziono: ${c}`); populateSelect(); renderTable(); }
+    
+    function saveProgressSettings() { 
+        manualProgressOffset = parseInt(document.getElementById('manualOffset').value) || 0; 
+        sessionStorage.setItem(PROGRESS_KEY, manualProgressOffset); // Zapis do sesji
+        updateProgressBar(); 
+        closeModals(); 
+    }
+    
+    function renderTable() {
+        const thead = document.getElementById('tableHead');
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = ''; thead.innerHTML = '';
+        const fv = document.getElementById('filterCarrier').value;
+
+        // Budowanie nagłówka
+        let headRow = '<tr>';
+        if(columnsConfig.id.show) headRow += `<th>${columnsConfig.id.label}</th>`;
+        if(columnsConfig.stacja.show) headRow += `<th>${columnsConfig.stacja.label}</th>`;
+        if(columnsConfig.przewoznik.show) headRow += `<th>${columnsConfig.przewoznik.label}</th>`;
+        if(columnsConfig.wojewodztwo.show) headRow += `<th>${columnsConfig.wojewodztwo.label}</th>`;
+        if(columnsConfig.epa.show) headRow += `<th>${columnsConfig.epa.label}</th>`;
+        if(columnsConfig.uwagi.show) headRow += `<th>${columnsConfig.uwagi.label}</th>`;
+        if(columnsConfig.editor.show) headRow += `<th>${columnsConfig.editor.label}</th>`;
+        if(columnsConfig.data.show) headRow += `<th>${columnsConfig.data.label}</th>`;
+        headRow += '</tr>';
+        thead.innerHTML = headRow;
+
+        const sh = t => t && t.length > 20 ? t.substring(0,17)+'...' : (t||'');
+
+        database.forEach((item, i) => {
+            if (fv !== 'ALL' && item.przewoznik !== fv) return;
+            const tr = document.createElement('tr');
+            if(item._status === 'modified') tr.className = 'row-modified'; else if(item._status === 'new') tr.className = 'row-new'; else if(progressRefDate && item['meta.data'] === progressRefDate) tr.className = 'row-done';
+            if (item.ukryty) tr.classList.add('row-hidden');
+            if(i == currentIndex) tr.classList.add('row-active');
+            
+            tr.onclick = () => { 
+                const s = document.getElementById('stationSelect');
+                if(!s.querySelector(`option[value="${i}"]`)) { const o = document.createElement('option'); o.value = i; o.text = item.stacja; o.selected = true; s.appendChild(o); }
+                s.value = i; loadStation(); 
+            };
+            
+            let rowHtml = '';
+            if(columnsConfig.id.show) rowHtml += `<td>${i+1}</td>`;
+            if(columnsConfig.stacja.show) rowHtml += `<td><b>${item.stacja}</b></td>`;
+            if(columnsConfig.przewoznik.show) rowHtml += `<td>${item.przewoznik}</td>`;
+            if(columnsConfig.wojewodztwo.show) rowHtml += `<td>${item.wojewodztwo || '-'}</td>`;
+            if(columnsConfig.epa.show) rowHtml += `<td>${item.epa || '-'}</td>`;
+            if(columnsConfig.uwagi.show) rowHtml += `<td>${sh(item.uwagi)}</td>`;
+            if(columnsConfig.editor.show) rowHtml += `<td>${item['meta.kto']||'-'}</td>`;
+            if(columnsConfig.data.show) rowHtml += `<td>${item['meta.data']}</td>`;
+            
+            tr.innerHTML = rowHtml;
+            tbody.appendChild(tr);
+        });
+    }
+    
+    function groupDatabaseBySegment() {
+        const segments = {};
+        database.forEach(item => {
+            const przewoznik = item.przewoznik.toUpperCase();
+            const segmentFileName = SEGMENT_GROUPS[przewoznik] || 'data_custom.json';
+            if (!segments[segmentFileName]) segments[segmentFileName] = [];
+            const { _status, ...cleanItem } = item;
+            segments[segmentFileName].push(cleanItem);
+        });
+        return segments;
+    }
+
+    function showCodePreview() { 
+        document.getElementById('gearMenu').classList.remove('active');
+        const segments = groupDatabaseBySegment();
+        const selector = document.getElementById('segmentSelector');
+        selector.innerHTML = '<option value="MASTER">Cała Baza (MASTER)</option>';
+        const segmentNames = new Set(Object.values(SEGMENT_GROUPS));
+        const sortedSegmentNames = Array.from(segmentNames).sort();
+        sortedSegmentNames.forEach(name => {
+             if (segments[name] && segments[name].length > 0) {
+                 const option = document.createElement('option');
+                 option.value = name; option.text = `${name} (${segments[name].length})`; selector.appendChild(option);
+             }
+        });
+        showSegment('MASTER'); 
+        document.getElementById('codeModal').style.display = 'flex'; 
+    }
+    
+    function showSegment(segmentName) {
+        const previewEl = document.getElementById('jsonPreview');
+        let dataToDisplay;
+        if (segmentName === 'MASTER') dataToDisplay = database.map(i => { const {_status, ...r} = i; return r; });
+        else { const segments = groupDatabaseBySegment(); dataToDisplay = segments[segmentName] || []; }
+        previewEl.innerHTML = syntaxHighlight(dataToDisplay);
+    }
+    
+    function copyCodeToClipboard() { 
+        const segmentName = document.getElementById('segmentSelector').value;
+        let dataToCopy;
+        if (segmentName === 'MASTER') dataToCopy = database.map(i => { const {_status, ...r} = i; return r; });
+        else { const segments = groupDatabaseBySegment(); dataToCopy = segments[segmentName] || []; }
+        navigator.clipboard.writeText(JSON.stringify(dataToCopy, null, 2)).then(() => showToast(`✅ Skopiowano segment: ${segmentName}`)); 
+    }
+
+    function downloadJSON() { 
+        const segmentName = document.getElementById('segmentSelector').value;
+        let dataToDownload; let fileName;
+        if (segmentName === 'MASTER') { dataToDownload = database.map(i => { const {_status, ...r} = i; return r; }); fileName = 'kasy_master.json'; }
+        else { const segments = groupDatabaseBySegment(); dataToDownload = segments[segmentName] || []; fileName = segmentName; }
+        if(dataToDownload.length === 0) { showToast("Brak danych do pobrania w tym segmencie."); return; }
+        const s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToDownload, null, 2)); 
+        const d = document.createElement('a'); d.setAttribute("href", s); d.setAttribute("download", fileName); d.click(); 
+        document.getElementById('gearMenu').classList.remove('active'); showToast(`💾 Pobrano: ${fileName}`);
+    }
+
+    function updateGlobalEditor() { const g = document.getElementById('globalEditor').value; const f = document.getElementById('meta.kto'); if(f) f.value = g; }
+    function getValue(id) { return document.getElementById(id).value.trim(); }
+    function setValue(id, val) { document.getElementById(id).value = val; }
+    function showToast(msg) { const t=document.getElementById('toast'); t.innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+    function createNewStation() { 
+        document.getElementById('editForm').reset(); document.getElementById('stationSelect').value = -1; currentIndex = -1; 
+        document.getElementById('meta.kto').value = document.getElementById('globalEditor').value; document.getElementById('meta.data').valueAsDate = new Date(); 
+        ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(id => renderTimeEditor(id, '')); 
+        updateCarrierBtn(); updateTimeline(); renderStationPreview(null); showToast("Nowa Stacja"); 
+    }
+    function deleteStation() { 
+        if(currentIndex===-1)return; 
+        if(confirm("Usunąć?")){ 
+            database.splice(currentIndex,1); sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+            updateCacheUsage();
+            populateSelect(); createNewStation(); renderTable(); updateProgressBar(); renderStationPreview(null); showToast("🗑️ Usunięto"); 
+        }
+    }
+    function syntaxHighlight(j) { if (typeof j != 'string') j = JSON.stringify(j, undefined, 2); j = j.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); return j.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => { let c = 'number'; if (/^"/.test(m)) { c = /:$/.test(m) ? 'key' : 'string'; } else if (/true|false/.test(m)) c = 'boolean'; else if (/null/.test(m)) c = 'null'; return '<span class="' + c + '">' + m + '</span>'; }); }
+    function openProgressModal() { document.getElementById('gearMenu').classList.remove('active'); document.getElementById('progressModal').style.display = 'flex'; }
+    function openHelpModal() { document.getElementById('gearMenu').classList.remove('active'); document.getElementById('helpModal').style.display = 'flex'; }
+    function bulkFixData() { 
+        document.getElementById('gearMenu').classList.remove('active'); if(!confirm("Naprawić format (EPA na string, godziny)?")) return; let c = 0; 
+        database.forEach(i => { 
+            if (i.epa && typeof i.epa !== 'string') { i.epa = String(i.epa); i._status = 'modified'; c++; } 
+            ['godziny.pn_pt','godziny.sob','godziny.nd','przerwy.pn_pt','przerwy.sob','przerwy.nd'].forEach(k => { 
+                if (i[k]) { const o = i[k]; let n = o.replace(/\./g, ':').replace(/\s*-\s*/g, '-').replace(/\s*;\s*/g, '; ').trim(); if (n !== o) { i[k] = n; i._status = 'modified'; c++; } } 
+            }); 
+            const p = i.przewoznik;
+            const newP = { 'KŚ': 'KOLEJE ŚLĄSKIE', 'KM': 'KOLEJE MAZOWIECKIE', 'ŁKA': 'ŁÓDZKA KOLEJ AGLOMERACYJNA', 'KW': 'KOLEJE WIELKOPOLSKIE', 'KD': 'KOLEJE DOLNOŚLĄSKIE', 'PKP SKM': 'SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE' }[p] || p;
+            if (newP !== p) { i.przewoznik = newP; i._status = 'modified'; c++; }
+        }); 
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
+        renderTable(); updateProgressBar(); populateCarrierFilter(); showToast(`✅ Zoptymalizowano ${c} pól.`); 
+        renderStationPreview(database[currentIndex]?.stacja);
+    }
+    function bulkUpdateClosed() { 
+        document.getElementById('gearMenu').classList.remove('active'); if(!confirm("Zaktualizować nieczynne?")) return; 
+        const e = document.getElementById('globalEditor').value; const t = new Date().toISOString().split('T')[0]; let c = 0; 
+        database.forEach(i => { 
+            const h = (i['godziny.pn_pt'] || "").toLowerCase(); 
+            if(h.includes('zamknięte') || h.includes('zamkniete') || h.includes('nieczynne')) { i['meta.kto'] = e; i['meta.data'] = t; i._status = 'modified'; c++; } 
+        }); 
+        sessionStorage.setItem(DB_SESSION_KEY, JSON.stringify(database)); 
+        updateCacheUsage();
+        renderTable(); updateProgressBar(); showToast(`✅ Zaktualizowano ${c}`); 
+        renderStationPreview(database[currentIndex]?.stacja);
+    }
+    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(e => e.style.display = 'none'); }
+    function updateProgressBar() { const m = database.filter(i => i._status === 'modified' || i._status === 'new').length; const tp = manualProgressOffset + m; const t = database.length; const d = Math.min(tp, t); const p = t > 0 ? (d / t) * 100 : 0; document.getElementById('progressBar').style.width = p + '%'; document.getElementById('progressText').innerText = `${d} / ${t} (Sesja: ${m})`; }
+</script>
+
+</body>
+</html>
