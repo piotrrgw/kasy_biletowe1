@@ -64,7 +64,7 @@
     "meta.data": "2025-12-10"
   },
   {
-    "stacja": "BIAŁYSTOK ZIELONA WZGÓRZA",
+    "stacja": "BIAŁYSTOK ZIELONE WZGÓRZA",
     "epa": "6623",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
@@ -77,7 +77,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.data": "2025-12-10"
   },
   {
     "stacja": "BIELSK PODLASKI",
@@ -1072,22 +1072,6 @@
     "meta.data": "2025-12-09"
   },
   {
-    "stacja": "TARKISZKI",
-    "epa": "Brak",
-    "wojewodztwo": "Podlaskie",
-    "przewoznik": "BRAK",
-    "godziny.pn_pt": "Zamknięte",
-    "godziny.sob": "Zamknięte",
-    "godziny.nd": "Zamknięte",
-    "przerwy.pn_pt": "Brak",
-    "przerwy.sob": "Brak",
-    "przerwy.nd": "Brak",
-    "uwagi": "",
-    "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
-  },
-  {
     "stacja": "TOMASZÓW MAZOWIECKI",
     "epa": "225",
     "wojewodztwo": "Łódzkie",
@@ -1102,6 +1086,22 @@
     "ukryty": false,
     "meta.kto": "PIOTR M",
     "meta.data": "2025-12-09"
+  },
+  {
+    "stacja": "TRAKISZKI",
+    "epa": "Brak",
+    "wojewodztwo": "Podlaskie",
+    "przewoznik": "BRAK",
+    "godziny.pn_pt": "Zamknięte",
+    "godziny.sob": "Zamknięte",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-11"
   },
   {
     "stacja": "TRZCIANKA",
