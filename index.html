@@ -789,11 +789,32 @@
     function updateCacheStatus() {
         const cacheStatusElement = document.getElementById('cacheStatus');
         const cacheTime = localStorage.getItem(STORAGE_KEY + '_time');
+
         if (cacheTime) {
             const date = new Date(parseInt(cacheTime));
             const dateStr = date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' });
             const totalRecords = bazaDanych.length;
-            cacheStatusElement.innerHTML = `Baza pobrana dnia: <strong>${dateStr}</strong><br>Liczba wpisów w bazie: ${totalRecords}`;
+
+            let oldestDate = '';
+            let newestDate = '';
+
+            if (totalRecords > 0) {
+                let oldest = '9999-12-31';
+                let newest = '1000-01-01';
+
+                bazaDanych.forEach(item => {
+                    const itemDate = item['meta.data'];
+                    if (itemDate && itemDate.length === 10) { // Proste sprawdzenie formatu
+                        if (itemDate < oldest) oldest = itemDate;
+                        if (itemDate > newest) newest = itemDate;
+                    }
+                });
+
+                if (oldest !== '9999-12-31') oldestDate = oldest;
+                if (newest !== '1000-01-01') newestDate = newest;
+            }
+
+            cacheStatusElement.innerHTML = `Baza pobrana: <strong>${dateStr}</strong><br>Liczba wpisów: ${totalRecords}<br>Najstarszy rekord: <strong>${oldestDate || 'brak'}</strong><br>Najnowszy rekord: <strong>${newestDate || 'brak'}</strong>`;
         } else {
             cacheStatusElement.innerHTML = `Brak danych w pamięci urządzenia.`;
         }
