@@ -814,7 +814,7 @@
                 if (newest !== '1000-01-01') newestDate = newest;
             }
 
-            cacheStatusElement.innerHTML = `Baza pobrana: <strong>${dateStr}</strong><br>Liczba wpisów: ${totalRecords}<br>Najstarszy rekord: <strong>${oldestDate || 'brak'}</strong><br>Najnowszy rekord: <strong>${newestDate || 'brak'}</strong>`;
+            cacheStatusElement.innerHTML = `Baza pobrana z serwera: <strong>${dateStr}</strong><br>Liczba wpisów: ${totalRecords}<br>Najstarszy rekord: <strong>${oldestDate || 'brak'}</strong><br>Najnowszy rekord: <strong>${newestDate || 'brak'}</strong>`;
         } else {
             cacheStatusElement.innerHTML = `Brak danych w pamięci urządzenia.`;
         }
