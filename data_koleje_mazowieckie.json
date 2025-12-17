@@ -65,7 +65,7 @@
   },
   {
     "stacja": "MIŃSK MAZOWIECKI",
-    "epa": "Brak",
+    "epa": "429",
     "wojewodztwo": "Mazowieckie",
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -77,11 +77,11 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "MROZY",
-    "epa": "Brak",
+    "epa": "1293",
     "wojewodztwo": "Mazowieckie",
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "06:00-14:45",
@@ -93,7 +93,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "NOWY DWÓR MAZOWIECKI",
@@ -145,7 +145,7 @@
   },
   {
     "stacja": "SIEDLCE",
-    "epa": "Brak",
+    "epa": "182",
     "wojewodztwo": "Mazowieckie",
     "przewoznik": "KOLEJE MAZOWIECKIE",
     "godziny.pn_pt": "Całodobowo",
@@ -157,7 +157,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "SOCHACZEW",
