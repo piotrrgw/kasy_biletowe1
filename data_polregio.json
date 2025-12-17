@@ -17,7 +17,7 @@
   },
   {
     "stacja": "CZEREMCHA",
-    "epa": "Brak",
+    "epa": "424",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "12:00-19:30",
@@ -29,11 +29,11 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "EŁK",
-    "epa": "Brak",
+    "epa": "38",
     "wojewodztwo": "Warmińsko-Mazurskie",
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "10:00-17:30",
@@ -45,7 +45,7 @@
     "uwagi": "PROSZĘ WERYFIKOWAĆ NA STRONIE PRZEWOŹNIKA",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "GORZÓW WIELKOPOLSKI",
@@ -289,7 +289,7 @@
   },
   {
     "stacja": "OSTRÓDA",
-    "epa": "Brak",
+    "epa": "144",
     "wojewodztwo": "Warmińsko-Mazurskie",
     "przewoznik": "POLREGIO",
     "godziny.pn_pt": "06:30-18:00",
@@ -301,7 +301,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "OSTRÓW WIELKOPOLSKI",
