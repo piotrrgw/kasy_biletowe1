@@ -17,7 +17,7 @@
   },
   {
     "stacja": "AUGUSTÓW",
-    "epa": "Brak",
+    "epa": "1",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -29,7 +29,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "BABIAK",
@@ -49,7 +49,7 @@
   },
   {
     "stacja": "BIAŁA PISKA",
-    "epa": "Brak",
+    "epa": "1041",
     "wojewodztwo": "Warmińsko-Mazurskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -61,7 +61,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "BIAŁYSTOK ZIELONE WZGÓRZA",
@@ -81,7 +81,7 @@
   },
   {
     "stacja": "BIELSK PODLASKI",
-    "epa": "Brak",
+    "epa": "8",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -93,7 +93,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "BYDGOSZCZ LEŚNA",
@@ -177,7 +177,7 @@
   },
   {
     "stacja": "DĄBROWA BIAŁOSTOCKA",
-    "epa": "Brak",
+    "epa": "1102",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -189,7 +189,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "DĄBROWA GÓRNICZA ZĄBKOWICE",
@@ -289,7 +289,7 @@
   },
   {
     "stacja": "GRAJEWO",
-    "epa": "Brak",
+    "epa": "433",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -301,11 +301,11 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "HAJNÓWKA",
-    "epa": "Brak",
+    "epa": "423",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -317,7 +317,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "INOWROCŁAW RĄBINEK",
@@ -561,7 +561,7 @@
   },
   {
     "stacja": "MOŃKI",
-    "epa": "Brak",
+    "epa": "1287",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -573,7 +573,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "MYSŁOWICE",
@@ -641,7 +641,7 @@
   },
   {
     "stacja": "NIEMOJKI",
-    "epa": "Brak",
+    "epa": "1299",
     "wojewodztwo": "Mazowieckie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -653,7 +653,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "NOWE DREZDENKO",
@@ -673,7 +673,7 @@
   },
   {
     "stacja": "NURZEC",
-    "epa": "Brak",
+    "epa": "1311",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -685,7 +685,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "OLEŚNICA RATAJE",
@@ -769,7 +769,7 @@
   },
   {
     "stacja": "OSOWIEC",
-    "epa": "Brak",
+    "epa": "1324",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -781,7 +781,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "OZORKÓW",
@@ -817,7 +817,7 @@
   },
   {
     "stacja": "PISZ",
-    "epa": "Brak",
+    "epa": "436",
     "wojewodztwo": "Warmińsko-Mazurskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -829,7 +829,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "PŁOCK",
@@ -865,7 +865,7 @@
   },
   {
     "stacja": "RUCIANE-NIDA",
-    "epa": "Brak",
+    "epa": "435",
     "wojewodztwo": "Warmińsko-Mazurskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -877,11 +877,11 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "SARNAKI",
-    "epa": "Brak",
+    "epa": "1405",
     "wojewodztwo": "Mazowieckie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -893,11 +893,11 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "SIEMIATYCZE",
-    "epa": "Brak",
+    "epa": "1411",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -909,7 +909,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "SIERADZ",
@@ -945,7 +945,7 @@
   },
   {
     "stacja": "SOKÓŁKA",
-    "epa": "Brak",
+    "epa": "189",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -957,7 +957,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "SOSNOWIEC POŁUDNIOWY",
@@ -1009,7 +1009,7 @@
   },
   {
     "stacja": "SUWAŁKI",
-    "epa": "Brak",
+    "epa": "197",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1021,11 +1021,11 @@
     "uwagi": "????",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "SZCZYTNO",
-    "epa": "Brak",
+    "epa": "207",
     "wojewodztwo": "Warmińsko-Mazurskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1037,7 +1037,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-10"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "SZEPIETOWO",
@@ -1089,7 +1089,7 @@
   },
   {
     "stacja": "TRAKISZKI",
-    "epa": "Brak",
+    "epa": "415",
     "wojewodztwo": "Podlaskie",
     "przewoznik": "BRAK",
     "godziny.pn_pt": "Zamknięte",
@@ -1101,7 +1101,7 @@
     "uwagi": "",
     "ukryty": false,
     "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-11"
+    "meta.data": "2025-12-17"
   },
   {
     "stacja": "TRZCIANKA",
