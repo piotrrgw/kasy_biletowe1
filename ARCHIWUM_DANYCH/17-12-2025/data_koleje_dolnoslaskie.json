@@ -1,0 +1,18 @@
+[
+  {
+    "stacja": "ŻŻŻŻ- TEST",
+    "epa": "2137",
+    "wojewodztwo": "Dolnośląskie",
+    "przewoznik": "KOLEJE DOLNOŚLĄSKIE",
+    "godziny.pn_pt": "Całodobowo",
+    "godziny.sob": "06:00-19:00",
+    "godziny.nd": "Zamknięte",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "07:00-08:00; 09:00-10:00; 11:00-12:00; 13:00-14:00; 15:00-16:00; 17:00-18:00",
+    "przerwy.nd": "Brak",
+    "uwagi": "Uwaga!! Kasa nieczynna do odwołania z powodu awarii.",
+    "ukryty": true,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-09"
+  }
+]
