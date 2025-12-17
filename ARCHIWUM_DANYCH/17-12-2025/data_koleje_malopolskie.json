@@ -1,0 +1,18 @@
+[
+  {
+    "stacja": "KRAKÓW GŁÓWNY",
+    "epa": "85",
+    "wojewodztwo": "Małopolskie",
+    "przewoznik": "KOLEJE MAŁOPOLSKIE",
+    "godziny.pn_pt": "06:15-19:30",
+    "godziny.sob": "07:15-17:30",
+    "godziny.nd": "07:15-17:30",
+    "przerwy.pn_pt": "Brak",
+    "przerwy.sob": "Brak",
+    "przerwy.nd": "Brak",
+    "uwagi": "CENTRUM OBSŁUGI KLIENTA",
+    "ukryty": false,
+    "meta.kto": "PIOTR M",
+    "meta.data": "2025-12-09"
+  }
+]
