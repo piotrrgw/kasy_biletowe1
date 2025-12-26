@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asystent Kas Biletowych</title>
+    <title>Asystent Kas Biletowych v4.2</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -12,1314 +13,875 @@
       gtag('js', new Date());
       gtag('config', 'G-W05T4L1HFD');
     </script>
+
     <style>
-        /* USTAWIENIA KOLORÓW */
+        /* --- USTAWIENIA KOLORÓW (VARIABLES) --- */
         :root {
-            --open: #28a745; /* Zielony */
-            --break: #ffc107; /* Żółty */
-            --closed: #dc3545; /* Czerwony */
-            --none: #6c757d; /* Szary */
-            --holiday: #007bff; /* Niebieski - Święta/Akcent */
+            --open: #218838;       /* Ciemniejszy zielony */
+            --break: #ffc107;      /* Żółty */
+            --closed: #c82333;     /* Ciemniejszy czerwony */
+            --none: #6c757d;       /* Szary */
+            --holiday: #0056b3;    /* Ciemniejszy niebieski */
             --bg-light: #f8f9fa;
             --bg-dark: #343a40;
             --text-dark: #212529;
             --text-light: #f8f9fa;
             --border-color: #dee2e6;
+            --focus-ring: 0 0 0 3px rgba(0, 123, 255, 0.5);
         }
 
-        /* PODSTAWOWY STYL */
-        /* Domyślnie html ma 100% (ok 16px), JS będzie to zmieniał */
-        html {
-            font-size: 100%;
+        /* Tryb Wysokiego Kontrastu (Dark Mode) */
+        body.high-contrast {
+            --bg-light: #121212;
+            --bg-dark: #000000;
+            --text-dark: #ffffff;
+            --text-light: #ffff00;
+            --border-color: #555;
+            --holiday: #3399ff;
         }
+        
+        body.high-contrast .card, 
+        body.high-contrast .station-tile {
+            background-color: #1e1e1e !important;
+            color: #fff !important;
+            border: 1px solid #555;
+        }
+
+        body.high-contrast input {
+            background-color: #333;
+            color: #fff;
+            border-color: #777;
+        }
+
+        /* --- PODSTAWOWY STYL --- */
+        html { font-size: 100%; box-sizing: border-box; }
+        *, *:before, *:after { box-sizing: inherit; }
 
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0;
             background-color: var(--bg-light);
             color: var(--text-dark);
-            font-size: 1rem; /* Bazuje na ustawieniu html */
-            line-height: 1.4;
+            font-size: 1rem;
+            line-height: 1.5;
+            display: flex; flex-direction: column;
+            min-height: 100vh;
         }
 
-        /* NAGŁÓWEK */
+        /* --- NAGŁÓWEK --- */
         header {
             background-color: var(--bg-dark);
             color: var(--text-light);
             padding: 15px 20px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             position: relative;
-            min-height: 50px; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.5rem; 
-        }
-
-        /* PRZYCISK USTAWIEŃ */
-        .settings-btn {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            color: var(--text-light);
-            font-size: 1.5rem;
-            cursor: pointer;
-            line-height: 1;
-            width: 3rem; 
-            height: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1100;
-        }
-
-        .settings-btn:active {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* MENU */
-        .settings-menu {
-            position: fixed; 
-            top: 80px; 
-            right: 10px;
-            left: 10px; 
-            max-width: 450px; 
-            margin-left: auto; 
-            background-color: white;
-            border: 2px solid var(--bg-dark); 
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); 
             z-index: 1000;
-            display: none;
-            border-radius: 12px;
-            overflow: hidden; 
-            max-height: 80vh; 
-            overflow-y: auto; 
         }
 
-        .settings-menu.active {
-            display: block;
-            animation: fadeIn 0.2s ease-out;
+        header h1 { margin: 0; font-size: 1.4rem; }
+
+        /* --- PRZYCISK USTAWIEŃ --- */
+        .settings-btn {
+            position: absolute; right: 15px; top: 50%;
+            transform: translateY(-50%);
+            background: transparent; border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 8px; color: var(--text-light);
+            font-size: 1.5rem; cursor: pointer;
+            width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .settings-btn:focus { outline: none; box-shadow: 0 0 0 2px #fff; }
+
+        /* --- MENU --- */
+        .settings-menu {
+            position: fixed; top: 70px; right: 10px; left: 10px; 
+            max-width: 450px; margin-left: auto; 
+            background-color: white; color: #333;
+            border: 1px solid #ccc; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
+            z-index: 1100; display: none;
+            border-radius: 12px; overflow: hidden; 
+            max-height: 85vh; overflow-y: auto; 
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .settings-menu.active { display: block; }
+
+        .menu-item {
+            display: flex; align-items: center; width: 100%;
+            padding: 15px; text-align: left;
+            border: none; background: white; cursor: pointer;
+            border-bottom: 1px solid #eee; font-size: 1rem; color: #333;
         }
 
-        .settings-menu button.menu-item {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            padding: 1rem; 
-            text-align: left;
-            border: none;
-            background: white;
-            cursor: pointer;
-            border-bottom: 1px solid #ddd;
-            font-size: 1rem; 
-            color: #333;
-            transition: background 0.2s;
-        }
+        .menu-item:hover { background-color: #f8f9fa; }
+        .menu-item .icon { margin-right: 15px; font-size: 1.2rem; }
 
-        .settings-menu button.menu-item:hover, 
-        .settings-menu button.menu-item:active {
-            background-color: #f0f0f0;
+        /* --- HISTORIA WYSZUKIWANIA --- */
+        #historyContainer { margin-bottom: 20px; display: none; }
+        .history-label { font-size: 0.85rem; color: var(--none); margin-bottom: 5px; display: block; }
+        .history-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+        .chip {
+            background-color: #e9ecef; border: 1px solid #ced4da;
+            border-radius: 16px; padding: 6px 12px; font-size: 0.9rem;
+            cursor: pointer; transition: background 0.2s;
         }
+        .chip:hover { background-color: #dee2e6; }
 
-        .settings-menu button.menu-item span.icon {
-            margin-right: 12px;
-            font-size: 1.2rem;
-        }
-
-        .settings-menu input[type="file"] {
-            display: none; 
-        }
-
-        /* KONTROLA WIELKOŚCI TEKSTU */
-        .text-size-control {
-            background-color: #e9ecef;
-            padding: 1rem;
-            border-bottom: 2px solid #dee2e6;
-            text-align: center;
-        }
-
-        .text-size-label {
-            display: block;
-            font-weight: bold;
-            color: var(--bg-dark);
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-
-        .size-buttons-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .size-btn {
-            background-color: var(--holiday);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.5rem 0;
-            width: 4rem; 
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .size-btn:active {
-            transform: translateY(2px);
-            box-shadow: none;
-        }
-
-        /* STATUS CACHE */
-        .cache-status-box {
-            padding: 1rem;
-            font-size: 0.9rem;
-            color: #555;
-            background-color: #f8f9fa;
-            border-top: 1px solid #ddd;
-            text-align: center;
-        }
-
-        /* GŁÓWNA ZAWARTOŚĆ */
+        /* --- GŁÓWNA ZAWARTOŚĆ --- */
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 0 10px;
+            flex: 1; max-width: 800px; margin: 0 auto;
+            padding: 20px 15px; width: 100%;
         }
 
-        /* PASEK DATY/CZASU */
+        /* --- PASEK DATY --- */
         #dateBar {
-            background-color: white;
-            padding: 1rem;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            font-size: 1.1rem; 
-            text-align: center;
-            border-left: 6px solid var(--border-color);
+            background-color: white; padding: 15px; margin-bottom: 20px;
+            border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-size: 1.1rem; text-align: center;
+            border-left: 6px solid var(--border-color); color: #333;
         }
 
-        .time-display {
-            font-weight: bold;
-            color: var(--holiday);
-            display: inline-block;
-            margin-left: 5px;
-        }
+        body.high-contrast #dateBar { background-color: #222; color: #fff; }
 
         .holiday-tag {
-            background-color: var(--holiday);
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            margin-left: 5px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            display: inline-block;
+            background-color: var(--holiday); color: white;
+            padding: 3px 8px; border-radius: 4px;
+            font-weight: bold; font-size: 0.9rem;
+            display: inline-block; margin-top: 5px;
         }
 
-        /* WYSZUKIWARKA */
-        #searchContainer {
-            position: relative;
-            margin-bottom: 25px;
-        }
+        /* --- WYSZUKIWARKA --- */
+        #searchContainer { position: relative; margin-bottom: 15px; }
 
         #stationSearch {
-            width: 100%;
-            padding: 1rem;
-            font-size: 1.2rem; 
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            outline: none;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            width: 100%; padding: 14px; font-size: 1.1rem; 
+            border: 2px solid #ccc; border-radius: 8px;
+            outline: none; -webkit-appearance: none;
         }
 
-        #stationSearch:focus {
-            border-color: var(--holiday);
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-        }
+        #stationSearch:focus { border-color: var(--holiday); box-shadow: var(--focus-ring); }
 
         #searchResults {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background-color: white;
-            border: 2px solid var(--holiday);
-            border-top: none;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 40vh; 
-            overflow-y: auto;
-            z-index: 50;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            border-radius: 0 0 8px 8px;
+            position: absolute; top: 100%; left: 0; right: 0;
+            background-color: white; border: 2px solid var(--holiday);
+            border-top: none; list-style: none; padding: 0; margin: 0;
+            max-height: 50vh; overflow-y: auto; z-index: 50;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border-radius: 0 0 8px 8px; display: none;
         }
 
         .search-result-item {
-            padding: 1rem;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-            font-size: 1.1rem;
+            padding: 12px 15px; cursor: pointer;
+            border-bottom: 1px solid #eee; font-size: 1.1rem; color: #333;
         }
 
-        .search-result-item:hover {
-            background-color: #e2e6ea;
+        .search-result-item.selected, .search-result-item:hover {
+            background-color: #e2e6ea; font-weight: bold;
         }
 
-        /* GŁÓWNY STATUS BOX */
+        /* --- STATUS GLÓWNY --- */
         #mainStatusBox {
-            padding: 1.5rem;
-            color: white;
-            text-align: center;
-            font-size: 2rem; 
-            font-weight: bold;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            display: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            padding: 1.5rem; color: white; text-align: center;
+            font-size: 1.8rem; font-weight: bold;
+            border-radius: 12px; margin-bottom: 25px;
+            display: none; box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
         #mainStatusBox.bg-open { background-color: var(--open); }
-        #mainStatusBox.bg-break { background-color: var(--break); color: var(--text-dark); text-shadow: none; }
+        #mainStatusBox.bg-break { background-color: var(--break); color: #212529; }
         #mainStatusBox.bg-closed { background-color: var(--closed); }
         #mainStatusBox.bg-none { background-color: var(--none); }
 
-        /* KARTY */
-        #detailsList {
-            display: grid;
-            gap: 20px;
-        }
+        /* --- KARTY SZCZEGÓŁÓW --- */
+        #detailsList { display: grid; gap: 20px; }
 
         .card {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border-left: 8px solid; 
+            background-color: white; padding: 1.5rem;
+            border-radius: 12px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-left: 8px solid #ccc; position: relative;
         }
 
         .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 1rem; padding-bottom: 1rem;
             border-bottom: 2px solid #f0f0f0;
-            flex-wrap: wrap; 
-            gap: 10px;
         }
         
-        .carrier-title {
-            font-weight: bold;
-            font-size: 1.3rem;
-        }
-        
-        .epa-info {
-            font-size: 0.9rem;
-            color: var(--none);
-            margin-top: 5px;
-        }
+        body.high-contrast .card-header { border-bottom-color: #444; }
+
+        .carrier-title { font-weight: bold; font-size: 1.2rem; }
+        .epa-info { font-size: 0.9rem; color: var(--none); }
 
         .status-pill {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 1rem;
-            text-transform: uppercase;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.4rem 0.8rem; border-radius: 6px;
+            font-weight: bold; font-size: 0.9rem; text-transform: uppercase;
         }
 
-        /* TABELA GODZIN */
-        .details-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            font-size: 1rem;
-        }
-        
+        /* --- TABELA --- */
+        .details-table { width: 100%; border-collapse: collapse; font-size: 1rem; }
         .details-table th, .details-table td {
-            padding: 0.8rem 0.5rem;
-            text-align: left;
-            vertical-align: top;
+            padding: 8px 5px; text-align: left; vertical-align: top;
             border-bottom: 1px solid #eee;
         }
         
-        .details-table th {
-            width: 35%; 
-            font-weight: bold;
-            color: var(--bg-dark);
+        body.high-contrast .details-table th, 
+        body.high-contrast .details-table td { border-bottom-color: #444; }
+
+        .details-table .active-row { background-color: #eef2f5; font-weight: bold; }
+        
+        body.high-contrast .details-table .active-row {
+            background-color: #333; color: #fff;
         }
         
-        .details-table .active-row {
-            background-color: #eef2f5;
-            font-weight: bold;
-        }
-        
-        /* NOTATKI */
         .notes-section {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            border-left: 5px solid #ffeeba;
+            background-color: #fff3cd; color: #856404; padding: 10px;
+            border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #ffeeba;
         }
         
-        .data-age-warning {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            font-weight: bold;
-            border-left: 5px solid #f5c6cb;
+        /* Styl kafelek w widoku wszystkich stacji */
+        .station-tile {
+            background: white; padding: 15px; border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 1.05rem; transition: transform 0.1s;
+        }
+        .station-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
+        .station-status-icon {
+            font-size: 0.8rem; font-weight: bold; 
+            padding: 3px 8px; border-radius: 12px; color: #fff;
         }
 
-        /* METADANE */
-        .meta-footer {
-            margin-top: 1rem;
-            padding-top: 0.5rem;
-            border-top: 1px dashed #ccc;
-            font-size: 0.8rem;
-            color: #777;
-            text-align: right;
+        /* --- STOPKA --- */
+        footer {
+            text-align: center; padding: 20px; font-size: 0.85rem;
+            color: var(--none); background-color: #f1f1f1;
+            border-top: 1px solid #ddd;
+        }
+        
+        body.high-contrast footer {
+            background-color: #111; color: #888; border-top-color: #333;
         }
 
-        #networkStatus {
-            font-size: 1rem;
-            margin-top: 1rem;
-            color: var(--text-dark);
-            text-align: center;
-            padding: 0.5rem;
-        }
-        
-        .msg-online { color: var(--open); font-weight: bold; }
-        .msg-offline { color: var(--closed); font-weight: bold; }
-
-        .btn-link {
-            display: block; 
-            margin-top: 1rem;
-            padding: 0.8rem;
-            background-color: var(--holiday);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        /* PANEL ODZYSKIWANIA */
-        #recoveryPanel {
-            background-color: #f8f8f8;
-            border: 2px solid #ddd;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-        }
-        
-        .recovery-btn {
-            background-color: var(--closed);
-            color: white;
-            padding: 0.8rem 1.2rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 1rem;
-            font-size: 1rem;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        /* TABELA PODSUMOWUJĄCA */
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            font-size: 1rem;
-        }
-        
-        .summary-table th, .summary-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .summary-table th {
-            background-color: #e9ecef;
-            font-size: 0.9rem;
-            color: var(--bg-dark);
-            text-transform: uppercase;
-        }
-
-        .summary-table tbody tr:hover {
-            background-color: #f8f8f8;
-            cursor: pointer;
-        }
-        
-        .status-dot {
-            height: 0.9rem; 
-            width: 0.9rem;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-        
-        .dot-open { background-color: var(--open); }
-        .dot-break { background-color: var(--break); }
-        .dot-closed { background-color: var(--closed); }
-        .dot-none { background-color: var(--none); }
-
-        /* MODAL */
+        /* MODAL POMOCY */
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6); 
-            justify-content: center;
-            align-items: center;
+            display: none; position: fixed; z-index: 2000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); 
+            justify-content: center; align-items: center;
         }
 
         .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            padding: 2rem;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 600px;
-            border-radius: 12px;
-            position: relative;
-            font-size: 1.1rem;
-            line-height: 1.6;
+            background-color: white; padding: 25px;
+            width: 90%; max-width: 600px;
+            border-radius: 12px; color: #333;
         }
 
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 2rem; 
-            font-weight: bold;
-            cursor: pointer;
-            padding: 0 0.5rem; 
-        }
+        .close-btn { float: right; font-size: 1.5rem; cursor: pointer; padding: 0 10px; }
 
-        .close-btn:hover,
-        .close-btn:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
+        /* SKRÓTY DOSTĘPNOŚCI W MENU */
+        .text-size-control {
+            background-color: #f8f9fa; padding: 15px;
+            border-bottom: 1px solid #eee; text-align: center;
         }
+        
+        .size-btn {
+            background: var(--holiday); color: white; border: none;
+            padding: 5px 15px; border-radius: 4px;
+            font-size: 1.1rem; cursor: pointer; margin: 0 5px;
+        }
+        
+        #fileInput { display: none; }
 
-        footer {
-            text-align: center;
-            padding: 1.5rem;
-            font-size: 0.9rem;
-            color: var(--none);
-            border-top: 1px solid #eee;
-            margin-top: 40px;
-            background-color: #fff;
-        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Asystent Kas Biletowych</h1>
-        <button class="settings-btn" onclick="toggleMenu()" aria-label="Ustawienia">⚙️</button>
-        <div class="settings-menu" id="settingsMenu">
+    <header role="banner">
+        <h1>System Kas Biletowych</h1>
+        <button class="settings-btn" onclick="toggleMenu()" aria-label="Ustawienia i Menu">⚙️</button>
+        
+        <div class="settings-menu" id="settingsMenu" role="dialog" aria-modal="true" aria-label="Menu Ustawień">
             
             <div class="text-size-control">
-                <span class="text-size-label">Wielkość tekstu (Dostępność):</span>
-                <div class="size-buttons-container">
-                    <button class="size-btn" onclick="zmienRozmiarTekstu(-1)" aria-label="Zmniejsz tekst">A-</button>
-                    <button class="size-btn" onclick="zmienRozmiarTekstu(0)" aria-label="Przywróć domyślny rozmiar tekstu">A</button>
-                    <button class="size-btn" onclick="zmienRozmiarTekstu(1)" aria-label="Powiększ tekst">A+</button>
+                <span style="display:block; margin-bottom:10px; font-weight:bold;">Wygląd:</span>
+                <button class="size-btn" onclick="toggleContrast()" aria-label="Przełącz kontrast">🌓 Kontrast</button>
+                <div style="margin-top:10px;">
+                    <span style="font-size:0.9rem;">Rozmiar tekstu:</span>
+                    <button class="size-btn" onclick="zmienRozmiarTekstu(-1)">A-</button>
+                    <button class="size-btn" onclick="zmienRozmiarTekstu(0)">A</button>
+                    <button class="size-btn" onclick="zmienRozmiarTekstu(1)">A+</button>
                 </div>
             </div>
 
             <button class="menu-item" onclick="pobierzDane(true)">
-                <span class="icon">🔄</span> Wymuś aktualizację bazy (online)
+                <span class="icon">🔄</span> Wymuś aktualizację (Online)
             </button>
             <button class="menu-item" onclick="pokazWszystkieStacje()">
                 <span class="icon">📋</span> Pokaż wszystkie stacje
             </button>
             <button class="menu-item" onclick="document.getElementById('fileInput').click()">
-                <span class="icon">📁</span> Wgraj lokalny plik JSON
+                <span class="icon">📁</span> Wgraj bazę (JSON)
             </button>
             <input type="file" id="fileInput" onchange="wgrajLokalnyPlik(this)" accept=".json">
-            <button class="menu-item" onclick="pobierzPlikNaDysk()">
-                <span class="icon">💾</span> Pobierz bazę na dysk
-            </button>
             <button class="menu-item" onclick="pokazInstrukcje()">
-                <span class="icon">❓</span> Instrukcja / Informacja
+                <span class="icon">❓</span> Instrukcja / Oznaczenia
             </button>
             
-            <div class="cache-status-box">
-                <span id="cacheStatus">Sprawdzanie pamięci...</span>
+            <div style="padding:10px; text-align:center; font-size:0.8rem; color:#666; background:#f0f0f0;">
+                <span id="cacheStatus">Status bazy: ...</span>
             </div>
         </div>
     </header>
 
-    <div class="container">
-        <div id="dateBar"></div>
+    <main class="container" role="main">
+        <div id="dateBar" aria-live="polite"></div>
 
         <div id="searchContainer">
-            <input type="text" id="stationSearch" placeholder="Wpisz nazwę stacji..." oninput="filtrujStacje(this.value)" autocomplete="off">
-            <ul id="searchResults"></ul>
+            <input type="text" id="stationSearch" 
+                   placeholder="Wpisz nazwę stacji (np. Warszawa Centralna)..." 
+                   aria-label="Wyszukaj stację"
+                   autocomplete="off">
+            <ul id="searchResults" role="listbox"></ul>
         </div>
         
-        <div id="statusMessage">
-            <div id="networkStatus">Ładowanie danych...</div>
-            
-            <div id="recoveryPanel">
-                <h3>Błąd połączenia</h3>
-                <p>Nie udało się pobrać danych online.</p>
-                <p>Aby działać w trybie offline, wgraj plik lokalny lub spróbuj ponownie.</p>
-                <button class="recovery-btn" onclick="document.getElementById('fileInput').click()">Wgraj lokalny plik JSON</button>
-            </div>
+        <div id="historyContainer">
+            <span class="history-label">Ostatnio oglądane:</span>
+            <div class="history-chips" id="historyChips"></div>
         </div>
 
-        <div id="mainStatusBox"></div>
+        <div id="statusMessage" style="text-align:center; margin-bottom:10px;">
+            <div id="networkStatus" style="font-size:0.9rem; color:#555;">Ładowanie systemu...</div>
+        </div>
+
+        <div id="mainStatusBox" role="status" aria-live="assertive"></div>
 
         <div id="detailsList"></div>
         
-        <div style="margin-top: 30px; padding: 1rem; background-color: #f0f0f0; border-radius: 8px; font-size: 0.9rem; text-align: center; color: #6c757d; border: 1px solid #ddd;">
-            <strong>OSTRZEŻENIE:</strong> Informacje mają charakter POGLĄDOWY.<br>Zawsze weryfikuj godziny otwarcia bezpośrednio u przewoźnika.
+        <div style="margin-top: 30px; font-size: 0.8rem; text-align: center; color: #777;">
+            Wciśnij <strong>ESC</strong> by wyczyścić. Użyj <strong>Strzałek</strong> w wyszukiwarce.
         </div>
+    </main>
 
-    </div>
-    
     <div id="helpModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="zamknijInstrukcje()">&times;</span>
-            <h2>Instrukcja i informacje</h2>
-            <p><strong>Asystent Kas Biletowych</strong> to narzędzie wspierające Drużyny Konduktorskie.</p>
-            <p><strong>Jak to działa?</strong><br>Aplikacja sprawdza aktualną datę i godzinę (uwzględniając święta), a następnie pokazuje, czy kasa na danej stacji jest otwarta.</p>
-            <hr>
-            <p><strong>Legenda Statusów:</strong></p>
-            <ul style="list-style: none; padding-left: 0;">
-                <li style="margin-bottom: 8px;"><span class="status-dot dot-open"></span> <strong>OTWARTA:</strong> Kasa pracuje.</li>
-                <li style="margin-bottom: 8px;"><span class="status-dot dot-break"></span> <strong>PRZERWA:</strong> Trwa przerwa w pracy kasy.</li>
-                <li style="margin-bottom: 8px;"><span class="status-dot dot-closed"></span> <strong>ZAMKNIĘTA:</strong> Poza godzinami pracy.</li>
-                <li style="margin-bottom: 8px;"><span class="status-dot dot-none"></span> <strong>BRAK KASY:</strong> Stacja nie posiada kasy.</li>
+            <h2>Oznaczenia</h2>
+            <ul style="list-style:none; padding:0; line-height:2;">
+                <li>🟢 <strong>OTWARTA</strong> - kasa pracuje</li>
+                <li>🟡 <strong>PRZERWA</strong> - przerwa w pracy</li>
+                <li>🔴 <strong>ZAMKNIĘTA</strong> - poza godzinami</li>
+                <li>⚪ <strong>BRAK KASY</strong> - brak punktu sprzedaży</li>
             </ul>
             <hr>
-            <p><strong>Dostępność (A+):</strong> W menu ustawień (zębatka) możesz powiększyć tekst aplikacji.</p>
+            <p><strong>Wersja 4.2</strong>: Naprawiono brakujące linki do stron przewoźników (Arriva, Koleje Małopolskie).</p>
         </div>
     </div>
 
     <footer>
-        <p>Współautorzy: Gemini (AI) oraz Piotr M 🚂</p>
+        <p>Wersja aplikacji: <strong>v4.2</strong></p>
+        <p>Współautorzy: Gemini oraz Piotr M 🚂</p>
     </footer>
 
 <script>
     // ================= KONFIGURACJA =================
-    const PLIKI_DANYCH = [
-        'data_pkp_intercity.json', 
-        'data_polregio.json',
-        'data_arriva_rp.json',
-        'data_koleje_slaskie.json',
-        'data_koleje_mazowieckie.json',
-        'data_lka.json',
-        'data_koleje_wielkopolskie.json',
-        'data_koleje_dolnoslaskie.json', 
-        'data_koleje_malopolskie.json',
-        'data_skm.json',
-        'data_brak_kasy.json'
-    ];
+    const STORAGE_KEY = 'kasy_biletowe_v_final';
+    const HISTORY_KEY = 'kasy_search_history';
+    const SETTINGS_KEY = 'kasy_settings_v4';
     
-    const STORAGE_KEY = 'kasy_biletowe_v_final'; 
-    const MAX_DAYS_FRESH = 30;
-    let bazaDanych = []; 
+    // Lista plików źródłowych
+    const PLIKI_DANYCH = [
+        'data_pkp_intercity.json', 'data_polregio.json', 'data_arriva_rp.json',
+        'data_koleje_slaskie.json', 'data_koleje_mazowieckie.json', 'data_lka.json',
+        'data_koleje_wielkopolskie.json', 'data_koleje_dolnoslaskie.json', 
+        'data_koleje_malopolskie.json', 'data_skm.json', 'data_brak_kasy.json'
+    ];
 
+    // NAPRAWIONY SŁOWNIK LINKÓW
     const BAZA_LINKOW = {
         "PKP INTERCITY": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
         "POLREGIO": "https://polregio.pl/pl/dla-podroznych/gdzie-kupic-bilet/kasy-biletowe/",
-        "ARRIVA RP": "https://arriva.pl/1032/kasy-biletowe",
         "KOLEJE ŚLĄSKIE": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
-        "KŚ": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
         "KOLEJE MAZOWIECKIE": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
-        "KM": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
-        "ŁÓDZKA KOLEJ AGLOMERACYJNA": "https://lka.lodzkie.pl/kasy-biletowe/",
         "ŁKA": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "ŁÓDZKA KOLEJ AGLOMERACYJNA": "https://lka.lodzkie.pl/kasy-biletowe/",
         "KOLEJE WIELKOPOLSKIE": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
-        "KW": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
         "KOLEJE DOLNOŚLĄSKIE": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
-        "KD": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
-        "KOLEJE MAŁOPOLSKIE": "https://www.kolejemalopolskie.com.pl/pl/dla-pasazera/gdzie-kupic-bilet-kolejowy",
-        "SZYBKA KOLEJ MIEJSKA W TRÓJMIEŚCIE": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-biletomatow",
         "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-biletomatow",
-        "BRAK": null
+        "SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-biletomatow",
+        "KOLEJE MAŁOPOLSKIE": "https://kolejemalopolskie.com.pl/pl/dla-pasazera/gdzie-kupic-bilet/kasy-biletowe",
+        "ARRIVA RP": "https://arriva.pl/art/punkty-sprzedazy-biletow"
     };
 
     const SWIETA_STALE = {
         '01-01': 'Nowy Rok', '01-06': 'Trzech Króli', '05-01': 'Święto Pracy',
-        '05-03': '3 Maja', '08-15': 'Wniebowzięcie NMP',
-        '11-01': 'Wszystkich Świętych', '11-11': 'Niepodległości',
-        '12-25': 'Boże Narodzenie', '12-26': 'Drugi dzień Bożego Narodzenia'
+        '05-03': '3 Maja', '08-15': 'Wniebowzięcie NMP', '11-01': 'Wszystkich Świętych',
+        '11-11': 'Niepodległości', '12-24': 'Wigilia', '12-25': 'Boże Narodzenie', '12-26': 'Drugi dzień Św.'
     };
 
-    // === POPRAWIONA FUNKCJA: OBSŁUGA WIELKOŚCI TEKSTU ===
-    let userFontSize = 100; // procenty
+    let bazaDanych = [];
+    let currentFocus = -1; 
+    let userSettings = { fontSize: 100, highContrast: false };
 
-    function initFontSize() {
-        const saved = localStorage.getItem('appFontSize');
-        if(saved) {
-            userFontSize = parseInt(saved);
+    // ================= INICJALIZACJA =================
+    window.onload = () => {
+        loadSettings();
+        initZegar();
+        loadHistory();
+        
+        const cached = localStorage.getItem(STORAGE_KEY);
+        if(cached) {
+            try {
+                bazaDanych = JSON.parse(cached);
+                document.getElementById('networkStatus').innerHTML = "Gotowy (tryb offline)";
+                updateCacheInfo();
+            } catch(e) { console.error("Cache corrupted"); }
         }
-        applyFontSize();
+        
+        pobierzDane();
+
+        setInterval(initZegar, 1000);
+        setInterval(() => {
+            if(document.getElementById('stationSearch').value) wyswietlStacje();
+        }, 60000);
+
+        setupSearchEvents();
+    };
+
+    // ================= OBSŁUGA UI I USTAWIENIEŃ =================
+    function loadSettings() {
+        const saved = localStorage.getItem(SETTINGS_KEY);
+        if(saved) userSettings = JSON.parse(saved);
+        applySettings();
+    }
+
+    function saveSettings() {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
+        applySettings();
+    }
+
+    function applySettings() {
+        document.documentElement.style.fontSize = userSettings.fontSize + "%";
+        if(userSettings.highContrast) document.body.classList.add('high-contrast');
+        else document.body.classList.remove('high-contrast');
+    }
+
+    function toggleContrast() {
+        userSettings.highContrast = !userSettings.highContrast;
+        saveSettings();
     }
 
     function zmienRozmiarTekstu(delta) {
-        if(delta === 0) {
-            userFontSize = 100;
-        } else {
-            userFontSize += (delta * 10);
-        }
-        if(userFontSize < 80) userFontSize = 80;
-        if(userFontSize > 160) userFontSize = 160;
-
-        applyFontSize();
-        localStorage.setItem('appFontSize', userFontSize);
+        if(delta === 0) userSettings.fontSize = 100;
+        else userSettings.fontSize += (delta * 10);
+        if(userSettings.fontSize < 80) userSettings.fontSize = 80;
+        if(userSettings.fontSize > 150) userSettings.fontSize = 150;
+        saveSettings();
     }
 
-    function applyFontSize() {
-        // POPRAWKA: Zmiana na root (html) wpływa na jednostki rem
-        document.documentElement.style.fontSize = userFontSize + "%";
+    function toggleMenu() {
+        document.getElementById('settingsMenu').classList.toggle('active');
     }
 
-    // Algorytm obliczania Wielkanocy
-    function getEasterDate(year) {
-        const a = year % 19;
-        const b = Math.floor(year / 100);
-        const c = year % 100;
-        const d = Math.floor(b / 4);
-        const e = b % 4;
-        const f = Math.floor((b + 8) / 25);
-        const g = Math.floor((b - f + 1) / 3);
-        const h = (19 * a + b - d - g + 15) % 30;
-        const i = Math.floor(c / 4);
-        const k = c % 4;
-        const l = (32 + 2 * e + 2 * i - h - k) % 7;
-        const m = Math.floor((a + 11 * h + 22 * l) / 451);
-        const month = Math.floor((h + l - 7 * m + 114) / 31);
-        const day = ((h + l - 7 * m + 114) % 31) + 1;
-        return new Date(year, month - 1, day);
+    // ================= HISTORIA I SZUKANIE =================
+    function loadHistory() {
+        const raw = localStorage.getItem(HISTORY_KEY);
+        const history = raw ? JSON.parse(raw) : [];
+        const container = document.getElementById('historyChips');
+        const wrapper = document.getElementById('historyContainer');
+        container.innerHTML = '';
+        if(history.length === 0) { wrapper.style.display = 'none'; return; }
+        wrapper.style.display = 'block';
+        history.forEach(stacja => {
+            const btn = document.createElement('button');
+            btn.className = 'chip';
+            btn.innerText = stacja;
+            btn.onclick = () => {
+                document.getElementById('stationSearch').value = stacja;
+                wyswietlStacje(stacja);
+            };
+            container.appendChild(btn);
+        });
     }
 
-    function addDays(date, days) {
-        const result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
+    function addToHistory(stacja) {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+        history = history.filter(h => h !== stacja);
+        history.unshift(stacja);
+        if(history.length > 5) history.pop();
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        loadHistory();
     }
 
-    function sprawdzSwieto() {
-        const d = new Date();
-        const y = d.getFullYear();
-        const m = String(d.getMonth()+1).padStart(2,'0');
-        const day = String(d.getDate()).padStart(2,'0');
-        const keyFixed = `${m}-${day}`;
-        
-        if(SWIETA_STALE[keyFixed]) return SWIETA_STALE[keyFixed];
-
-        const easter = getEasterDate(y);
-        const easterMon = addDays(easter, 1);
-        const corpusChristi = addDays(easter, 60);
-        const pentecost = addDays(easter, 49);
-
-        const check = (dateObj) => {
-            return dateObj.getDate() === d.getDate() && dateObj.getMonth() === d.getMonth();
-        };
-
-        if(check(easter)) return 'Wielkanoc';
-        if(check(easterMon)) return 'Pon. Wielkanocny';
-        if(check(corpusChristi)) return 'Boże Ciało';
-        if(check(pentecost)) return 'Zielone Świątki';
-
-        return null;
-    }
-
-    function checkDataAge(dataDateStr) {
-        if (!dataDateStr) return false;
-        if (dataDateStr.length !== 10) return false;
-
-        const [y, m, d] = dataDateStr.split('-').map(Number);
-        const dataDate = new Date(y, m - 1, d);
-        const today = new Date();
-
-        dataDate.setHours(0, 0, 0, 0);
-        today.setHours(0, 0, 0, 0);
-
-        const diffTime = Math.abs(today - dataDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-        return diffDays > MAX_DAYS_FRESH;
-    }
-
-    function updateCacheStatus() {
-        const cacheStatusElement = document.getElementById('cacheStatus');
-        const cacheTime = localStorage.getItem(STORAGE_KEY + '_time');
-
-        if (cacheTime) {
-            const date = new Date(parseInt(cacheTime));
-            // Ujednolicenie formatu daty do YYYY-MM-DD
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const dateStr = `${year}-${month}-${day}`;
-            const totalRecords = bazaDanych.length;
-
-            let oldestDate = '';
-            let newestDate = '';
-
-            if (totalRecords > 0) {
-                let oldest = '9999-12-31';
-                let newest = '1000-01-01';
-
-                bazaDanych.forEach(item => {
-                    const itemDate = item['meta.data'];
-                    if (itemDate && itemDate.length === 10) { // Proste sprawdzenie formatu
-                        if (itemDate < oldest) oldest = itemDate;
-                        if (itemDate > newest) newest = itemDate;
-                    }
-                });
-
-                if (oldest !== '9999-12-31') oldestDate = oldest;
-                if (newest !== '1000-01-01') newestDate = newest;
+    function setupSearchEvents() {
+        const input = document.getElementById('stationSearch');
+        input.addEventListener('input', function() { filtrujStacje(this.value); });
+        input.addEventListener('keydown', function(e) {
+            const list = document.getElementById('searchResults');
+            let items = list.getElementsByTagName('li');
+            if (e.key === 'ArrowDown') { currentFocus++; addActive(items); }
+            else if (e.key === 'ArrowUp') { currentFocus--; addActive(items); }
+            else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentFocus > -1 && items[currentFocus]) items[currentFocus].click();
+                else if (items.length > 0) items[0].click();
+            } else if (e.key === 'Escape') {
+                input.value = ''; list.style.display = 'none';
+                document.getElementById('detailsList').innerHTML = '';
+                document.getElementById('mainStatusBox').style.display = 'none';
+                input.blur();
             }
+        });
+    }
 
-            cacheStatusElement.innerHTML = `Baza pobrana z serwera: <strong>${dateStr}</strong><br>Liczba wpisów: ${totalRecords}<br>Najstarszy rekord: <strong>${oldestDate || 'brak'}</strong><br>Najnowszy rekord: <strong>${newestDate || 'brak'}</strong>`;
-        } else {
-            cacheStatusElement.innerHTML = `Brak danych w pamięci urządzenia.`;
-        }
+    function addActive(items) {
+        if (!items) return false;
+        removeActive(items);
+        if (currentFocus >= items.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (items.length - 1);
+        items[currentFocus].classList.add("selected");
+        items[currentFocus].scrollIntoView({block: "nearest"});
+    }
+    
+    function removeActive(items) {
+        for (let i = 0; i < items.length; i++) items[i].classList.remove("selected");
     }
 
     function normalizeText(text) {
-        if (!text) return "";
-        return String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    }
-
-    // ================= MENU I FUNKCJE PLIKÓW =================
-
-    function toggleMenu() {
-        const menu = document.getElementById('settingsMenu');
-        menu.classList.toggle('active');
-    }
-    
-    function pokazInstrukcje() {
-        document.getElementById('helpModal').style.display = 'flex';
-        // Zamknij menu ustawień, żeby nie zasłaniało
-        document.getElementById('settingsMenu').classList.remove('active');
-    }
-    
-    function zamknijInstrukcje() {
-        document.getElementById('helpModal').style.display = 'none';
-    }
-
-    function pokazWszystkieStacje() {
-        document.getElementById('stationSearch').value = ''; 
-        document.getElementById('searchResults').style.display = 'none';
-        toggleMenu(); 
-        
-        const mainBox = document.getElementById('mainStatusBox');
-        const listContainer = document.getElementById('detailsList');
-        
-        mainBox.style.display = 'none'; 
-        listContainer.style.display = 'block';
-        listContainer.innerHTML = '';
-
-        if(bazaDanych.length === 0) {
-            listContainer.innerHTML = '<p style="text-align:center; padding: 20px;">Brak danych w bazie. Spróbuj zaktualizować online.</p>';
-            return;
-        }
-
-        const stacjeMap = {};
-        bazaDanych.forEach(item => {
-            if(item.ukryty) return; 
-            if(!stacjeMap[item.stacja]) {
-                stacjeMap[item.stacja] = [];
-            }
-            stacjeMap[item.stacja].push(item);
-        });
-
-        const sortedNames = Object.keys(stacjeMap).sort((a,b) => a.localeCompare(b));
-
-        let tableHtml = `
-            <table class="summary-table">
-                <thead>
-                    <tr>
-                        <th>Stacja</th>
-                        <th>EPA</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-
-        const d = new Date();
-        const swieto = sprawdzSwieto();
-        const day = d.getDay(); 
-
-        sortedNames.forEach(name => {
-            const entries = stacjeMap[name];
-            const epaDisplay = (entries[0].epa && String(entries[0].epa) !== 'Brak') ? entries[0].epa : '-';
-            
-            let isAnyOpen = false;
-            let isAnyBreak = false;
-            let allBrak = true;
-
-            entries.forEach(entry => {
-                if(entry.przewoznik !== 'BRAK') allBrak = false;
-                const st = obliczStatus(entry, swieto, day);
-                if(st.type === 'open') isAnyOpen = true;
-                if(st.type === 'break') isAnyBreak = true;
-            });
-
-            let finalStatus = { text: 'NIECZYNNA', colorClass: 'dot-closed' };
-            
-            if (allBrak) {
-                finalStatus = { text: 'Brak kasy', colorClass: 'dot-none' };
-            } else if (isAnyOpen) {
-                finalStatus = { text: 'Czynna', colorClass: 'dot-open' };
-            } else if (isAnyBreak) {
-                finalStatus = { text: 'Przerwa', colorClass: 'dot-break' };
-            }
-
-            tableHtml += `
-                <tr onclick="document.getElementById('stationSearch').value='${name}'; wyswietlStacje('${name}')">
-                    <td><strong>${name}</strong></td>
-                    <td>${epaDisplay}</td>
-                    <td><span class="status-dot ${finalStatus.colorClass}"></span> ${finalStatus.text}</td>
-                </tr>
-            `;
-        });
-
-        tableHtml += `</tbody></table>`;
-        listContainer.innerHTML = tableHtml;
-    }
-
-    document.addEventListener('click', function(e) {
-        const menu = document.getElementById('settingsMenu');
-        const btn = document.querySelector('.settings-btn');
-        if (e.target !== menu && e.target !== btn && !menu.contains(e.target) && !btn.contains(e.target)) {
-            menu.classList.remove('active');
-        }
-    });
-
-    function pobierzPlikNaDysk() {
-        if(bazaDanych.length === 0) {
-            alert("Brak danych do pobrania! Najpierw zaktualizuj bazę.");
-            return;
-        }
-        const dataStr = JSON.stringify(bazaDanych, null, 2);
-        const blob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = "kasy_polaczona_baza.json"; 
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    // --- POPRAWIONA FUNKCJA POBIERANIA DANYCH (z poprzedniej wiadomości) ---
-    async function pobierzDane(force = false) {
-        const netMsg = document.getElementById('networkStatus');
-        const recoveryPanel = document.getElementById('recoveryPanel');
-        
-        netMsg.innerText = "Łączenie z serwerem i pobieranie segmentów...";
-        recoveryPanel.style.display = 'none';
-
-        try {
-            const fetchPromises = PLIKI_DANYCH.map(url => 
-                fetch(url, { cache: "no-store" })
-                .then(res => {
-                    if (!res.ok) return []; 
-                    return res.json();
-                })
-                .catch(err => {
-                    console.error("Błąd pobierania pliku: " + url, err);
-                    return [];
-                })
-            );
-            
-            const results = await Promise.all(fetchPromises);
-            
-            let nowaBaza = [];
-            results.forEach(arr => {
-                 if (Array.isArray(arr)) {
-                     nowaBaza = nowaBaza.concat(arr);
-                 }
-            });
-            
-            if (nowaBaza.length === 0) {
-                throw new Error("Pusta baza danych - brak połączenia lub błąd plików.");
-            }
-            
-            bazaDanych = nowaBaza.filter(item => item.ukryty !== true); 
-            
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(bazaDanych));
-            localStorage.setItem(STORAGE_KEY + '_time', Date.now().toString());
-            
-            netMsg.innerHTML = "<span class='msg-online'>✅ Dane załadowane pomyślnie!</span>";
-            if(force) {
-                alert("Dane zaktualizowane pomyślnie!");
-                toggleMenu(); 
-            }
-            updateCacheStatus();
-
-        } catch (e) {
-            console.warn("Błąd podczas aktualizacji online:", e);
-            const cached = localStorage.getItem(STORAGE_KEY);
-            if(cached) {
-                bazaDanych = JSON.parse(cached);
-                netMsg.innerHTML = "<span class='msg-offline'>⚠️ Brak połączenia (używam zapisanej bazy).</span>";
-                updateCacheStatus();
-            } else {
-                netMsg.innerHTML = "<span class='msg-offline'>❌ BŁĄD SIECI / BRAK DANYCH</span>";
-                updateCacheStatus();
-                recoveryPanel.style.display = 'block';
-            }
-        }
-    }
-
-    function wgrajLokalnyPlik(input) {
-        const file = input.files[0];
-        if(!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const json = JSON.parse(e.target.result);
-                const now = Date.now();
-
-                bazaDanych = json.filter(item => item.ukryty !== true);
-
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(bazaDanych));
-                localStorage.setItem(STORAGE_KEY + '_time', now.toString());
-                
-                alert("Plik lokalny wczytany pomyślnie!");
-                document.getElementById('recoveryPanel').style.display = 'none';
-                document.getElementById('networkStatus').innerHTML = "<span class='msg-online'>📁 Dane lokalne załadowane</span>";
-                updateCacheStatus();
-                document.getElementById('stationSearch').value = ''; 
-                document.getElementById('detailsList').innerHTML = '';
-                toggleMenu();
-
-            } catch(err) {
-                alert("Błąd: Plik uszkodzony lub nieprawidłowy format.");
-                console.error(err);
-            }
-        };
-        reader.readAsText(file);
-    }
-
-    // ================= LOGIKA WYŚWIETLANIA =================
-
-    function initZegar() {
-        const d = new Date();
-        const optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        let dateStr = d.toLocaleDateString('pl-PL', optionsDate);
-        dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-        const timeStr = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const swieto = sprawdzSwieto();
-        const bar = document.getElementById('dateBar');
-        let htmlContent = `${dateStr} <br><span class="time-display">⏰ ${timeStr}</span>`;
-        if(swieto) {
-            htmlContent += ` <div style="margin-top:5px;"><span class="holiday-tag">★ ${swieto}</span></div>`;
-            bar.style.borderColor = "var(--holiday)";
-        } else {
-            bar.style.borderColor = "#ddd";
-        }
-        bar.innerHTML = htmlContent;
+        return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
     function filtrujStacje(query) {
         const list = document.getElementById('searchResults');
-        list.innerHTML = '';
-        
-        if (!query || query.length < 1) {
-            list.style.display = 'none';
-            return;
-        }
-        const normalizedQuery = normalizeText(query);
-        const unikalneStacje = [];
-        const seen = new Set();
-        
-        bazaDanych.forEach(item => {
-            if(item.ukryty) return; 
+        list.innerHTML = ''; currentFocus = -1;
+        if (!query || query.length < 2) { list.style.display = 'none'; return; }
 
-            const nazwaNormalized = normalizeText(item.stacja);
-            const epa = String(item.epa || "").toLowerCase();
-            
-            if (nazwaNormalized.includes(normalizedQuery) || epa.includes(normalizedQuery)) {
-                if (!seen.has(item.stacja)) {
-                    seen.add(item.stacja);
-                    unikalneStacje.push(item);
-                }
+        const normalizedQuery = normalizeText(query);
+        const seen = new Set();
+        const results = [];
+
+        bazaDanych.forEach(item => {
+            if(item.ukryty) return;
+            const nazwa = item.stacja;
+            if(seen.has(nazwa)) return;
+            if (normalizeText(nazwa).includes(normalizedQuery) || normalizeText(item.epa).includes(normalizedQuery)) {
+                seen.add(nazwa);
+                results.push(item);
             }
         });
-        unikalneStacje.sort((a,b) => a.stacja.localeCompare(b.stacja));
 
-        if (unikalneStacje.length === 0) {
-            list.style.display = 'none';
-            return;
-        }
+        results.sort((a,b) => {
+            const aS = normalizeText(a.stacja).startsWith(normalizedQuery);
+            const bS = normalizeText(b.stacja).startsWith(normalizedQuery);
+            if(aS && !bS) return -1; if(!aS && bS) return 1;
+            return a.stacja.localeCompare(b.stacja);
+        });
 
-        unikalneStacje.forEach(item => {
+        if (results.length === 0) { list.style.display = 'none'; return; }
+
+        results.slice(0, 15).forEach(item => {
             const li = document.createElement('li');
             li.className = 'search-result-item';
-            const epaInfo = (item.epa && String(item.epa) !== 'Brak') ? `(EPA: ${item.epa})` : '';
-            li.innerHTML = `<strong>${item.stacja}</strong> ${epaInfo}`;
-            li.onclick = () => {
-                document.getElementById('stationSearch').value = item.stacja;
-                wyswietlStacje(item.stacja);
-                list.style.display = 'none';
-            };
+            li.role = "option";
+            const epaTxt = (item.epa && item.epa !== 'Brak') ? ` <small style="color:#888">(${item.epa})</small>` : '';
+            li.innerHTML = `${item.stacja}${epaTxt}`;
+            li.onclick = () => { wybierzStacje(item.stacja); };
             list.appendChild(li);
         });
         list.style.display = 'block';
     }
 
-    document.addEventListener('click', function(e) {
-        const list = document.getElementById('searchResults');
-        const input = document.getElementById('stationSearch');
-        if (e.target !== list && e.target !== input) {
-            list.style.display = 'none';
-        }
-    });
+    function wybierzStacje(stacja) {
+        document.getElementById('stationSearch').value = stacja;
+        document.getElementById('searchResults').style.display = 'none';
+        wyswietlStacje(stacja);
+        addToHistory(stacja);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
-    function wyswietlStacje(nazwaWymuszona = null) {
-        const nazwa = nazwaWymuszona || document.getElementById('stationSearch').value;
+    // ================= LOGIKA BIZNESOWA =================
+    
+    function wyswietlStacje(nazwaInput = null) {
+        const nazwa = nazwaInput || document.getElementById('stationSearch').value;
+        const container = document.getElementById('detailsList');
         const mainBox = document.getElementById('mainStatusBox');
-        const listContainer = document.getElementById('detailsList');
         
-        listContainer.innerHTML = '';
-        if(!nazwa) {
-            mainBox.style.display = 'none';
-            listContainer.style.display = 'none';
-            return;
-        }
+        container.innerHTML = '';
+        mainBox.style.display = 'none';
 
-        const kasy = bazaDanych.filter(k => k.stacja === nazwa && !k.ukryty); 
-        
-        if(kasy.length === 0) {
-            mainBox.style.display = 'none';
-            listContainer.style.display = 'none';
-            return;
-        }
-
-        let anyOpen = false;
-        let anyBreak = false;
-        let allNone = true;
+        const kasy = bazaDanych.filter(k => k.stacja === nazwa && !k.ukryty);
+        if(kasy.length === 0) return;
 
         const d = new Date();
         const swieto = sprawdzSwieto();
-        const day = d.getDay(); 
+        const day = d.getDay();
         let dayType = 'pn_pt';
         if(swieto || day === 0) dayType = 'nd';
         else if(day === 6) dayType = 'sob';
 
+        let globalStatus = { code: 'closed', priority: 0 }; 
+
         kasy.forEach(k => {
-            if (k.przewoznik !== 'BRAK') allNone = false;
+            const status = obliczStatus(k, swieto, day);
+            let currentPrio = 0;
+            if (status.type === 'break') currentPrio = 1;
+            if (status.type === 'open') currentPrio = 2;
             
-            const st = obliczStatus(k, swieto, day);
-            if(st.type === 'open') anyOpen = true;
-            if(st.type === 'break') anyBreak = true;
-            
-            const isDataOld = checkDataAge(k['meta.data']);
-            const linkPrzewoznika = BAZA_LINKOW[k.przewoznik] || null;
-            const uwagiHtml = (k.uwagi && String(k.uwagi).toLowerCase() !== 'nan' && String(k.uwagi).trim().length > 0) ? 
-                `<div class="notes-section"><strong>UWAGI:</strong> ${k.uwagi}</div>` : '';
-            const dataAgeWarningHtml = isDataOld ? 
-                `<div class="data-age-warning">⛔ Dane nieaktualne (starsze niż ${MAX_DAYS_FRESH} dni). Weryfikuj u przewoźnika!</div>` : '';
+            if (currentPrio > globalStatus.priority) {
+                globalStatus = { code: status.type, priority: currentPrio };
+            }
+            if (k.przewoznik === 'BRAK') globalStatus.isNone = true;
 
-            const h_pnpt = k['godziny.pn_pt'] || '-';
-            const h_sob = k['godziny.sob'] || '-';
-            const h_nd = k['godziny.nd'] || '-';
+            const link = BAZA_LINKOW[k.przewoznik] || BAZA_LINKOW[k.przewoznik.split(' ')[0]] || null;
             
-            const p_pnpt = k['przerwy.pn_pt'] || '-';
-            const p_sob = k['przerwy.sob'] || '-';
-            const p_nd = k['przerwy.nd'] || '-';
-
-            const html = `
-            <div class="card" style="border-left-color: ${st.color}">
+            let cardHtml = `
+            <div class="card" style="border-left-color: ${status.color}">
                 <div class="card-header">
                     <div>
                         <div class="carrier-title">${k.przewoznik}</div>
-                        <div class="epa-info">EPA: ${k.epa || 'Brak danych'}</div>
+                        <div class="epa-info">EPA: ${k.epa || '-'}</div>
                     </div>
-                    <div class="status-pill" style="background-color: ${st.color}; color: ${st.type==='break'?'#333':'white'}">
-                        ${st.text}
+                    <div class="status-pill" style="background:${status.color}; color:${status.type==='break'?'#222':'#fff'}">
+                        ${status.text}
                     </div>
-                </div>
-                
-                ${dataAgeWarningHtml}
-                ${uwagiHtml}
+                </div>`;
 
+            if(k.uwagi && k.uwagi.length > 2 && k.uwagi.toLowerCase() !== 'nan') {
+                cardHtml += `<div class="notes-section">⚠️ ${k.uwagi}</div>`;
+            }
+
+            cardHtml += `
                 <table class="details-table">
                     <tr class="${dayType==='pn_pt'?'active-row':''}">
-                        <th>Pn - Pt</th>
-                        <td>${h_pnpt} <br> <small style="color:#555">Przerwa: ${p_pnpt}</small></td>
+                        <th>Pn-Pt</th>
+                        <td>${k['godziny.pn_pt'] || '-'} <br><small>Przerwa: ${k['przerwy.pn_pt']||'-'}</small></td>
                     </tr>
                     <tr class="${dayType==='sob'?'active-row':''}">
-                        <th>Sobota</th>
-                        <td>${h_sob} <br> <small style="color:#555">Przerwa: ${p_sob}</small></td>
+                        <th>Sob</th>
+                        <td>${k['godziny.sob'] || '-'} <br><small>Przerwa: ${k['przerwy.sob']||'-'}</small></td>
                     </tr>
                     <tr class="${dayType==='nd'?'active-row':''}">
-                        <th>Ndz / Św</th>
-                        <td>${h_nd} <br> <small style="color:#555">Przerwa: ${p_nd}</small></td>
+                        <th>Ndz/Św</th>
+                        <td>${k['godziny.nd'] || '-'} <br><small>Przerwa: ${k['przerwy.nd']||'-'}</small></td>
                     </tr>
                 </table>
-                
-                ${linkPrzewoznika ? `<a href="${linkPrzewoznika}" target="_blank" class="btn-link">Strona przewoźnika &raquo;</a>` : ''}
-
-                <div class="meta-footer">Aktualizacja: ${k['meta.data'] || '-'} &bull; Edytor: ${k['meta.kto'] || '-'}</div>
+                ${link ? `<div style="text-align:right; margin-top:10px;"><a href="${link}" target="_blank" style="color:var(--holiday); font-weight:bold; text-decoration:none;">Strona przewoźnika &rarr;</a></div>` : ''}
             </div>`;
-            listContainer.innerHTML += html;
+            container.insertAdjacentHTML('beforeend', cardHtml);
         });
 
         mainBox.style.display = 'block';
-        mainBox.className = ''; 
+        mainBox.className = '';
         
-        if (allNone) {
+        if (globalStatus.isNone && globalStatus.priority === 0) {
             mainBox.innerText = "BRAK KASY";
             mainBox.classList.add('bg-none');
-        } else if(anyOpen) {
+        } else if (globalStatus.code === 'open') {
             mainBox.innerText = "KASA CZYNNA";
             mainBox.classList.add('bg-open');
-        } else if(anyBreak) {
+        } else if (globalStatus.code === 'break') {
             mainBox.innerText = "PRZERWA";
             mainBox.classList.add('bg-break');
         } else {
             mainBox.innerText = "NIECZYNNE";
             mainBox.classList.add('bg-closed');
         }
-        
-        listContainer.style.display = 'grid';
     }
 
     function obliczStatus(kasa, swieto, dayOfWeek) {
-        if (kasa.przewoznik === 'BRAK') {
-            return { type: 'none', text: 'BRAK KASY', color: '#6c757d' };
+        if(kasa.przewoznik === 'BRAK') return { type: 'none', text: 'BRAK KASY', color: '#6c757d' };
+        let hStr, bStr;
+        if(swieto || dayOfWeek === 0) { hStr = kasa['godziny.nd']; bStr = kasa['przerwy.nd']; }
+        else if(dayOfWeek === 6) { hStr = kasa['godziny.sob']; bStr = kasa['przerwy.sob']; }
+        else { hStr = kasa['godziny.pn_pt']; bStr = kasa['przerwy.pn_pt']; }
+
+        const h = String(hStr||"").toLowerCase();
+        if(!h || h.includes('nieczynne') || h.includes('zamknięte')) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#c82333' };
+        if(h.includes('całodobowo')) {
+            if(isDuringBreak(bStr)) return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
+            return { type: 'open', text: 'OTWARTA', color: '#218838' };
         }
 
-        let hStr, bStr;
-        if(swieto || dayOfWeek === 0) {
-            hStr = kasa['godziny.nd'];
-            bStr = kasa['przerwy.nd'];
-        } else if(dayOfWeek === 6) {
-            hStr = kasa['godziny.sob'];
-            bStr = kasa['przerwy.sob'];
-        } else {
-            hStr = kasa['godziny.pn_pt'];
-            bStr = kasa['przerwy.pn_pt'];
-        }
-        
-        const hStrLower = String(hStr || "").toLowerCase();
-        const is24h = hStrLower.includes('całodobowo');
-        
-        if(!hStr || hStrLower.includes('nieczynne') || hStrLower.includes('zamknięte')) {
-            return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
-        }
         const now = new Date();
         const min = now.getHours() * 60 + now.getMinutes();
-        
-        if (!is24h) {
-            const [open, close] = parseRange(hStr);
-            let isOpen = false;
-            if (open <= close) {
-                if(min >= open && min < close) isOpen = true;
-            } else {
-                if(min >= open || min < close) isOpen = true;
-            }
-            if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
-        }
+        const [open, close] = parseRange(hStr);
 
-        const bStrLower = String(bStr || "").toLowerCase();
-        if(bStr && bStrLower.length > 3 && !bStrLower.includes('brak') && bStrLower !== 'nan') {
-            const breaks = String(bStr).split(';');
-            for(let br of breaks) {
-                const [bStart, bEnd] = parseRange(br.trim());
-                let isDuringBreak = false;
-                if (bStart <= bEnd) {
-                    if (min >= bStart && min < bEnd) isDuringBreak = true;
-                } else {
-                    if (min >= bStart || min < bEnd) isDuringBreak = true;
-                }
-                if(isDuringBreak) {
-                    return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
-                }
-            }
-        }
-        
-        return { type: 'open', text: 'OTWARTA', color: '#28a745' };
+        let isOpen = false;
+        if(open <= close) { if(min >= open && min < close) isOpen = true; }
+        else { if(min >= open || min < close) isOpen = true; }
+
+        if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#c82333' };
+        if(isDuringBreak(bStr)) return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
+
+        return { type: 'open', text: 'OTWARTA', color: '#218838' };
     }
 
-    function parseTime(t) {
-        if(!t) return 0;
-        const cleanT = String(t).replace('.', ':').trim();
-        const [h, m] = cleanT.split(':').map(Number);
-        if (isNaN(h) || isNaN(m)) return 0;
-        return h * 60 + m;
+    function isDuringBreak(bStr) {
+        if(!bStr || bStr.length < 3 || String(bStr).toLowerCase().includes('brak')) return false;
+        const now = new Date();
+        const min = now.getHours() * 60 + now.getMinutes();
+        const breaks = String(bStr).split(';');
+        
+        for(let br of breaks) {
+            const [start, end] = parseRange(br.trim());
+            if(start === 0 && end === 0) continue;
+            if(start <= end) { if(min >= start && min < end) return true; } 
+            else { if(min >= start || min < end) return true; }
+        }
+        return false;
     }
-    
+
     function parseRange(str) {
-        if(!str || !String(str).includes('-')) return [0,0];
-        const parts = String(str).split('-');
+        if(!str || !str.includes('-')) return [0,0];
+        const parts = str.split('-');
         return [parseTime(parts[0]), parseTime(parts[1])];
     }
+    
+    function parseTime(t) {
+        const clean = String(t).replace('.',':').trim();
+        const [h, m] = clean.split(':').map(Number);
+        if(isNaN(h)) return 0;
+        return h * 60 + (m || 0);
+    }
 
-    window.onload = () => {
-        initFontSize(); 
-        initZegar();
-        const cached = localStorage.getItem(STORAGE_KEY);
-        if(cached) {
-            bazaDanych = JSON.parse(cached);
-            document.getElementById('networkStatus').innerHTML = "Wczytano dane z pamięci.";
-            updateCacheStatus();
-        }
-        
-        pobierzDane();
-        
-        setInterval(() => { initZegar(); }, 1000); 
-        setInterval(() => { 
-            if(document.getElementById('detailsList').style.display !== 'none' && document.getElementById('stationSearch').value) {
-                 wyswietlStacje(); 
+    // ================= DANE I SIEC =================
+    async function pobierzDane(force = false) {
+        const netMsg = document.getElementById('networkStatus');
+        if(force) netMsg.innerText = "Aktualizuję dane...";
+        try {
+            const fetchPromises = PLIKI_DANYCH.map(url => fetch(url, {cache: "no-store"}).then(r => r.ok ? r.json() : []));
+            const results = await Promise.all(fetchPromises);
+            let merged = [];
+            results.forEach(arr => { if(Array.isArray(arr)) merged = merged.concat(arr); });
+            
+            if(merged.length > 0) {
+                bazaDanych = merged.filter(x => !x.ukryty);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(bazaDanych));
+                localStorage.setItem(STORAGE_KEY + '_date', new Date().toISOString());
+                netMsg.innerHTML = "<span style='color:green'>✅ Dane online</span>";
+                updateCacheInfo();
+                if(force) { alert("Pobrano najnowsze dane!"); toggleMenu(); }
             }
-        }, 60000);
-    };
+        } catch(e) {
+            console.warn("Offline fallback", e);
+            if(!force) netMsg.innerHTML = "<span style='color:#d9534f'>⚠️ Tryb Offline</span>";
+        }
+    }
+
+    function updateCacheInfo() {
+        const date = localStorage.getItem(STORAGE_KEY + '_date');
+        const count = bazaDanych.length;
+        const info = date ? `Data bazy: ${date.substring(0,10)}` : 'Brak daty';
+        document.getElementById('cacheStatus').innerText = `${info} | Rekordów: ${count}`;
+    }
+
+    // ================= KALENDARZ =================
+    function initZegar() {
+        const d = new Date();
+        const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        let dateStr = d.toLocaleDateString('pl-PL', opts);
+        dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+        const timeStr = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+        const swieto = sprawdzSwieto();
+        let html = `<strong>${dateStr}</strong> | Godz. ${timeStr}`;
+        if(swieto) html += `<br><span class="holiday-tag">★ ${swieto}</span>`;
+        
+        document.getElementById('dateBar').innerHTML = html;
+        if(swieto) document.getElementById('dateBar').style.borderColor = "var(--holiday)";
+    }
+    
+    function sprawdzSwieto() {
+        const d = new Date();
+        const key = String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        if(SWIETA_STALE[key]) return SWIETA_STALE[key];
+        
+        const year = d.getFullYear();
+        const a=year%19, b=Math.floor(year/100), c=year%100, d_v=Math.floor(b/4), e=b%4, f=Math.floor((b+8)/25), g=Math.floor((b-f+1)/3), h=(19*a+b-d_v-g+15)%30, i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7, m=Math.floor((a+11*h+22*l)/451), p=(h+l-7*m+114)%31, month=Math.floor((h+l-7*m+114)/31);
+        const easter = new Date(year, month-1, p+1);
+        
+        const check = (off) => {
+            const t = new Date(easter.getTime()); t.setDate(t.getDate()+off);
+            return d.getDate()===t.getDate() && d.getMonth()===t.getMonth();
+        };
+
+        if(check(0)) return 'Wielkanoc';
+        if(check(1)) return 'Poniedziałek Wielkanocny';
+        if(check(49)) return 'Zielone Świątki';
+        if(check(60)) return 'Boże Ciało';
+        
+        return null;
+    }
+
+    // Pozostałe funkcje pomocnicze UI
+    function pokazInstrukcje() { document.getElementById('helpModal').style.display = 'flex'; toggleMenu(); }
+    function zamknijInstrukcje() { document.getElementById('helpModal').style.display = 'none'; }
+    function wgrajLokalnyPlik(input) {
+        const r = new FileReader();
+        r.onload = e => {
+            try { 
+                bazaDanych = JSON.parse(e.target.result); 
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(bazaDanych));
+                alert("Wgrano!"); toggleMenu(); 
+            } catch(x) { alert("Błąd pliku"); }
+        };
+        if(input.files[0]) r.readAsText(input.files[0]);
+    }
+
+    function pokazWszystkieStacje() {
+        const list = document.getElementById('detailsList');
+        list.innerHTML = '<h3 style="margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:5px;">Wszystkie stacje (szybki podgląd):</h3>';
+        
+        // Dane do kalkulacji statusu
+        const d = new Date();
+        const swieto = sprawdzSwieto();
+        const day = d.getDay();
+        
+        const unikalne = [...new Set(bazaDanych.map(x=>x.stacja))].sort();
+        
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px;">';
+        
+        unikalne.forEach(s => {
+            // Obliczamy status zbiorczy dla stacji 's'
+            const kasy = bazaDanych.filter(k => k.stacja === s && !k.ukryty);
+            let color = '#6c757d'; // Default szary
+            let statusPrio = -1; // 0=closed, 1=break, 2=open
+            
+            kasy.forEach(k => {
+                const stat = obliczStatus(k, swieto, day);
+                let p = 0;
+                if(stat.type === 'open') p = 2;
+                else if(stat.type === 'break') p = 1;
+                
+                if(p > statusPrio) {
+                    statusPrio = p;
+                    color = stat.color;
+                }
+                // Jeśli jest zamknięte, a status był -1 (brak info), ustawiamy zamknięte
+                if(stat.type === 'closed' && statusPrio === -1) {
+                    statusPrio = 0;
+                    color = stat.color;
+                }
+            });
+
+            let statusText = (statusPrio === 2) ? "OTWARTA" : (statusPrio === 1 ? "PRZERWA" : (statusPrio === 0 ? "ZAMKNIĘTA" : "BRAK"));
+
+            html += `
+                <div class="station-tile" 
+                     onclick="wybierzStacje('${s}')" 
+                     style="border-left: 6px solid ${color};">
+                    <span style="font-weight:600;">${s}</span>
+                    <span class="station-status-icon" style="background:${color}; font-size:0.7rem;">${statusText}</span>
+                </div>`;
+        });
+        
+        html += '</div>';
+        list.innerHTML += html;
+        document.getElementById('mainStatusBox').style.display='none';
+        
+        // Zamknij menu jeśli jest otwarte
+        const menu = document.getElementById('settingsMenu');
+        if(menu.classList.contains('active')) menu.classList.remove('active');
+    }
 </script>
 </body>
 </html>
