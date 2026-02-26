@@ -4,16 +4,16 @@
     "epa": "45",
     "wojewodztwo": "Wielkopolskie",
     "przewoznik": "KOLEJE WIELKOPOLSKIE",
-    "godziny.pn_pt": "06:00-19:30",
-    "godziny.sob": "07:30-18:30",
+    "godziny.pn_pt": "06:20-19:30",
+    "godziny.sob": "07:00-18:30",
     "godziny.nd": "08:00-18:30",
-    "przerwy.pn_pt": "10:00-10:30; 13:35-14:15",
-    "przerwy.sob": "10:00-10:30; 13:35-14:15",
-    "przerwy.nd": "10:00-10:30; 13:35-14:15",
+    "przerwy.pn_pt": "08:15-08:40; 13:35-14:10; 15:55-16:25",
+    "przerwy.sob": "11:30-12:00; 13:40-14:25",
+    "przerwy.nd": "11:30-12:00; 13:40-14:25",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "KOŁO",
@@ -28,8 +28,8 @@
     "przerwy.nd": "Brak",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "KONIN",
@@ -44,8 +44,8 @@
     "przerwy.nd": "12:00-12:10; 16:50-17:10",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "POZNAŃ GŁÓWNY",
@@ -60,8 +60,8 @@
     "przerwy.nd": "12:00-12:10; 16:20-16:40",
     "uwagi": "KASA KOLEI WIELKOPOLSKICH NR 1",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "POZNAŃ GŁÓWNY",
@@ -72,12 +72,12 @@
     "godziny.sob": "06:00-21:30",
     "godziny.nd": "06:00-21:30",
     "przerwy.pn_pt": "10:00-10:20; 13:10-13:40; 17:20-17:40",
-    "przerwy.sob": "10:00-10:20; 13:10-13:40; 17:20-17:40",
-    "przerwy.nd": "10:00-10:20; 13:10-13:40; 17:20-17:40",
+    "przerwy.sob": "10:00-10:20; 13:30-14:00; 17:20-17:40",
+    "przerwy.nd": "10:00-10:20; 13:30-14:00; 17:20-17:40",
     "uwagi": "KASA KOLEI WIELKOPOLSKICH NR 2",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "SŁUPCA",
@@ -92,8 +92,8 @@
     "przerwy.nd": "08:30-08:40; 12:25-12:45",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "SWARZĘDZ",
@@ -103,13 +103,13 @@
     "godziny.pn_pt": "06:10-16:00",
     "godziny.sob": "07:30-14:30",
     "godziny.nd": "Zamknięte",
-    "przerwy.pn_pt": "Brak",
+    "przerwy.pn_pt": "08:55-09:15",
     "przerwy.sob": "Brak",
     "przerwy.nd": "Brak",
     "uwagi": "Sprzedaż biletów na 30 minut przed odjazdem pociągu.",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "WRZEŚNIA",
@@ -122,9 +122,9 @@
     "przerwy.pn_pt": "09:10-09:30; 12:40-13:00; 17:00-17:20",
     "przerwy.sob": "09:10-09:30; 12:40-13:00; 17:00-17:20",
     "przerwy.nd": "09:10-09:30; 12:40-13:00; 17:00-17:20",
-    "uwagi": "Święta: 8:10-19:30 przerwy: 12:40-13:00 16:35-16:45",
+    "uwagi": "! UWAGA !\nŚwięta: 8:10-19:30 przerwy: 12:40-13:00 16:35-16:45",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   }
 ]

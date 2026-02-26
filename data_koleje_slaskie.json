@@ -12,8 +12,8 @@
     "przerwy.nd": "09:25-09:40",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "CZĘSTOCHOWA OSOBOWA",
@@ -28,8 +28,8 @@
     "przerwy.nd": "Brak",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "DĄBROWA GÓRNICZA",
@@ -44,8 +44,8 @@
     "przerwy.nd": "08:50-09:05; 14:25-14:40",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "GLIWICE",
@@ -60,8 +60,8 @@
     "przerwy.nd": "Brak",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "KATOWICE",
@@ -76,8 +76,8 @@
     "przerwy.nd": "Brak",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "LUBLINIEC",
@@ -87,13 +87,13 @@
     "godziny.pn_pt": "06:30-18:00",
     "godziny.sob": "06:30-18:00",
     "godziny.nd": "06:30-18:00",
-    "przerwy.pn_pt": "09:55-10:10; 13:05-13:20",
-    "przerwy.sob": "09:55-10:10; 13:05-13:20",
-    "przerwy.nd": "09:55-10:10; 13:05-13:20",
+    "przerwy.pn_pt": "09:50-10:05; 13:05-13:20",
+    "przerwy.sob": "09:50-10:05; 13:05-13:20",
+    "przerwy.nd": "09:50-05:05; 13:05-13:20",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "MYSZKÓW",
@@ -103,29 +103,29 @@
     "godziny.pn_pt": "05:15-20:35",
     "godziny.sob": "05:15-20:35",
     "godziny.nd": "05:15-20:35",
-    "przerwy.pn_pt": "08:10-08:25; 12:45-13:05; 16:30-16:45",
-    "przerwy.sob": "08:10-08:25; 12:45-13:05; 16:30-16:45",
-    "przerwy.nd": "08:10-08:25; 12:45-13:05; 16:30-16:45",
+    "przerwy.pn_pt": "08:00-08:15; 12:45-13:05; 15:10-15:25",
+    "przerwy.sob": "08:00-08:15; 12:45-13:05; 15:10-15:25",
+    "przerwy.nd": "08:00-08:15; 12:45-13:05; 15:10-15:25",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "SOSNOWIEC GŁÓWNY",
     "epa": "191",
     "wojewodztwo": "Śląskie",
     "przewoznik": "KOLEJE ŚLĄSKIE",
-    "godziny.pn_pt": "06:00-21:30",
-    "godziny.sob": "06:00-21:30",
-    "godziny.nd": "06:00-21:30",
-    "przerwy.pn_pt": "08:40-08:55; 13:30-14:00; 17:10-17:25",
-    "przerwy.sob": "08:40-08:55; 13:30-14:00; 17:10-17:25",
-    "przerwy.nd": "08:40-08:55; 13:30-14:00; 17:10-17:25",
-    "uwagi": "",
+    "godziny.pn_pt": "06:00-17:30",
+    "godziny.sob": "06:00-17:30",
+    "godziny.nd": "06:00-17:30",
+    "przerwy.pn_pt": "08:40-08:55; 13:15-13:30",
+    "przerwy.sob": "08:40-08:55; 13:15-13:30",
+    "przerwy.nd": "08:40-08:55; 13:15-13:30",
+    "uwagi": "! UWAGA ! \nOd 10 lutego 2026 r. kasa KŚ na stacji jest nieczynna do odwołania.",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "ZABRZE",
@@ -140,8 +140,8 @@
     "przerwy.nd": "08:50-09:05; 13:30-14:00; 17:15-17:30",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   },
   {
     "stacja": "ZAWIERCIE",
@@ -156,7 +156,7 @@
     "przerwy.nd": "08:05-08:20; 12:45-13:05; 15:55-16:10",
     "uwagi": "",
     "ukryty": false,
-    "meta.kto": "PIOTR M",
-    "meta.data": "2025-12-09"
+    "meta.kto": "PIOTR S",
+    "meta.data": "2026-02-26"
   }
 ]
