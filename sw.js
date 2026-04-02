@@ -1,17 +1,18 @@
 // Wersja aplikacji: v1.0
 const CACHE_NAME = 'kasy-app-cache-v1.0';
 const DATA_CACHE_NAME = 'kasy-data-cache-v1.0';
-const REFRESH_INTERVAL = 24 * 60 * 60 * 1000; // 24 godziny w milisekundach
+const REFRESH_INTERVAL = 24 * 60 * 60 * 1000; // 24 godziny
 
+// ZMIANA: Dodano kropki przed ukośnikami (ścieżki względne)
 const STATIC_ASSETS = [
-    '/',
-    '/index.html',
-    '/editor.html',
-    '/manifest.json',
-    '/favicon.svg',
-    '/favicon-editor.svg',
-    '/apple-touch-icon.png',
-    '/apple-touch-icon-editor.png'
+    './',
+    './index.html',
+    './editor.html',
+    './manifest.json',
+    './favicon.svg',
+    './favicon-editor.svg',
+    './apple-touch-icon.png',
+    './apple-touch-icon-editor.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -47,12 +48,11 @@ self.addEventListener('fetch', (event) => {
                 
                 let fetchNewData = true;
                 if (cachedResponse) {
-                    // Pobranie daty zapisania z nagłówków (jeśli wstawiliśmy)
                     const dateHeader = cachedResponse.headers.get('sw-cache-date');
                     if (dateHeader) {
                         const cacheTime = new Date(dateHeader).getTime();
                         if (Date.now() - cacheTime < REFRESH_INTERVAL) {
-                            fetchNewData = false; // Dane mają mniej niż 24h
+                            fetchNewData = false;
                         }
                     }
                 }
@@ -61,7 +61,6 @@ self.addEventListener('fetch', (event) => {
                     return cachedResponse;
                 }
 
-                // Pobranie z sieci i zapis z naszą datą
                 try {
                     const networkResponse = await fetch(event.request);
                     const headers = new Headers(networkResponse.headers);
@@ -76,14 +75,13 @@ self.addEventListener('fetch', (event) => {
                     cache.put(event.request, responseToCache);
                     return networkResponse;
                 } catch (error) {
-                    // W razie braku internetu, zwróć to co mamy w cache
                     if (cachedResponse) return cachedResponse;
                     throw error;
                 }
             })
         );
     } else {
-        // Obsługa plików statycznych (Cache First)
+        // Obsługa plików statycznych
         event.respondWith(
             caches.match(event.request).then((cachedResponse) => {
                 return cachedResponse || fetch(event.request).then((networkResponse) => {
