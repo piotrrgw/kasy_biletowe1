@@ -1,0 +1,28 @@
+{
+  "name": "Asystent Kas Biletowych",
+  "short_name": "Kasy Biletowe",
+  "description": "Aplikacja do zarządzania i sprawdzania statusu kas biletowych",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#343a40",
+  "theme_color": "#343a40",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon-editor.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
