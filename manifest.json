@@ -2,7 +2,7 @@
   "name": "Asystent Kas Biletowych",
   "short_name": "Kasy Biletowe",
   "description": "Aplikacja do zarządzania i sprawdzania statusu kas biletowych",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#343a40",
   "theme_color": "#343a40",
