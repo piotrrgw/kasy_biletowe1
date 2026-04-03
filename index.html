@@ -508,6 +508,7 @@
         let anyOpen = false;
         let anyBreak = false;
 
+        console.log(kasy)
         kasy.forEach(k => {
             const st = obliczStatus(k, swieto, day);
             if(st.type === 'open') anyOpen = true;
@@ -534,21 +535,21 @@
                 <table>
                     <tr class="${dayType==='pn_pt'?'active-row':''}">
                         <th>Pn - Pt</th>
-                        <td>${escapeHTML(k.godziny.pn_pt)} <br> <small style="color:#777">Przerwa: ${escapeHTML(k.przerwy.pn_pt||'-')}</small></td>
+                        <td>${escapeHTML(k["godziny.pn_pt"])} <br> <small style="color:#777">Przerwa: ${escapeHTML(k["przerwy.pn_pt"]||'-')}</small></td>
                     </tr>
                     <tr class="${dayType==='sob'?'active-row':''}">
                         <th>Sobota</th>
-                        <td>${escapeHTML(k.godziny.sob)} <br> <small style="color:#777">Przerwa: ${escapeHTML(k.przerwy.sob||'-')}</small></td>
+                        <td>${escapeHTML(k["godziny.sob"])} <br> <small style="color:#777">Przerwa: ${escapeHTML(k["przerwy.sob"]||'-')}</small></td>
                     </tr>
                     <tr class="${dayType==='nd'?'active-row':''}">
                         <th>Ndz / Św</th>
-                        <td>${escapeHTML(k.godziny.nd)} <br> <small style="color:#777">Przerwa: ${escapeHTML(k.przerwy.nd||'-')}</small></td>
+                        <td>${escapeHTML(k["przerwy.nd"])} <br> <small style="color:#777">Przerwa: ${escapeHTML(k["przerwy.nd"]||'-')}</small></td>
                     </tr>
                 </table>
                 ${link ? `<a href="${link}" target="_blank" class="btn-link">Wykaz kas: ${escapeHTML(k.przewoznik)} &raquo;</a>` : ''}
-                <div class="meta-footer">Dane: ${escapeHTML(k.meta?.data || '-')} | ${escapeHTML(k.meta?.kto || '-')}</div>
             </div>`;
             listContainer.innerHTML += html; // Wstrzykujemy bezpiecznie sformatowany HTML
+            // <div class="meta-footer">Dane: ${escapeHTML(k.meta?.data || '-')} | ${escapeHTML(k.meta?.kto || '-')}</div>
         });
 
         mainBox.style.display = 'block';
