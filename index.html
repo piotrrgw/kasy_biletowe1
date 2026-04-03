@@ -569,7 +569,7 @@
 
     // ================= KALKULATOR =================
     function obliczStatus(kasa, swieto, dayOfWeek) {
-        if(!kasa.godziny || (!kasa['godziny.pn_pt'] && !kasa['godziny.sob'] && !kasa['godziny.nd'])) {
+        if(!kasa['godziny.pn_pt'] && !kasa['godziny.sob'] && !kasa['godziny.nd']) {
              return { type: 'closed', text: 'BRAK DANYCH', color: '#6c757d' };
         }
 
