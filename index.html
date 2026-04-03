@@ -547,9 +547,9 @@
                     </tr>
                 </table>
                 ${link ? `<a href="${link}" target="_blank" class="btn-link">Wykaz kas: ${escapeHTML(k.przewoznik)} &raquo;</a>` : ''}
+                <div class="meta-footer">Dane: ${escapeHTML(k['meta.data'] || '-')} | ${escapeHTML(k['meta.kto'] || '-')}</div>
             </div>`;
             listContainer.innerHTML += html; // Wstrzykujemy bezpiecznie sformatowany HTML
-            // <div class="meta-footer">Dane: ${escapeHTML(k.meta?.data || '-')} | ${escapeHTML(k.meta?.kto || '-')}</div>
         });
 
         mainBox.style.display = 'block';
@@ -569,14 +569,14 @@
 
     // ================= KALKULATOR =================
     function obliczStatus(kasa, swieto, dayOfWeek) {
-        if(!kasa.godziny || (!kasa.godziny.pn_pt && !kasa.godziny.sob && !kasa.godziny.nd)) {
+        if(!kasa.godziny || (!kasa['godziny.pn_pt'] && !kasa['godziny.sob'] && !kasa['godziny.nd'])) {
              return { type: 'closed', text: 'BRAK DANYCH', color: '#6c757d' };
         }
 
         let hStr, bStr;
-        if(swieto || dayOfWeek === 0) { hStr = kasa.godziny.nd; bStr = kasa.przerwy.nd; } 
-        else if(dayOfWeek === 6) { hStr = kasa.godziny.sob; bStr = kasa.przerwy.sob; } 
-        else { hStr = kasa.godziny.pn_pt; bStr = kasa.przerwy.pn_pt; }
+        if(swieto || dayOfWeek === 0) { hStr = kasa['godziny.nd']; bStr = kasa['przerwy.nd']; } 
+        else if(dayOfWeek === 6) { hStr = kasa['godziny.sob']; bStr = kasa['przerwy.sob']; } 
+        else { hStr = kasa['godziny.pn_pt']; bStr = kasa['przerwy.pn_pt']; }
 
         if(!hStr || hStr.toLowerCase().includes('nieczynne') || hStr.toLowerCase().includes('zamknięte')) {
             return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
