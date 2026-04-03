@@ -1,9 +1,8 @@
-// Wersja aplikacji: v1.0
-const CACHE_NAME = 'kasy-app-cache-v1.0';
-const DATA_CACHE_NAME = 'kasy-data-cache-v1.0';
+// Wersja aplikacji: v1.2
+const CACHE_NAME = 'kasy-app-cache-v1.2';
+const DATA_CACHE_NAME = 'kasy-data-cache-v1.2';
 const REFRESH_INTERVAL = 24 * 60 * 60 * 1000; // 24 godziny
 
-// ZMIANA: Dodano kropki przed ukośnikami (ścieżki względne)
 const STATIC_ASSETS = [
     './',
     './index.html',
