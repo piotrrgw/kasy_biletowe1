@@ -1,711 +1,584 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#343a40">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <title>Asystent Kas Biletowych v4.2</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0056b3">
+    <title>Asystent Kas Biletowych v5.0</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W05T4L1HFD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-W05T4L1HFD');
-    </script>
-
+    
     <style>
-        /* --- USTAWIENIA KOLORÓW (VARIABLES) --- */
         :root {
-            --open: #218838;       /* Ciemniejszy zielony */
-            --break: #ffc107;      /* Żółty */
-            --closed: #c82333;     /* Ciemniejszy czerwony */
-            --none: #6c757d;       /* Szary */
-            --holiday: #0056b3;    /* Ciemniejszy niebieski */
-            --bg-light: #f8f9fa;
-            --bg-dark: #343a40;
-            --text-dark: #212529;
-            --text-light: #f8f9fa;
-            --border-color: #dee2e6;
-            --focus-ring: 0 0 0 3px rgba(0, 123, 255, 0.5);
+            --primary: #0056b3;
+            --bg: #f4f4f9;
+            --white: #ffffff;
+            --open: #28a745;
+            --closed: #dc3545;
+            --break: #ffc107;
+            --holiday: #6f42c1;
+            --text: #333;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
         }
 
-        /* Tryb Wysokiego Kontrastu (Dark Mode) */
-        body.high-contrast {
-            --bg-light: #121212;
-            --bg-dark: #000000;
-            --text-dark: #ffffff;
-            --text-light: #ffff00;
-            --border-color: #555;
-            --holiday: #3399ff;
-        }
-        
-        body.high-contrast .card, 
-        body.high-contrast .station-tile {
-            background-color: #1e1e1e !important;
-            color: #fff !important;
-            border: 1px solid #555;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        body.high-contrast input {
-            background-color: #333;
-            color: #fff;
-            border-color: #777;
-        }
-
-        /* --- PODSTAWOWY STYL --- */
-        html { font-size: 100%; box-sizing: border-box; }
-        *, *:before, *:after { box-sizing: inherit; }
-
-        body {
+        body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 0;
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            font-size: 1rem;
-            line-height: 1.5;
-            display: flex; flex-direction: column;
-            min-height: 100vh;
+            background-color: var(--bg); color: var(--text); 
+            margin: 0; padding: 15px; padding-bottom: 80px; 
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* --- NAGŁÓWEK --- */
-        header {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            padding: 15px 20px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            position: relative;
-            z-index: 1000;
-        }
-
-        header h1 { margin: 0; font-size: 1.4rem; }
-
-        /* --- PRZYCISK USTAWIEŃ --- */
-        .settings-btn {
-            position: absolute; right: 15px; top: 50%;
-            transform: translateY(-50%);
-            background: transparent; border: 1px solid rgba(255,255,255,0.4);
-            border-radius: 8px; color: var(--text-light);
-            font-size: 1.5rem; cursor: pointer;
-            width: 44px; height: 44px;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .container { max-width: 800px; margin: 0 auto; width: 100%; flex: 1; }
         
-        .settings-btn:focus { outline: none; box-shadow: 0 0 0 2px #fff; }
-
-        /* --- MENU --- */
-        .settings-menu {
-            position: fixed; top: 70px; right: 10px; left: 10px; 
-            max-width: 450px; margin-left: auto; 
-            background-color: white; color: #333;
-            border: 1px solid #ccc; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
-            z-index: 1100; display: none;
-            border-radius: 12px; overflow: hidden; 
-            max-height: 85vh; overflow-y: auto; 
+        /* HEADER & BURGER */
+        .header-wrapper {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px;
+        }
+        h1 { color: var(--primary); font-size: 1.5rem; margin: 0; letter-spacing: -0.5px; }
+        
+        .burger-btn {
+            background: none; border: none; font-size: 1.8rem; color: var(--primary);
+            cursor: pointer; padding: 5px; line-height: 1;
         }
 
-        .settings-menu.active { display: block; }
-
-        .menu-item {
-            display: flex; align-items: center; width: 100%;
-            padding: 15px; text-align: left;
-            border: none; background: white; cursor: pointer;
-            border-bottom: 1px solid #eee; font-size: 1rem; color: #333;
+        /* MENU OVERLAY */
+        .menu-overlay {
+            position: fixed; top: 0; left: -100%; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000; transition: var(--transition);
+            opacity: 0; visibility: hidden;
+        }
+        .menu-overlay.active { left: 0; opacity: 1; visibility: visible; }
+        .menu-content {
+            position: absolute; top: 0; left: -300px; width: 300px; height: 100%;
+            background: var(--white); padding: 20px; transition: var(--transition);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2); overflow-y: auto;
+        }
+        .menu-overlay.active .menu-content { left: 0; }
+        .menu-close { text-align: right; font-size: 1.5rem; cursor: pointer; color: #666; margin-bottom: 20px;}
+        .menu-section { margin-bottom: 25px; }
+        .menu-section h3 { color: var(--primary); margin-top: 0; border-bottom: 2px solid var(--bg); padding-bottom: 5px; }
+        .menu-section p { font-size: 0.9rem; line-height: 1.5; color: #555; }
+        .btn-sync {
+            width: 100%; padding: 12px; background: var(--primary); color: #fff;
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
         }
 
-        .menu-item:hover { background-color: #f8f9fa; }
-        .menu-item .icon { margin-right: 15px; font-size: 1.2rem; }
+        /* INFO BARS */
+        .top-info-bar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .status-row { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; }
+        .msg-online { color: var(--open); } .msg-offline { color: var(--closed); }
+        .sync-time { color: #666; }
 
-        /* --- HISTORIA WYSZUKIWANIA --- */
-        #historyContainer { margin-bottom: 20px; display: none; }
-        .history-label { font-size: 0.85rem; color: var(--none); margin-bottom: 5px; display: block; }
-        .history-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-        .chip {
-            background-color: #e9ecef; border: 1px solid #ced4da;
-            border-radius: 16px; padding: 6px 12px; font-size: 0.9rem;
-            cursor: pointer; transition: background 0.2s;
+        .date-bar {
+            background: #e9ecef; padding: 12px; border-radius: 8px; text-align: center;
+            font-weight: 600; color: #555; border: 1px solid #ddd; font-size: 0.95rem;
         }
-        .chip:hover { background-color: #dee2e6; }
-
-        /* --- GŁÓWNA ZAWARTOŚĆ --- */
-        .container {
-            flex: 1; max-width: 800px; margin: 0 auto;
-            padding: 20px 15px; width: 100%;
-        }
-
-        /* --- PASEK DATY --- */
-        #dateBar {
-            background-color: white; padding: 15px; margin-bottom: 20px;
-            border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            font-size: 1.1rem; text-align: center;
-            border-left: 6px solid var(--border-color); color: #333;
-        }
-
-        body.high-contrast #dateBar { background-color: #222; color: #fff; }
-
+        .time-display { color: var(--primary); font-weight: 800; margin-left: 10px; }
         .holiday-tag {
-            background-color: var(--holiday); color: white;
-            padding: 3px 8px; border-radius: 4px;
-            font-weight: bold; font-size: 0.9rem;
-            display: inline-block; margin-top: 5px;
+            background-color: var(--holiday); color: white; padding: 2px 8px;
+            border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; margin-left: 6px;
         }
 
-        /* --- WYSZUKIWARKA --- */
-        #searchContainer { position: relative; margin-bottom: 15px; }
+        /* CONTROLS & TOGGLE */
+        .controls { background: var(--white); padding: 20px; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 25px; }
+        
+        .toggle-container {
+            display: flex; background: #e9ecef; border-radius: 8px; padding: 4px; margin-bottom: 15px;
+        }
+        .toggle-btn {
+            flex: 1; padding: 10px; text-align: center; font-weight: 600; font-size: 0.9rem;
+            color: #555; cursor: pointer; border-radius: 6px; transition: var(--transition);
+        }
+        .toggle-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        #stationSearch {
-            width: 100%; padding: 14px; font-size: 1.1rem; 
-            border: 2px solid #ccc; border-radius: 8px;
-            outline: none; -webkit-appearance: none;
+        select, input {
+            width: 100%; padding: 14px; border: 1px solid #ccc; border-radius: 8px;
+            font-size: 1rem; background-color: #fff; margin-bottom: 10px;
+        }
+        .search-notice { font-size: 0.8rem; color: var(--primary); text-align: center; font-weight: bold; margin-bottom: 5px; display: none; }
+
+        /* SKELETON LOADER */
+        .skeleton-wrapper { display: none; }
+        .skeleton-card {
+            background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 15px;
+            box-shadow: var(--shadow);
+        }
+        .skeleton-line {
+            height: 15px; background: #e0e0e0; border-radius: 4px; margin-bottom: 10px;
+            animation: shimmer 1.5s infinite linear;
+        }
+        .skeleton-line.title { height: 25px; width: 60%; margin-bottom: 20px; }
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: 200px 0; }
+        }
+        .skeleton-loader {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 400% 100%;
         }
 
-        #stationSearch:focus { border-color: var(--holiday); box-shadow: var(--focus-ring); }
-
-        #searchResults {
-            position: absolute; top: 100%; left: 0; right: 0;
-            background-color: white; border: 2px solid var(--holiday);
-            border-top: none; list-style: none; padding: 0; margin: 0;
-            max-height: 50vh; overflow-y: auto; z-index: 50;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            border-radius: 0 0 8px 8px; display: none;
-        }
-
-        .search-result-item {
-            padding: 12px 15px; cursor: pointer;
-            border-bottom: 1px solid #eee; font-size: 1.1rem; color: #333;
-        }
-
-        .search-result-item.selected, .search-result-item:hover {
-            background-color: #e2e6ea; font-weight: bold;
-        }
-
-        /* --- STATUS GLÓWNY --- */
+        /* MAIN STATUS BOX */
         #mainStatusBox {
-            padding: 1.5rem; color: white; text-align: center;
-            font-size: 1.8rem; font-weight: bold;
-            border-radius: 12px; margin-bottom: 25px;
-            display: none; box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            display: none; text-align: center; padding: 25px 15px; border-radius: 12px;
+            color: white; font-weight: 800; font-size: 2rem; text-transform: uppercase;
+            margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); line-height: 1.1;
         }
-        
-        #mainStatusBox.bg-open { background-color: var(--open); }
-        #mainStatusBox.bg-break { background-color: var(--break); color: #212529; }
-        #mainStatusBox.bg-closed { background-color: var(--closed); }
-        #mainStatusBox.bg-none { background-color: var(--none); }
+        .bg-open { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        .bg-break { background: linear-gradient(135deg, #ffc107, #d39e00); color: #212529 !important; }
+        .bg-closed { background: linear-gradient(135deg, #dc3545, #bd2130); }
 
-        /* --- KARTY SZCZEGÓŁÓW --- */
-        #detailsList { display: grid; gap: 20px; }
+        /* CARDS */
+        .details-container { display: none; }
+        .card { background: var(--white); border-radius: 10px; box-shadow: var(--shadow); margin-bottom: 20px; overflow: hidden; border-left: 6px solid #ccc; }
+        .card-header { padding: 15px; background: #f8f9fa; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .carrier-title { font-size: 1.1rem; font-weight: 700; color: #2c3e50; }
+        .epa-info { font-size: 0.8rem; color: #7f8c8d; margin-top: 2px; }
+        .status-pill { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: white; text-transform: uppercase; text-align: center; }
+        .notes-section { background-color: #fff3cd; color: #856404; padding: 10px 15px; font-size: 0.9rem; border-top: 1px solid #ffeb8f; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f1f1f1; vertical-align: top; }
+        th { color: #666; width: 35%; font-weight: normal; }
+        .active-row { background-color: #e8f5e9; color: #1b5e20; }
+        .active-row th { color: #1b5e20; font-weight: 700; }
+        .btn-link { display: block; text-align: center; margin: 15px; color: var(--primary); text-decoration: none; font-weight: 600; border: 2px solid #e9ecef; background: #f8f9fa; padding: 12px; border-radius: 8px; }
+        .meta-footer { font-size: 0.7rem; color: #95a5a6; text-align: right; padding: 8px 15px; background: #fff; }
 
-        .card {
-            background-color: white; padding: 1.5rem;
-            border-radius: 12px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border-left: 8px solid #ccc; position: relative;
+        /* FOOTER & UPDATE BANNER */
+        .main-footer {
+            margin-top: auto; padding: 20px 0 10px 0; text-align: center; border-top: 1px solid #ddd;
         }
+        .footer-content p { margin: 5px 0; font-size: 0.85rem; color: #666; }
+        .app-version { font-weight: bold; color: var(--primary); }
 
-        .card-header {
-            display: flex; justify-content: space-between; align-items: flex-start;
-            margin-bottom: 1rem; padding-bottom: 1rem;
-            border-bottom: 2px solid #f0f0f0;
+        #updateBanner {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #343a40; color: #fff;
+            text-align: center; padding: 12px; font-size: 0.9rem; font-weight: bold;
+            display: none; z-index: 2000; cursor: pointer; box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
         }
-        
-        body.high-contrast .card-header { border-bottom-color: #444; }
-
-        .carrier-title { font-weight: bold; font-size: 1.2rem; }
-        .epa-info { font-size: 0.9rem; color: var(--none); }
-
-        .status-pill {
-            padding: 0.4rem 0.8rem; border-radius: 6px;
-            font-weight: bold; font-size: 0.9rem; text-transform: uppercase;
-        }
-
-        /* --- TABELA --- */
-        .details-table { width: 100%; border-collapse: collapse; font-size: 1rem; }
-        .details-table th, .details-table td {
-            padding: 8px 5px; text-align: left; vertical-align: top;
-            border-bottom: 1px solid #eee;
-        }
-        
-        body.high-contrast .details-table th, 
-        body.high-contrast .details-table td { border-bottom-color: #444; }
-
-        .details-table .active-row { background-color: #eef2f5; font-weight: bold; }
-        
-        body.high-contrast .details-table .active-row {
-            background-color: #333; color: #fff;
-        }
-        
-        .notes-section {
-            background-color: #fff3cd; color: #856404; padding: 10px;
-            border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #ffeeba;
-        }
-        
-        /* Styl kafelek w widoku wszystkich stacji */
-        .station-tile {
-            background: white; padding: 15px; border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer;
-            display: flex; align-items: center; justify-content: space-between;
-            font-size: 1.05rem; transition: transform 0.1s;
-        }
-        .station-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
-        .station-status-icon {
-            font-size: 0.8rem; font-weight: bold; 
-            padding: 3px 8px; border-radius: 12px; color: #fff;
-        }
-
-        /* --- STOPKA --- */
-        footer {
-            text-align: center; padding: 20px; font-size: 0.85rem;
-            color: var(--none); background-color: #f1f1f1;
-            border-top: 1px solid #ddd;
-        }
-        
-        body.high-contrast footer {
-            background-color: #111; color: #888; border-top-color: #333;
-        }
-
-        /* MODAL POMOCY */
-        .modal {
-            display: none; position: fixed; z-index: 2000;
-            left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.7); 
-            justify-content: center; align-items: center;
-        }
-
-        .modal-content {
-            background-color: white; padding: 25px;
-            width: 90%; max-width: 600px;
-            border-radius: 12px; color: #333;
-        }
-
-        .close-btn { float: right; font-size: 1.5rem; cursor: pointer; padding: 0 10px; }
-
-        /* SKRÓTY DOSTĘPNOŚCI W MENU */
-        .text-size-control {
-            background-color: #f8f9fa; padding: 15px;
-            border-bottom: 1px solid #eee; text-align: center;
-        }
-        
-        .size-btn {
-            background: var(--holiday); color: white; border: none;
-            padding: 5px 15px; border-radius: 4px;
-            font-size: 1.1rem; cursor: pointer; margin: 0 5px;
-        }
-        
-        #fileInput { display: none; }
+        #updateBanner:active { background: #23272b; }
 
     </style>
 </head>
 <body>
-
-    <header role="banner">
-        <h1>System Kas Biletowych</h1>
-        <button class="settings-btn" onclick="toggleMenu()" aria-label="Ustawienia i Menu">⚙️</button>
-        
-        <div class="settings-menu" id="settingsMenu" role="dialog" aria-modal="true" aria-label="Menu Ustawień">
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <div id="menuOverlay" class="menu-overlay">
+        <div class="menu-content">
+            <div class="menu-close" onclick="toggleMenu()">✕</div>
             
-            <div class="text-size-control">
-                <span style="display:block; margin-bottom:10px; font-weight:bold;">Wygląd:</span>
-                <button class="size-btn" onclick="toggleContrast()" aria-label="Przełącz kontrast">🌓 Kontrast</button>
-                <div style="margin-top:10px;">
-                    <span style="font-size:0.9rem;">Rozmiar tekstu:</span>
-                    <button class="size-btn" onclick="zmienRozmiarTekstu(-1)">A-</button>
-                    <button class="size-btn" onclick="zmienRozmiarTekstu(0)">A</button>
-                    <button class="size-btn" onclick="zmienRozmiarTekstu(1)">A+</button>
-                </div>
+            <div class="menu-section">
+                <h3>Opcje</h3>
+                <button class="btn-sync" onclick="forceSync()">🔄 Wymuś odświeżenie bazy</button>
             </div>
 
-            <button class="menu-item" onclick="pobierzDane(true)">
-                <span class="icon">🔄</span> Wymuś aktualizację (Online)
-            </button>
-            <button class="menu-item" onclick="pokazWszystkieStacje()">
-                <span class="icon">📋</span> Pokaż wszystkie stacje
-            </button>
-            <button class="menu-item" onclick="document.getElementById('fileInput').click()">
-                <span class="icon">📁</span> Wgraj bazę (JSON)
-            </button>
-            <input type="file" id="fileInput" onchange="wgrajLokalnyPlik(this)" accept=".json">
-            <button class="menu-item" onclick="pokazInstrukcje()">
-                <span class="icon">❓</span> Instrukcja / Oznaczenia
-            </button>
-            
-            <div style="padding:10px; text-align:center; font-size:0.8rem; color:#666; background:#f0f0f0;">
-                <span id="cacheStatus">Status bazy: ...</span>
+            <div class="menu-section">
+                <h3>Instrukcja obsługi</h3>
+                <p><strong>1. Wybór trybu:</strong> Użyj przełącznika, aby szukać po nazwie stacji lub wpisać numer pociągu.</p>
+                <p><strong>2. Praca Offline:</strong> Aplikacja działa bez internetu po pierwszym załadowaniu. Data ostatniej synchronizacji widoczna jest na ekranie głównym.</p>
+                <p><strong>3. Statusy:</strong> Zielony (Otwarta), Żółty (Przerwa), Czerwony (Zamknięta/Awaria).</p>
+                <p><strong>4. Pociągi:</strong> Wyświetla status kas na stacjach po drodze pociągu (stan na chwilę wyszukiwania).</p>
             </div>
-        </div>
-    </header>
-
-    <main class="container" role="main">
-        <div id="dateBar" aria-live="polite"></div>
-
-        <div id="searchContainer">
-            <input type="text" id="stationSearch" 
-                   placeholder="Wpisz nazwę stacji (np. Warszawa Centralna)..." 
-                   aria-label="Wyszukaj stację"
-                   autocomplete="off">
-            <ul id="searchResults" role="listbox"></ul>
-        </div>
-        
-        <div id="historyContainer">
-            <span class="history-label">Ostatnio oglądane:</span>
-            <div class="history-chips" id="historyChips"></div>
-        </div>
-
-        <div id="statusMessage" style="text-align:center; margin-bottom:10px;">
-            <div id="networkStatus" style="font-size:0.9rem; color:#555;">Ładowanie systemu...</div>
-        </div>
-
-        <div id="mainStatusBox" role="status" aria-live="assertive"></div>
-
-        <div id="detailsList"></div>
-        
-        <div style="margin-top: 30px; font-size: 0.8rem; text-align: center; color: #777;">
-            Wciśnij <strong>ESC</strong> by wyczyścić. Użyj <strong>Strzałek</strong> w wyszukiwarce.
-        </div>
-    </main>
-
-    <div id="helpModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="zamknijInstrukcje()">&times;</span>
-            <h2>Oznaczenia</h2>
-            <ul style="list-style:none; padding:0; line-height:2;">
-                <li>🟢 <strong>OTWARTA</strong> - kasa pracuje</li>
-                <li>🟡 <strong>PRZERWA</strong> - przerwa w pracy</li>
-                <li>🔴 <strong>ZAMKNIĘTA</strong> - poza godzinami</li>
-                <li>⚪ <strong>BRAK KASY</strong> - brak punktu sprzedaży</li>
-            </ul>
-            <hr>
-            <p><strong>Wersja 4.2</strong>: Naprawiono brakujące linki do stron przewoźników (Arriva, Koleje Małopolskie).</p>
         </div>
     </div>
 
-    <footer>
-        <p>Wersja aplikacji WEB: <strong>v4.2</strong></p>
-        <p>Współautorzy: Gemini oraz Piotr M 🚂</p>
+    <div id="updateBanner" onclick="window.location.reload(true)">
+        🚀 Dostępna nowa wersja aplikacji. Kliknij, aby zaktualizować.
+    </div>
+
+    <div class="container">
+        <div class="header-wrapper">
+            <h1>🚆 Asystent Kas Biletowych</h1>
+            <button class="burger-btn" onclick="toggleMenu()">☰</button>
+        </div>
+        
+        <div class="top-info-bar">
+            <div class="status-row">
+                <span id="networkStatus" class="msg-offline">Sprawdzanie sieci...</span>
+                <span id="syncTimestamp" class="sync-time">Brak danych w pamięci</span>
+            </div>
+            <div id="dateBar" class="date-bar">Ładowanie zegara...</div>
+        </div>
+
+        <div class="controls">
+            <div class="toggle-container">
+                <div id="tabStation" class="toggle-btn active" onclick="switchMode('station')">🏠 Stacja</div>
+                <div id="tabTrain" class="toggle-btn" onclick="switchMode('train')">🚂 Numer Pociągu</div>
+            </div>
+
+            <div id="searchStationBox">
+                <label for="stationSelect">Wybierz stację:</label>
+                <select id="stationSelect" onchange="triggerSearch()">
+                    <option value="">-- Wczytywanie bazy... --</option>
+                </select>
+            </div>
+
+            <div id="searchTrainBox" style="display:none;">
+                <label for="trainInput">Wpisz numer pociągu:</label>
+                <input type="number" id="trainInput" placeholder="Np. 12345" oninput="triggerSearch()">
+                <div class="search-notice" id="trainNotice">ℹ️ Prezentowany status to stan na obecną chwilę.</div>
+            </div>
+        </div>
+
+        <div id="skeletonLoader" class="skeleton-wrapper">
+            <div class="skeleton-card">
+                <div class="skeleton-line title skeleton-loader"></div>
+                <div class="skeleton-line skeleton-loader"></div>
+                <div class="skeleton-line skeleton-loader" style="width: 80%;"></div>
+            </div>
+        </div>
+
+        <div id="mainStatusBox">STATUS</div>
+        <div id="detailsList" class="details-container"></div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>Projekt i wdrożenie: <strong>Piotr M 🚂</strong> oraz <strong>Gemini (AI)</strong></p>
+            <p class="app-version">Wersja aplikacji: v5.0</p>
+        </div>
     </footer>
 
 <script>
     // ================= KONFIGURACJA =================
-    const STORAGE_KEY = 'kasy_biletowe_v_final';
-    const HISTORY_KEY = 'kasy_search_history';
-    const SETTINGS_KEY = 'kasy_settings_v4';
+    const STORAGE_KEY = 'kasy_biletowe_v5_data';
+    const SYNC_KEY = 'kasy_biletowe_v5_sync';
+    const TRAINS_KEY = 'kasy_biletowe_v5_trains';
     
-    // Lista plików źródłowych
-    const PLIKI_DANYCH = [
-        'data_pkp_intercity.json', 'data_polregio.json', 'data_arriva_rp.json',
-        'data_koleje_slaskie.json', 'data_koleje_mazowieckie.json', 'data_lka.json',
-        'data_koleje_wielkopolskie.json', 'data_koleje_dolnoslaskie.json', 
-        'data_koleje_malopolskie.json', 'data_skm.json', 'data_brak_kasy.json'
+    let bazaDanych = [];
+    let bazaPociagow = [];
+    let currentMode = 'station';
+
+    // Lista segmentów z danymi
+    const API_FILES = [
+        'data_arriva_rp.json', 'data_brak_kasy.json', 'data_koleje_dolnoslaskie.json',
+        'data_koleje_malopolskie.json', 'data_koleje_mazowieckie.json', 'data_koleje_slaskie.json',
+        'data_koleje_wielkopolskie.json', 'data_lka.json', 'data_pkp_intercity.json',
+        'data_polregio.json', 'data_skm.json'
     ];
 
-    // NAPRAWIONY SŁOWNIK LINKÓW
     const BAZA_LINKOW = {
-        "PKP INTERCITY": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
-        "POLREGIO": "https://polregio.pl/pl/dla-podroznych/gdzie-kupic-bilet/kasy-biletowe/",
-        "KOLEJE ŚLĄSKIE": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
-        "KOLEJE MAZOWIECKIE": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
-        "ŁKA": "https://lka.lodzkie.pl/kasy-biletowe/",
-        "ŁÓDZKA KOLEJ AGLOMERACYJNA": "https://lka.lodzkie.pl/kasy-biletowe/",
-        "KOLEJE WIELKOPOLSKIE": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
-        "KOLEJE DOLNOŚLĄSKIE": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
-        "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-biletomatow",
-        "SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-biletomatow",
-        "KOLEJE MAŁOPOLSKIE": "https://kolejemalopolskie.com.pl/pl/dla-pasazera/gdzie-kupic-bilet/kasy-biletowe",
-        "ARRIVA RP": "https://arriva.pl/art/punkty-sprzedazy-biletow"
+        "PKP Intercity": "https://www.intercity.pl/pl/site/dla-pasazera/kup-bilet/wyszukiwarka-kas-i-biletomatow.html",
+        "Polregio": "https://polregio.pl/pl/dla-podroznych/gdzie-kupic-bilet/kasy-biletowe/",
+        "Arriva RP": "https://arriva.pl/1032/kasy-biletowe",
+        "Koleje Śląskie": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/", "KŚ": "https://www.kolejeslaskie.com/kup_bilet/na-dworcu/",
+        "Koleje Mazowieckie": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow", "KM": "https://www.mazowieckie.com.pl/pl/strefa-podroznych/wyszukiwarka-kas-biletomatow",
+        "Łódzka Kolej Aglomeracyjna": "https://lka.lodzkie.pl/kasy-biletowe/", "ŁKA": "https://lka.lodzkie.pl/kasy-biletowe/",
+        "Koleje Wielkopolskie": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/", "KW": "https://koleje-wielkopolskie.com.pl/dla-pasazera/kasy-biletowe/",
+        "Koleje Dolnośląskie": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/", "KD": "https://kolejedolnoslaskie.pl/informacje-o-kanalach-sprzedazy/kasy-biletowe/",
+        "Koleje Małopolskie": "https://www.kolejemalopolskie.com.pl/pl/kasa-biletowa-kolei-malopolskich-na-dworcu-krakow-glowny",
+        "Szybka Kolej Miejska w Trójmieście": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow", "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow"
     };
 
+    // ================= XSS PROTECTION =================
+    // Bezpieczne wstawianie tekstu zapobiegające XSS (Zalecenie CodeQL)
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>'"]/g, tag => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[tag] || tag));
+    }
+
+    // ================= MENU & UI =================
+    function toggleMenu() {
+        document.getElementById('menuOverlay').classList.toggle('active');
+    }
+
+    function switchMode(mode) {
+        currentMode = mode;
+        document.getElementById('tabStation').classList.toggle('active', mode === 'station');
+        document.getElementById('tabTrain').classList.toggle('active', mode === 'train');
+        document.getElementById('searchStationBox').style.display = mode === 'station' ? 'block' : 'none';
+        document.getElementById('searchTrainBox').style.display = mode === 'train' ? 'block' : 'none';
+        document.getElementById('trainNotice').style.display = mode === 'train' ? 'block' : 'none';
+        
+        // Ukryj wyniki przy przełączaniu
+        document.getElementById('mainStatusBox').style.display = 'none';
+        document.getElementById('detailsList').style.display = 'none';
+    }
+
+    // ================= KALENDARZ ŚWIĄT =================
     const SWIETA_STALE = {
         '01-01': 'Nowy Rok', '01-06': 'Trzech Króli', '05-01': 'Święto Pracy',
-        '05-03': '3 Maja', '08-15': 'Wniebowzięcie NMP', '11-01': 'Wszystkich Świętych',
-        '11-11': 'Niepodległości', '12-24': 'Wigilia', '12-25': 'Boże Narodzenie', '12-26': 'Drugi dzień Św.'
+        '05-03': '3 Maja', '08-15': 'Wniebowzięcie NMP', '11-01': 'Wszystkich Świętych', 
+        '11-11': 'Niepodległości', '12-25': 'Boże Narodzenie', '12-26': 'Boże Narodzenie'
+    };
+    const SWIETA_RUCHOME = {
+        '2025-04-20': 'Wielkanoc', '2025-04-21': 'Pon. Wielkanocny', '2025-06-08': 'Zielone Świątki', '2025-06-19': 'Boże Ciało',
+        '2026-04-05': 'Wielkanoc', '2026-04-06': 'Pon. Wielkanocny', '2026-05-24': 'Zielone Świątki', '2026-06-04': 'Boże Ciało',
+        '2027-03-28': 'Wielkanoc', '2027-03-29': 'Pon. Wielkanocny', '2027-05-16': 'Zielone Świątki', '2027-05-27': 'Boże Ciało',
+        '2028-04-16': 'Wielkanoc', '2028-04-17': 'Pon. Wielkanocny', '2028-06-04': 'Zielone Świątki', '2028-06-15': 'Boże Ciało',
+        '2029-04-01': 'Wielkanoc', '2029-04-02': 'Pon. Wielkanocny', '2029-05-20': 'Zielone Świątki', '2029-05-31': 'Boże Ciało',
+        '2030-04-21': 'Wielkanoc', '2030-04-22': 'Pon. Wielkanocny', '2030-06-09': 'Zielone Świątki', '2030-06-20': 'Boże Ciało'
     };
 
-    let bazaDanych = [];
-    let currentFocus = -1; 
-    let userSettings = { fontSize: 100, highContrast: false };
+    function sprawdzSwieto() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,'0');
+        const day = String(d.getDate()).padStart(2,'0');
+        if(SWIETA_STALE[`${m}-${day}`]) return SWIETA_STALE[`${m}-${day}`];
+        if(SWIETA_RUCHOME[`${y}-${m}-${day}`]) return SWIETA_RUCHOME[`${y}-${m}-${day}`];
+        return null;
+    }
 
-    // ================= INICJALIZACJA =================
-    window.onload = () => {
-        loadSettings();
-        initZegar();
-        loadHistory();
-        
-        const cached = localStorage.getItem(STORAGE_KEY);
-        if(cached) {
+    // ================= POBIERANIE DANYCH =================
+    async function pobierzDane(force = false) {
+        const netMsg = document.getElementById('networkStatus');
+        const syncMsg = document.getElementById('syncTimestamp');
+        netMsg.innerText = "Synchronizacja...";
+        netMsg.className = "msg-online";
+
+        try {
+            let combinedData = [];
+            // Pobieranie wszystkich segmentów
+            for (const file of API_FILES) {
+                try {
+                    const res = await fetch(file, { cache: "no-store" });
+                    if(res.ok) {
+                        const data = await res.json();
+                        if(Array.isArray(data)) combinedData.push(...data);
+                    }
+                } catch(e) { console.warn(`Pominięto plik ${file}`, e); }
+            }
+
+            // Pobieranie pociągów
+            let loadedTrains = [];
             try {
-                bazaDanych = JSON.parse(cached);
-                document.getElementById('networkStatus').innerHTML = "Gotowy (tryb offline)";
-                updateCacheInfo();
-            } catch(e) { console.error("Cache corrupted"); }
+                const resTrain = await fetch('trains.json', { cache: "no-store" });
+                if(resTrain.ok) loadedTrains = await resTrain.json();
+            } catch(e) { console.warn('Brak pliku trains.json', e); }
+
+            if(combinedData.length === 0) throw new Error("Wszystkie segmenty puste");
+
+            // Sukces - zapisz do pamięci
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(combinedData));
+            localStorage.setItem(TRAINS_KEY, JSON.stringify(loadedTrains));
+            
+            const now = new Date().toLocaleString('pl-PL');
+            localStorage.setItem(SYNC_KEY, now);
+            
+            bazaDanych = combinedData;
+            bazaPociagow = loadedTrains;
+
+            netMsg.innerHTML = "✅ Sieć: Online";
+            syncMsg.innerHTML = `Baza z: ${now}`;
+            if(force) alert("Pomyślnie zsynchronizowano bazy z serwerem!");
+            zbudujSelect();
+
+        } catch (e) {
+            // Fallback Offline
+            const cachedData = localStorage.getItem(STORAGE_KEY);
+            const cachedTrains = localStorage.getItem(TRAINS_KEY);
+            const cachedSync = localStorage.getItem(SYNC_KEY);
+
+            netMsg.innerHTML = "⚠️ Sieć: Offline";
+            netMsg.className = "msg-offline";
+
+            if (cachedData) {
+                bazaDanych = JSON.parse(cachedData);
+                if(cachedTrains) bazaPociagow = JSON.parse(cachedTrains);
+                syncMsg.innerHTML = `Baza z: ${cachedSync || 'Brak daty'}`;
+                if(force) alert("Brak połączenia. Używam danych z pamięci urządzenia.");
+                zbudujSelect();
+            } else {
+                syncMsg.innerHTML = "Brak bazy w pamięci!";
+                if(force) alert("Błąd krytyczny: Brak internetu i brak danych w pamięci.");
+            }
         }
+    }
+
+    function forceSync() {
+        toggleMenu();
+        pobierzDane(true);
+    }
+
+    // ================= INTERFEJS I ZEGAR =================
+    function initZegar() {
+        const d = new Date();
+        let dateStr = d.toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+        const timeStr = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const swieto = sprawdzSwieto();
         
-        pobierzDane();
-
-        setInterval(initZegar, 1000);
-        setInterval(() => {
-            if(document.getElementById('stationSearch').value) wyswietlStacje();
-        }, 60000);
-
-        setupSearchEvents();
-    };
-
-    // ================= OBSŁUGA UI I USTAWIENIEŃ =================
-    function loadSettings() {
-        const saved = localStorage.getItem(SETTINGS_KEY);
-        if(saved) userSettings = JSON.parse(saved);
-        applySettings();
+        const bar = document.getElementById('dateBar');
+        let html = `${escapeHTML(dateStr)} <span class="time-display">⏰ ${escapeHTML(timeStr)}</span>`;
+        if(swieto) {
+            html += ` <span class="holiday-tag">★ ${escapeHTML(swieto)}</span>`;
+            bar.style.borderColor = "var(--holiday)";
+        } else { bar.style.borderColor = "#ddd"; }
+        bar.innerHTML = html;
     }
 
-    function saveSettings() {
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings));
-        applySettings();
-    }
+    function zbudujSelect() {
+        const sel = document.getElementById('stationSelect');
+        const saved = sel.value;
+        sel.innerHTML = '<option value="">-- Wybierz stację --</option>';
 
-    function applySettings() {
-        document.documentElement.style.fontSize = userSettings.fontSize + "%";
-        if(userSettings.highContrast) document.body.classList.add('high-contrast');
-        else document.body.classList.remove('high-contrast');
-    }
-
-    function toggleContrast() {
-        userSettings.highContrast = !userSettings.highContrast;
-        saveSettings();
-    }
-
-    function zmienRozmiarTekstu(delta) {
-        if(delta === 0) userSettings.fontSize = 100;
-        else userSettings.fontSize += (delta * 10);
-        if(userSettings.fontSize < 80) userSettings.fontSize = 80;
-        if(userSettings.fontSize > 150) userSettings.fontSize = 150;
-        saveSettings();
-    }
-
-    function toggleMenu() {
-        document.getElementById('settingsMenu').classList.toggle('active');
-    }
-
-    // ================= HISTORIA I SZUKANIE =================
-    function loadHistory() {
-        const raw = localStorage.getItem(HISTORY_KEY);
-        const history = raw ? JSON.parse(raw) : [];
-        const container = document.getElementById('historyChips');
-        const wrapper = document.getElementById('historyContainer');
-        container.innerHTML = '';
-        if(history.length === 0) { wrapper.style.display = 'none'; return; }
-        wrapper.style.display = 'block';
-        history.forEach(stacja => {
-            const btn = document.createElement('button');
-            btn.className = 'chip';
-            btn.innerText = stacja;
-            btn.onclick = () => {
-                document.getElementById('stationSearch').value = stacja;
-                wyswietlStacje(stacja);
-            };
-            container.appendChild(btn);
+        const stacje = [...new Set(bazaDanych.map(x => x.stacja))].sort((a,b) => a.localeCompare(b));
+        stacje.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s;
+            opt.textContent = s; // Zabezpieczenie przed XSS
+            sel.appendChild(opt);
         });
+        if(saved && stacje.includes(saved)) {
+            sel.value = saved;
+            wyswietlWidok();
+        }
     }
 
-    function addToHistory(stacja) {
-        let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-        history = history.filter(h => h !== stacja);
-        history.unshift(stacja);
-        if(history.length > 5) history.pop();
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-        loadHistory();
-    }
-
-    function setupSearchEvents() {
-        const input = document.getElementById('stationSearch');
-        input.addEventListener('input', function() { filtrujStacje(this.value); });
-        input.addEventListener('keydown', function(e) {
-            const list = document.getElementById('searchResults');
-            let items = list.getElementsByTagName('li');
-            if (e.key === 'ArrowDown') { currentFocus++; addActive(items); }
-            else if (e.key === 'ArrowUp') { currentFocus--; addActive(items); }
-            else if (e.key === 'Enter') {
-                e.preventDefault();
-                if (currentFocus > -1 && items[currentFocus]) items[currentFocus].click();
-                else if (items.length > 0) items[0].click();
-            } else if (e.key === 'Escape') {
-                input.value = ''; list.style.display = 'none';
-                document.getElementById('detailsList').innerHTML = '';
-                document.getElementById('mainStatusBox').style.display = 'none';
-                input.blur();
-            }
-        });
-    }
-
-    function addActive(items) {
-        if (!items) return false;
-        removeActive(items);
-        if (currentFocus >= items.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = (items.length - 1);
-        items[currentFocus].classList.add("selected");
-        items[currentFocus].scrollIntoView({block: "nearest"});
-    }
-    
-    function removeActive(items) {
-        for (let i = 0; i < items.length; i++) items[i].classList.remove("selected");
-    }
-
-    function normalizeText(text) {
-        return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    }
-
-    function filtrujStacje(query) {
-        const list = document.getElementById('searchResults');
-        list.innerHTML = ''; currentFocus = -1;
-        if (!query || query.length < 2) { list.style.display = 'none'; return; }
-
-        const normalizedQuery = normalizeText(query);
-        const seen = new Set();
-        const results = [];
-
-        bazaDanych.forEach(item => {
-            if(item.ukryty) return;
-            const nazwa = item.stacja;
-            if(seen.has(nazwa)) return;
-            if (normalizeText(nazwa).includes(normalizedQuery) || normalizeText(item.epa).includes(normalizedQuery)) {
-                seen.add(nazwa);
-                results.push(item);
-            }
-        });
-
-        results.sort((a,b) => {
-            const aS = normalizeText(a.stacja).startsWith(normalizedQuery);
-            const bS = normalizeText(b.stacja).startsWith(normalizedQuery);
-            if(aS && !bS) return -1; if(!aS && bS) return 1;
-            return a.stacja.localeCompare(b.stacja);
-        });
-
-        if (results.length === 0) { list.style.display = 'none'; return; }
-
-        results.slice(0, 15).forEach(item => {
-            const li = document.createElement('li');
-            li.className = 'search-result-item';
-            li.role = "option";
-            const epaTxt = (item.epa && item.epa !== 'Brak') ? ` <small style="color:#888">(${item.epa})</small>` : '';
-            li.innerHTML = `${item.stacja}${epaTxt}`;
-            li.onclick = () => { wybierzStacje(item.stacja); };
-            list.appendChild(li);
-        });
-        list.style.display = 'block';
-    }
-
-    function wybierzStacje(stacja) {
-        document.getElementById('stationSearch').value = stacja;
-        document.getElementById('searchResults').style.display = 'none';
-        wyswietlStacje(stacja);
-        addToHistory(stacja);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // ================= LOGIKA BIZNESOWA =================
-    
-    function wyswietlStacje(nazwaInput = null) {
-        const nazwa = nazwaInput || document.getElementById('stationSearch').value;
-        const container = document.getElementById('detailsList');
+    function triggerSearch() {
         const mainBox = document.getElementById('mainStatusBox');
+        const listContainer = document.getElementById('detailsList');
+        const loader = document.getElementById('skeletonLoader');
         
-        container.innerHTML = '';
         mainBox.style.display = 'none';
+        listContainer.style.display = 'none';
+        loader.style.display = 'block'; // Pokazuj szkielet
 
-        const kasy = bazaDanych.filter(k => k.stacja === nazwa && !k.ukryty);
-        if(kasy.length === 0) return;
+        // Opoznienie dla efektu renderowania i uspokojenia UI
+        setTimeout(() => {
+            loader.style.display = 'none';
+            wyswietlWidok();
+        }, 300);
+    }
 
+    function wyswietlWidok() {
+        const listContainer = document.getElementById('detailsList');
+        const mainBox = document.getElementById('mainStatusBox');
+        listContainer.innerHTML = '';
+        
         const d = new Date();
         const swieto = sprawdzSwieto();
-        const day = d.getDay();
-        let dayType = 'pn_pt';
-        if(swieto || day === 0) dayType = 'nd';
-        else if(day === 6) dayType = 'sob';
+        const day = d.getDay(); 
+        let dayType = (swieto || day === 0) ? 'nd' : (day === 6 ? 'sob' : 'pn_pt');
 
-        let globalStatus = { code: 'closed', priority: 0 }; 
+        if (currentMode === 'station') {
+            const nazwa = document.getElementById('stationSelect').value;
+            if(!nazwa) return;
+
+            // GTM DataLayer Push
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({'event': 'search_station', 'station_name': nazwa});
+
+            const kasy = bazaDanych.filter(k => k.stacja === nazwa);
+            generujKarty(kasy, swieto, day, dayType, listContainer, mainBox);
+
+        } else if (currentMode === 'train') {
+            const nrPociagu = document.getElementById('trainInput').value.trim();
+            if(!nrPociagu || nrPociagu.length < 2) return; // Szukaj gdy wpisano coś sensownego
+
+            // GTM DataLayer Push
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({'event': 'search_train', 'train_number': nrPociagu});
+
+            const pociag = bazaPociagow.find(p => p.numer === nrPociagu);
+            if(!pociag) {
+                listContainer.innerHTML = `<p style="text-align:center; color:#666;">Brak pociągu o numerze ${escapeHTML(nrPociagu)} w bazie (trains.json).</p>`;
+                listContainer.style.display = 'block';
+                return;
+            }
+
+            // Zbierz kasy dla wszystkich stacji tego pociągu
+            let kasyPociagu = [];
+            pociag.stacje.forEach(stacja => {
+                const kasyNaStacji = bazaDanych.filter(k => k.stacja === stacja);
+                if(kasyNaStacji.length > 0) {
+                    kasyPociagu.push(...kasyNaStacji);
+                } else {
+                    // Generuj atrapę jeśli stacja nie ma wpisu
+                    kasyPociagu.push({ stacja: stacja, przewoznik: "Brak danych", godziny: {pn_pt:"",sob:"",nd:""}, przerwy: {} });
+                }
+            });
+
+            generujKarty(kasyPociagu, swieto, day, dayType, listContainer, mainBox, true);
+        }
+    }
+
+    function generujKarty(kasy, swieto, day, dayType, listContainer, mainBox, isTrainMode = false) {
+        let anyOpen = false;
+        let anyBreak = false;
 
         kasy.forEach(k => {
-            const status = obliczStatus(k, swieto, day);
-            let currentPrio = 0;
-            if (status.type === 'break') currentPrio = 1;
-            if (status.type === 'open') currentPrio = 2;
-            
-            if (currentPrio > globalStatus.priority) {
-                globalStatus = { code: status.type, priority: currentPrio };
-            }
-            if (k.przewoznik === 'BRAK') globalStatus.isNone = true;
+            const st = obliczStatus(k, swieto, day);
+            if(st.type === 'open') anyOpen = true;
+            if(st.type === 'break') anyBreak = true;
 
-            const link = BAZA_LINKOW[k.przewoznik] || BAZA_LINKOW[k.przewoznik.split(' ')[0]] || null;
+            const link = BAZA_LINKOW[k.przewoznik] || null;
+            const uwagiHtml = k.uwagi ? `<div class="notes-section"><strong>UWAGI:</strong> ${escapeHTML(k.uwagi)}</div>` : '';
             
-            let cardHtml = `
-            <div class="card" style="border-left-color: ${status.color}">
+            // W trybie pociągu chcemy widzieć nazwę stacji w nagłówku karty
+            const headerText = isTrainMode ? `${escapeHTML(k.stacja)} - ${escapeHTML(k.przewoznik)}` : escapeHTML(k.przewoznik);
+
+            const html = `
+            <div class="card" style="border-left-color: ${st.color}">
                 <div class="card-header">
                     <div>
-                        <div class="carrier-title">${k.przewoznik}</div>
-                        <div class="epa-info">EPA: ${k.epa || '-'}</div>
+                        <div class="carrier-title">${headerText}</div>
+                        <div class="epa-info">EPA: ${escapeHTML(k.epa || 'Brak')}</div>
                     </div>
-                    <div class="status-pill" style="background:${status.color}; color:${status.type==='break'?'#222':'#fff'}">
-                        ${status.text}
+                    <div class="status-pill" style="background-color: ${st.color}; color: ${st.type==='break'?'#333':'white'}">
+                        ${st.text}
                     </div>
-                </div>`;
-
-            if(k.uwagi && k.uwagi.length > 2 && k.uwagi.toLowerCase() !== 'nan') {
-                cardHtml += `<div class="notes-section">⚠️ ${k.uwagi}</div>`;
-            }
-
-            cardHtml += `
-                <table class="details-table">
+                </div>
+                ${uwagiHtml}
+                <table>
                     <tr class="${dayType==='pn_pt'?'active-row':''}">
-                        <th>Pn-Pt</th>
-                        <td>${k['godziny.pn_pt'] || '-'} <br><small>Przerwa: ${k['przerwy.pn_pt']||'-'}</small></td>
+                        <th>Pn - Pt</th>
+                        <td>${escapeHTML(k.godziny.pn_pt)} <br> <small style="color:#777">Przerwa: ${escapeHTML(k.przerwy.pn_pt||'-')}</small></td>
                     </tr>
                     <tr class="${dayType==='sob'?'active-row':''}">
-                        <th>Sob</th>
-                        <td>${k['godziny.sob'] || '-'} <br><small>Przerwa: ${k['przerwy.sob']||'-'}</small></td>
+                        <th>Sobota</th>
+                        <td>${escapeHTML(k.godziny.sob)} <br> <small style="color:#777">Przerwa: ${escapeHTML(k.przerwy.sob||'-')}</small></td>
                     </tr>
                     <tr class="${dayType==='nd'?'active-row':''}">
-                        <th>Ndz/Św</th>
-                        <td>${k['godziny.nd'] || '-'} <br><small>Przerwa: ${k['przerwy.nd']||'-'}</small></td>
+                        <th>Ndz / Św</th>
+                        <td>${escapeHTML(k.godziny.nd)} <br> <small style="color:#777">Przerwa: ${escapeHTML(k.przerwy.nd||'-')}</small></td>
                     </tr>
                 </table>
-                ${link ? `<div style="text-align:right; margin-top:10px;"><a href="${link}" target="_blank" style="color:var(--holiday); font-weight:bold; text-decoration:none;">Strona przewoźnika &rarr;</a></div>` : ''}
+                ${link ? `<a href="${link}" target="_blank" class="btn-link">Wykaz kas: ${escapeHTML(k.przewoznik)} &raquo;</a>` : ''}
+                <div class="meta-footer">Dane: ${escapeHTML(k.meta?.data || '-')} | ${escapeHTML(k.meta?.kto || '-')}</div>
             </div>`;
-            container.insertAdjacentHTML('beforeend', cardHtml);
+            listContainer.innerHTML += html; // Wstrzykujemy bezpiecznie sformatowany HTML
         });
 
         mainBox.style.display = 'block';
-        mainBox.className = '';
-        
-        if (globalStatus.isNone && globalStatus.priority === 0) {
-            mainBox.innerText = "BRAK KASY";
-            mainBox.classList.add('bg-none');
-        } else if (globalStatus.code === 'open') {
-            mainBox.innerText = "KASA CZYNNA";
+        mainBox.className = ''; 
+        if(anyOpen) {
+            mainBox.innerText = isTrainMode ? "TRASA: KASY CZYNNE" : "KASA CZYNNA";
             mainBox.classList.add('bg-open');
-        } else if (globalStatus.code === 'break') {
-            mainBox.innerText = "PRZERWA";
+        } else if(anyBreak) {
+            mainBox.innerText = isTrainMode ? "TRASA: PRZERWY" : "PRZERWA";
             mainBox.classList.add('bg-break');
         } else {
-            mainBox.innerText = "NIECZYNNE";
+            mainBox.innerText = isTrainMode ? "TRASA: NIECZYNNE" : "NIECZYNNE";
             mainBox.classList.add('bg-closed');
         }
+        listContainer.style.display = 'block';
     }
 
+    // ================= KALKULATOR =================
     function obliczStatus(kasa, swieto, dayOfWeek) {
-        if(kasa.przewoznik === 'BRAK') return { type: 'none', text: 'BRAK KASY', color: '#6c757d' };
-        let hStr, bStr;
-        if(swieto || dayOfWeek === 0) { hStr = kasa['godziny.nd']; bStr = kasa['przerwy.nd']; }
-        else if(dayOfWeek === 6) { hStr = kasa['godziny.sob']; bStr = kasa['przerwy.sob']; }
-        else { hStr = kasa['godziny.pn_pt']; bStr = kasa['przerwy.pn_pt']; }
+        if(!kasa.godziny || (!kasa.godziny.pn_pt && !kasa.godziny.sob && !kasa.godziny.nd)) {
+             return { type: 'closed', text: 'BRAK DANYCH', color: '#6c757d' };
+        }
 
-        const h = String(hStr||"").toLowerCase();
-        if(!h || h.includes('nieczynne') || h.includes('zamknięte')) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#c82333' };
-        if(h.includes('całodobowo')) {
-            if(isDuringBreak(bStr)) return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
-            return { type: 'open', text: 'OTWARTA', color: '#218838' };
+        let hStr, bStr;
+        if(swieto || dayOfWeek === 0) { hStr = kasa.godziny.nd; bStr = kasa.przerwy.nd; } 
+        else if(dayOfWeek === 6) { hStr = kasa.godziny.sob; bStr = kasa.przerwy.sob; } 
+        else { hStr = kasa.godziny.pn_pt; bStr = kasa.przerwy.pn_pt; }
+
+        if(!hStr || hStr.toLowerCase().includes('nieczynne') || hStr.toLowerCase().includes('zamknięte')) {
+            return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
         }
 
         const now = new Date();
@@ -713,200 +586,58 @@
         const [open, close] = parseRange(hStr);
 
         let isOpen = false;
-        if(open <= close) { if(min >= open && min < close) isOpen = true; }
+        if(open <= close) { if(min >= open && min < close) isOpen = true; } 
         else { if(min >= open || min < close) isOpen = true; }
 
-        if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#c82333' };
-        if(isDuringBreak(bStr)) return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
+        if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
 
-        return { type: 'open', text: 'OTWARTA', color: '#218838' };
-    }
-
-    function isDuringBreak(bStr) {
-        if(!bStr || bStr.length < 3 || String(bStr).toLowerCase().includes('brak')) return false;
-        const now = new Date();
-        const min = now.getHours() * 60 + now.getMinutes();
-        const breaks = String(bStr).split(';');
-        
-        for(let br of breaks) {
-            const [start, end] = parseRange(br.trim());
-            if(start === 0 && end === 0) continue;
-            if(start <= end) { if(min >= start && min < end) return true; } 
-            else { if(min >= start || min < end) return true; }
+        if(bStr && bStr.length > 3 && !bStr.toLowerCase().includes('brak')) {
+            const breaks = bStr.split(';');
+            for(let br of breaks) {
+                const [bStart, bEnd] = parseRange(br.trim());
+                if(min >= bStart && min < bEnd) return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
+            }
         }
-        return false;
+        return { type: 'open', text: 'OTWARTA', color: '#28a745' };
     }
 
+    function parseTime(t) {
+        if(!t) return 0;
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
+    
     function parseRange(str) {
         if(!str || !str.includes('-')) return [0,0];
         const parts = str.split('-');
         return [parseTime(parts[0]), parseTime(parts[1])];
     }
-    
-    function parseTime(t) {
-        const clean = String(t).replace('.',':').trim();
-        const [h, m] = clean.split(':').map(Number);
-        if(isNaN(h)) return 0;
-        return h * 60 + (m || 0);
-    }
 
-    // ================= DANE I SIEC =================
-    async function pobierzDane(force = false) {
-        const netMsg = document.getElementById('networkStatus');
-        if(force) netMsg.innerText = "Aktualizuję dane...";
-        try {
-            const fetchPromises = PLIKI_DANYCH.map(url => fetch(url, {cache: "no-store"}).then(r => r.ok ? r.json() : []));
-            const results = await Promise.all(fetchPromises);
-            let merged = [];
-            results.forEach(arr => { if(Array.isArray(arr)) merged = merged.concat(arr); });
-            
-            if(merged.length > 0) {
-                bazaDanych = merged.filter(x => !x.ukryty);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(bazaDanych));
-                localStorage.setItem(STORAGE_KEY + '_date', new Date().toISOString());
-                netMsg.innerHTML = "<span style='color:green'>✅ Dane online</span>";
-                updateCacheInfo();
-                if(force) { alert("Pobrano najnowsze dane!"); toggleMenu(); }
-            }
-        } catch(e) {
-            console.warn("Offline fallback", e);
-            if(!force) netMsg.innerHTML = "<span style='color:#d9534f'>⚠️ Tryb Offline</span>";
-        }
-    }
-
-    function updateCacheInfo() {
-        const date = localStorage.getItem(STORAGE_KEY + '_date');
-        const count = bazaDanych.length;
-        const info = date ? `Data bazy: ${date.substring(0,10)}` : 'Brak daty';
-        document.getElementById('cacheStatus').innerText = `${info} | Rekordów: ${count}`;
-    }
-
-    // ================= KALENDARZ =================
-    function initZegar() {
-        const d = new Date();
-        const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        let dateStr = d.toLocaleDateString('pl-PL', opts);
-        dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-        const timeStr = d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
-        const swieto = sprawdzSwieto();
-        let html = `<strong>${dateStr}</strong> | Godz. ${timeStr}`;
-        if(swieto) html += `<br><span class="holiday-tag">★ ${swieto}</span>`;
-        
-        document.getElementById('dateBar').innerHTML = html;
-        if(swieto) document.getElementById('dateBar').style.borderColor = "var(--holiday)";
-    }
-    
-    function sprawdzSwieto() {
-        const d = new Date();
-        const key = String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-        if(SWIETA_STALE[key]) return SWIETA_STALE[key];
-        
-        const year = d.getFullYear();
-        const a=year%19, b=Math.floor(year/100), c=year%100, d_v=Math.floor(b/4), e=b%4, f=Math.floor((b+8)/25), g=Math.floor((b-f+1)/3), h=(19*a+b-d_v-g+15)%30, i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7, m=Math.floor((a+11*h+22*l)/451), p=(h+l-7*m+114)%31, month=Math.floor((h+l-7*m+114)/31);
-        const easter = new Date(year, month-1, p+1);
-        
-        const check = (off) => {
-            const t = new Date(easter.getTime()); t.setDate(t.getDate()+off);
-            return d.getDate()===t.getDate() && d.getMonth()===t.getMonth();
-        };
-
-        if(check(0)) return 'Wielkanoc';
-        if(check(1)) return 'Poniedziałek Wielkanocny';
-        if(check(49)) return 'Zielone Świątki';
-        if(check(60)) return 'Boże Ciało';
-        
-        return null;
-    }
-
-    // Pozostałe funkcje pomocnicze UI
-    function pokazInstrukcje() { document.getElementById('helpModal').style.display = 'flex'; toggleMenu(); }
-    function zamknijInstrukcje() { document.getElementById('helpModal').style.display = 'none'; }
-    function wgrajLokalnyPlik(input) {
-        const r = new FileReader();
-        r.onload = e => {
-            try { 
-                bazaDanych = JSON.parse(e.target.result); 
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(bazaDanych));
-                alert("Wgrano!"); toggleMenu(); 
-            } catch(x) { alert("Błąd pliku"); }
-        };
-        if(input.files[0]) r.readAsText(input.files[0]);
-    }
-
-    function pokazWszystkieStacje() {
-        const list = document.getElementById('detailsList');
-        list.innerHTML = '<h3 style="margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:5px;">Wszystkie stacje (szybki podgląd):</h3>';
-        
-        // Dane do kalkulacji statusu
-        const d = new Date();
-        const swieto = sprawdzSwieto();
-        const day = d.getDay();
-        
-        const unikalne = [...new Set(bazaDanych.map(x=>x.stacja))].sort();
-        
-        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px;">';
-        
-        unikalne.forEach(s => {
-            // Obliczamy status zbiorczy dla stacji 's'
-            const kasy = bazaDanych.filter(k => k.stacja === s && !k.ukryty);
-            let color = '#6c757d'; // Default szary
-            let statusPrio = -1; // 0=closed, 1=break, 2=open
-            
-            kasy.forEach(k => {
-                const stat = obliczStatus(k, swieto, day);
-                let p = 0;
-                if(stat.type === 'open') p = 2;
-                else if(stat.type === 'break') p = 1;
-                
-                if(p > statusPrio) {
-                    statusPrio = p;
-                    color = stat.color;
-                }
-                // Jeśli jest zamknięte, a status był -1 (brak info), ustawiamy zamknięte
-                if(stat.type === 'closed' && statusPrio === -1) {
-                    statusPrio = 0;
-                    color = stat.color;
-                }
-            });
-
-            let statusText = (statusPrio === 2) ? "OTWARTA" : (statusPrio === 1 ? "PRZERWA" : (statusPrio === 0 ? "ZAMKNIĘTA" : "BRAK"));
-
-            html += `
-                <div class="station-tile" 
-                     onclick="wybierzStacje('${s}')" 
-                     style="border-left: 6px solid ${color};">
-                    <span style="font-weight:600;">${s}</span>
-                    <span class="station-status-icon" style="background:${color}; font-size:0.7rem;">${statusText}</span>
-                </div>`;
+    // ================= PWA UPDATE LOGIC =================
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+            reg.onupdatefound = () => {
+                const installingWorker = reg.installing;
+                installingWorker.onstatechange = () => {
+                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        document.getElementById('updateBanner').style.display = 'block';
+                    }
+                };
+            };
         });
-        
-        html += '</div>';
-        list.innerHTML += html;
-        document.getElementById('mainStatusBox').style.display='none';
-        
-        // Zamknij menu jeśli jest otwarte
-        const menu = document.getElementById('settingsMenu');
-        if(menu.classList.contains('active')) menu.classList.remove('active');
     }
+
+    // START
+    window.onload = () => {
+        initZegar();
+        pobierzDane();
+        
+        const localSync = localStorage.getItem(SYNC_KEY);
+        if(localSync) document.getElementById('syncTimestamp').innerHTML = `Baza z: ${localSync}`;
+
+        setInterval(initZegar, 1000);
+        setInterval(() => { if(document.getElementById('mainStatusBox').style.display === 'block') wyswietlWidok(); }, 60000);
+    };
 </script>
 </body>
-<footer style="background-color: var(--bg-dark, #343a40); color: var(--text-light, #f8f9fa); text-align: center; padding: 15px 20px; margin-top: auto; border-top: 2px solid var(--border-color, #dee2e6); display: flex; flex-direction: column; gap: 5px; font-size: 0.9rem;" role="contentinfo" aria-label="Stopka strony">
-    <p style="margin: 0; font-weight: 700; line-height: 1.4;">Wersja aplikacji PWA: v1.2</p>
-</footer>
-
-<script>
-    // Wersja aplikacji: v1.2
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            // KLUCZOWE: Ścieżka względna!
-            navigator.serviceWorker.register('./sw.js')
-                .then(registration => {
-                    console.log('✅ Service Worker PWA aktywny. Zakres (Scope):', registration.scope);
-                })
-                .catch(err => {
-                    console.error('❌ Błąd rejestracji Service Workera:', err);
-                });
-        });
-    }
-</script>
 </html>

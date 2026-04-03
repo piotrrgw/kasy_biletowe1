@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-XXXXXXX');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Edytor Pociągów - trains.json</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #6c757d;
+            --bg: #f4f4f9;
+            --white: #ffffff;
+            --open: #28a745;
+            --closed: #dc3545;
+            --break: #ffc107;
+            --text: #333;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg); color: var(--text); 
+            margin: 0; padding: 15px; padding-bottom: 80px; 
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        .container { max-width: 800px; margin: 0 auto; width: 100%; flex: 1; }
+        
+        h1 { color: var(--primary); font-size: 1.5rem; text-align: center; margin-bottom: 20px; letter-spacing: -0.5px; }
+
+        .card {
+            background: var(--white); padding: 20px; border-radius: 12px;
+            box-shadow: var(--shadow); margin-bottom: 25px;
+        }
+
+        .card h2 { font-size: 1.2rem; color: #444; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0; display: flex; justify-content: space-between; align-items: center;}
+        
+        .dict-status { font-size: 0.8rem; color: #fff; background: var(--primary); padding: 4px 8px; border-radius: 4px; font-weight: normal; }
+
+        /* Formularze */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.95rem; }
+        input[type="text"], input[type="number"] {
+            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        /* Przyciski */
+        button {
+            padding: 12px 15px; border: none; border-radius: 8px; font-size: 1rem;
+            cursor: pointer; font-weight: 600; transition: var(--transition);
+        }
+        button:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; width: 100%; }
+        .btn-primary:hover { background: #004494; }
+        .btn-success { background: var(--open); color: white; width: 100%; }
+        .btn-danger { background: var(--closed); color: white; padding: 8px 12px; font-size: 0.85rem; }
+        .btn-secondary { background: var(--secondary); color: white; }
+        
+        /* Moduł stacji */
+        .station-adder { display: flex; gap: 10px; margin-bottom: 5px; }
+        .station-adder input { flex: 1; margin-bottom: 0; }
+        .station-adder button { width: auto; background: #17a2b8; color: white; }
+        .station-hint { font-size: 0.8rem; color: #666; margin-bottom: 15px; display: block; }
+
+        .station-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+        .station-badge {
+            background: #e9ecef; color: #333; padding: 6px 12px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px;
+            border: 1px solid #ccc;
+        }
+        .station-badge span { cursor: pointer; color: var(--closed); font-weight: bold; font-size: 1.1rem; line-height: 1;}
+
+        /* Tabela Pociągów */
+        .train-item {
+            background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px;
+            padding: 15px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px;
+        }
+        .train-header { display: flex; justify-content: space-between; align-items: center; }
+        .train-title { font-weight: 700; font-size: 1.1rem; color: var(--primary); }
+        .train-route { font-size: 0.85rem; color: #666; }
+        .train-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        
+        /* Akcje Plików */
+        .file-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .file-actions button, .file-actions label { flex: 1; min-width: 140px; text-align: center; }
+        .file-upload-label {
+            background: var(--secondary); color: white; padding: 12px 15px;
+            border-radius: 8px; cursor: pointer; font-weight: 600; display: block;
+        }
+        input[type="file"] { display: none; }
+
+        /* Stopka */
+        .main-footer { margin-top: auto; padding: 20px 0 10px 0; text-align: center; border-top: 1px solid #ddd; }
+        .footer-content p { margin: 5px 0; font-size: 0.85rem; color: #666; }
+        .app-version { font-weight: bold; color: var(--primary); }
+    </style>
+</head>
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <div class="container">
+        <h1>🚂 Edytor Bazy Pociągów</h1>
+
+        <div class="file-actions">
+            <label class="file-upload-label">
+                📂 Importuj trains.json
+                <input type="file" id="importFile" accept=".json" onchange="importJSON(event)">
+            </label>
+            <button class="btn-success" onclick="exportJSON()">💾 Pobierz trains.json</button>
+        </div>
+
+        <div class="card">
+            <h2 id="formTitle">
+                Dodaj Nowy Pociąg 
+                <span id="dictStatus" class="dict-status">Ładowanie słownika...</span>
+            </h2>
+            <div class="form-group">
+                <label for="nrPociagu">Numer Pociągu:</label>
+                <input type="number" id="nrPociagu" placeholder="Np. 12345">
+            </div>
+            <div class="form-group">
+                <label for="nazwaPociagu">Nazwa Pociągu (Opcjonalnie):</label>
+                <input type="text" id="nazwaPociagu" placeholder="Np. Wawel">
+            </div>
+
+            <div class="form-group">
+                <label>Trasa (Tylko stacje obecne w bazie kas):</label>
+                <div class="station-adder">
+                    <input type="text" id="nowaStacja" list="stationDictionary" placeholder="Zacznij wpisywać nazwę stacji...">
+                    <datalist id="stationDictionary"></datalist>
+                    <button type="button" onclick="addStation()">Dodaj</button>
+                </div>
+                <span class="station-hint">Zacznij pisać, a system podpowie stacje z bazy.</span>
+                
+                <div id="stationListPreview" class="station-list">
+                    </div>
+            </div>
+
+            <button class="btn-primary" id="saveBtn" onclick="saveTrain()">Zapisz Pociąg</button>
+            <button class="btn-secondary" id="cancelBtn" style="display:none; margin-top:10px; width: 100%;" onclick="resetForm()">Anuluj Edycję</button>
+        </div>
+
+        <div class="card">
+            <h2>Aktualna Baza Pociągów (<span id="trainCount">0</span>)</h2>
+            <div id="trainsListContainer">
+                </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>Projekt i wdrożenie: <strong>Piotr M 🚂</strong> oraz <strong>Gemini (AI)</strong></p>
+            <p class="app-version">Wersja aplikacji: v5.0</p>
+        </div>
+    </footer>
+
+    <script>
+        // Wersja: v5.0
+        const STORAGE_KEY = 'kasy_biletowe_editor_trains';
+        const DICT_CACHE_KEY = 'kasy_biletowe_editor_dict_cache';
+        
+        let trainsDatabase = [];
+        let availableStations = []; // Słownik stacji z plików JSON
+        let currentStations = [];
+        let editingIndex = -1;
+
+        // Lista plików z bazą kas do zbudowania słownika
+        const API_FILES = [
+            'data_arriva_rp.json', 'data_brak_kasy.json', 'data_koleje_dolnoslaskie.json',
+            'data_koleje_malopolskie.json', 'data_koleje_mazowieckie.json', 'data_koleje_slaskie.json',
+            'data_koleje_wielkopolskie.json', 'data_lka.json', 'data_pkp_intercity.json',
+            'data_polregio.json', 'data_skm.json'
+        ];
+
+        window.onload = () => {
+            // Ładowanie zapisanych pociągów z pamięci lokalnej
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try { trainsDatabase = JSON.parse(saved); } catch(e) { console.error("Błąd parsowania cache", e); }
+            }
+            renderTrainsList();
+            
+            // Budowa słownika stacji
+            buildStationDictionary();
+
+            // Nasłuchiwacz entera w polu stacji
+            document.getElementById('nowaStacja').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addStation();
+            });
+        };
+
+        // Zabezpieczenie przed XSS dla wyświetlania danych
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
+        }
+
+        // --- BUDOWA SŁOWNIKA STACJI (RESTRICTED INPUT) ---
+        async function buildStationDictionary() {
+            const dictStatus = document.getElementById('dictStatus');
+            try {
+                let allData = [];
+                for (const file of API_FILES) {
+                    try {
+                        const res = await fetch(file, { cache: "no-store" });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (Array.isArray(data)) allData.push(...data);
+                        }
+                    } catch(e) { console.warn(`Pominięto plik ${file} podczas budowania słownika.`); }
+                }
+
+                if (allData.length > 0) {
+                    // Wyciągnij unikalne nazwy i posortuj
+                    availableStations = [...new Set(allData.map(x => x.stacja))].sort((a,b) => a.localeCompare(b));
+                    localStorage.setItem(DICT_CACHE_KEY, JSON.stringify(availableStations));
+                    populateDataList();
+                    dictStatus.innerText = `Słownik: ${availableStations.length} stacji`;
+                    dictStatus.style.background = 'var(--open)';
+                } else {
+                    throw new Error("Puste pliki bazy");
+                }
+            } catch (err) {
+                console.warn("Błąd łączenia z serwerem, ładuję słownik z cache...", err);
+                const cachedDict = localStorage.getItem(DICT_CACHE_KEY);
+                if (cachedDict) {
+                    availableStations = JSON.parse(cachedDict);
+                    populateDataList();
+                    dictStatus.innerText = `Słownik (Offline): ${availableStations.length} stacji`;
+                    dictStatus.style.background = 'var(--break)';
+                    dictStatus.style.color = '#333';
+                } else {
+                    dictStatus.innerText = "Błąd słownika";
+                    dictStatus.style.background = 'var(--closed)';
+                }
+            }
+        }
+
+        function populateDataList() {
+            const dataList = document.getElementById('stationDictionary');
+            dataList.innerHTML = '';
+            availableStations.forEach(station => {
+                const opt = document.createElement('option');
+                opt.value = station;
+                dataList.appendChild(opt);
+            });
+        }
+
+        // --- ZARZĄDZANIE STACJAMI W FORMULARZU ---
+        function addStation() {
+            const input = document.getElementById('nowaStacja');
+            const stationName = input.value.trim();
+            if (stationName === '') return;
+
+            // WALIDACJA TWARDA: Czy wpisana stacja jest w słowniku?
+            if (availableStations.length > 0 && !availableStations.includes(stationName)) {
+                alert(`Błąd: Stacja "${stationName}" nie istnieje w głównej bazie kas!\nWybierz poprawną stację z rozwijanej listy podpowiedzi.`);
+                return;
+            }
+
+            currentStations.push(stationName);
+            input.value = '';
+            input.focus();
+            renderCurrentStations();
+        }
+
+        function removeStation(index) {
+            currentStations.splice(index, 1);
+            renderCurrentStations();
+        }
+
+        function renderCurrentStations() {
+            const container = document.getElementById('stationListPreview');
+            container.innerHTML = '';
+            
+            currentStations.forEach((station, index) => {
+                const badge = document.createElement('div');
+                badge.className = 'station-badge';
+                badge.innerHTML = `${escapeHTML(station)} <span onclick="removeStation(${index})">&times;</span>`;
+                container.appendChild(badge);
+            });
+        }
+
+        // --- ZARZĄDZANIE POCIĄGAMI ---
+        function saveTrain() {
+            const nrInput = document.getElementById('nrPociagu').value.trim();
+            const nazwaInput = document.getElementById('nazwaPociagu').value.trim();
+
+            if (!nrInput) {
+                alert("Podaj numer pociągu!");
+                return;
+            }
+            if (currentStations.length === 0) {
+                alert("Dodaj przynajmniej jedną stację do trasy!");
+                return;
+            }
+
+            const trainData = {
+                numer: nrInput,
+                nazwa: nazwaInput,
+                stacje: [...currentStations]
+            };
+
+            if (editingIndex >= 0) {
+                trainsDatabase[editingIndex] = trainData;
+            } else {
+                const exists = trainsDatabase.find(t => t.numer === nrInput);
+                if(exists) {
+                    if(!confirm("Pociąg o tym numerze już istnieje. Dodać mimo to?")) return;
+                }
+                trainsDatabase.push(trainData);
+            }
+
+            saveToMemory();
+            resetForm();
+            renderTrainsList();
+        }
+
+        function editTrain(index) {
+            const train = trainsDatabase[index];
+            document.getElementById('nrPociagu').value = train.numer;
+            document.getElementById('nazwaPociagu').value = train.nazwa || '';
+            currentStations = [...train.stacje];
+            
+            editingIndex = index;
+            document.getElementById('formTitle').childNodes[0].nodeValue = `Edycja Pociągu: ${train.numer} `;
+            document.getElementById('saveBtn').innerText = "Zapisz Zmiany";
+            document.getElementById('cancelBtn').style.display = 'block';
+            window.scrollTo(0, 0);
+            renderCurrentStations();
+        }
+
+        function deleteTrain(index) {
+            if (confirm(`Czy na pewno chcesz usunąć pociąg ${trainsDatabase[index].numer}?`)) {
+                trainsDatabase.splice(index, 1);
+                saveToMemory();
+                renderTrainsList();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('nrPociagu').value = '';
+            document.getElementById('nazwaPociagu').value = '';
+            document.getElementById('nowaStacja').value = '';
+            currentStations = [];
+            editingIndex = -1;
+            document.getElementById('formTitle').childNodes[0].nodeValue = "Dodaj Nowy Pociąg ";
+            document.getElementById('saveBtn').innerText = "Zapisz Pociąg";
+            document.getElementById('cancelBtn').style.display = 'none';
+            renderCurrentStations();
+        }
+
+        function renderTrainsList() {
+            const container = document.getElementById('trainsListContainer');
+            container.innerHTML = '';
+            document.getElementById('trainCount').innerText = trainsDatabase.length;
+
+            if (trainsDatabase.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#666;">Brak pociągów w bazie.</p>';
+                return;
+            }
+
+            trainsDatabase.forEach((train, index) => {
+                const item = document.createElement('div');
+                item.className = 'train-item';
+                
+                const nazwaText = train.nazwa ? ` (${escapeHTML(train.nazwa)})` : '';
+                const routeText = train.stacje.map(s => escapeHTML(s)).join(' ➔ ');
+
+                item.innerHTML = `
+                    <div class="train-header">
+                        <div class="train-title">Nr: ${escapeHTML(train.numer)}${nazwaText}</div>
+                    </div>
+                    <div class="train-route"><strong>Trasa:</strong> ${routeText}</div>
+                    <div class="train-actions">
+                        <button class="btn-secondary" style="padding: 6px 12px; font-size:0.85rem;" onclick="editTrain(${index})">Edytuj</button>
+                        <button class="btn-danger" onclick="deleteTrain(${index})">Usuń</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function saveToMemory() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(trainsDatabase));
+        }
+
+        // --- OBSŁUGA JSON ---
+        function exportJSON() {
+            if (trainsDatabase.length === 0) {
+                alert("Baza jest pusta, nie ma czego eksportować.");
+                return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(trainsDatabase, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "trains.json");
+            dlAnchorElem.click();
+            dlAnchorElem.remove();
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (Array.isArray(importedData)) {
+                        trainsDatabase = importedData;
+                        saveToMemory();
+                        renderTrainsList();
+                        alert("Baza pociągów zaimportowana pomyślnie!");
+                    } else {
+                        alert("Błąd: Plik nie zawiera poprawnej struktury tablicy.");
+                    }
+                } catch (err) {
+                    alert("Błąd parsowania pliku JSON. Upewnij się, że plik jest poprawny.");
+                }
+                event.target.value = ''; // reset
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
