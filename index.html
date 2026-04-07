@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0056b3">
-    <title>Asystent Kas Biletowych v5.3</title>
+    <title>Asystent Kas Biletowych v5.4</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
@@ -21,6 +21,7 @@
             --open: #28a745;
             --closed: #dc3545;
             --break: #ffc107;
+            --secondary: #6c757d;
             --holiday: #6f42c1;
             --text: #333;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -134,6 +135,7 @@
         .bg-open { background: linear-gradient(135deg, #28a745, #1e7e34); }
         .bg-break { background: linear-gradient(135deg, #ffc107, #d39e00); color: #212529 !important; }
         .bg-closed { background: linear-gradient(135deg, #dc3545, #bd2130); }
+        .bg-secondary { background: var(--secondary); }
         .bg-train { background: var(--primary); }
 
         /* CARDS */
@@ -249,12 +251,12 @@
     <footer class="main-footer">
         <div class="footer-content">
             <p>Projekt i wdrożenie: <strong>Piotr M 🚂</strong> oraz <strong>Gemini (AI)</strong></p>
-            <p class="app-version">Wersja aplikacji: v5.3</p>
+            <p class="app-version">Wersja aplikacji: v5.4</p>
         </div>
     </footer>
 
 <script>
-    // ================= KONFIGURACJA v5.3 =================
+    // ================= KONFIGURACJA v5.4 =================
     const STORAGE_KEY = 'kasy_biletowe_v5_data';
     const SYNC_KEY = 'kasy_biletowe_v5_sync';
     const TRAINS_KEY = 'kasy_biletowe_v5_trains';
@@ -285,7 +287,6 @@
     };
 
     // ================= HELPERY DANYCH & XSS =================
-    // Niezawodne pobieranie danych
     function getField(kasa, category, field) {
         if (kasa[category] && kasa[category][field] !== undefined) return kasa[category][field];
         if (kasa[`${category}.${field}`] !== undefined) return kasa[`${category}.${field}`];
@@ -299,7 +300,6 @@
         }[tag] || tag));
     }
 
-    // Bezpieczne pobieranie linku pomimo wielkości liter (np. pkp intercity == PKP INTERCITY)
     function getCarrierLink(carrierName) {
         if (!carrierName) return null;
         const upperName = carrierName.toUpperCase();
@@ -338,7 +338,6 @@
         document.getElementById('detailsList').style.display = 'none';
     }
 
-    // Funkcja do "przeskakiwania" z widoku pociągu na konkretną stację
     function jumpToStation(stationName) {
         const sel = document.getElementById('stationSelect');
         Array.from(sel.options).forEach(opt => {
@@ -348,7 +347,7 @@
         });
         switchMode('station');
         triggerSearch();
-        window.scrollTo(0, 0); // Przewiń do góry
+        window.scrollTo(0, 0); 
     }
 
     // ================= KALENDARZ ŚWIĄT =================
@@ -479,7 +478,6 @@
         dl.innerHTML = '';
         bazaPociagow.forEach(p => {
             const opt = document.createElement('option');
-            // Podpowiadamy numer z nazwą
             opt.value = p.numer;
             opt.textContent = p.nazwa ? `${p.numer} (${p.nazwa})` : p.numer;
             dl.appendChild(opt);
@@ -545,13 +543,17 @@
     function generujKartyStacji(kasy, swieto, day, dayType, listContainer, mainBox) {
         let anyOpen = false;
         let anyBreak = false;
+        let anyClosed = false;
+        let anyBrak = false;
 
         kasy.forEach(k => {
             const st = obliczStatus(k, swieto, day);
             if(st.type === 'open') anyOpen = true;
-            if(st.type === 'break') anyBreak = true;
+            else if(st.type === 'break') anyBreak = true;
+            else if(st.type === 'closed') anyClosed = true;
+            else if(st.type === 'brak') anyBrak = true;
 
-            const link = getCarrierLink(k.przewoznik); // Użycie bezpiecznej funkcji (Case Insensitive)
+            const link = getCarrierLink(k.przewoznik); 
             const uwagiHtml = k.uwagi ? `<div class="notes-section"><strong>UWAGI:</strong> ${escapeHTML(k.uwagi)}</div>` : '';
 
             const html = `
@@ -592,8 +594,10 @@
             mainBox.innerText = "KASA CZYNNA"; mainBox.classList.add('bg-open');
         } else if(anyBreak) {
             mainBox.innerText = "PRZERWA"; mainBox.classList.add('bg-break');
-        } else {
+        } else if(anyClosed) {
             mainBox.innerText = "NIECZYNNE"; mainBox.classList.add('bg-closed');
+        } else {
+            mainBox.innerText = "BRAK KASY"; mainBox.classList.add('bg-secondary');
         }
         listContainer.style.display = 'block';
     }
@@ -611,26 +615,32 @@
         pociag.stacje.forEach(stacjaReq => {
             const kasyNaStacji = bazaDanych.filter(k => k.stacja && k.stacja.toUpperCase() === stacjaReq.toUpperCase());
             
-            let stStatus = 'brak';
-            let stText = 'BRAK';
+            let stStatus = 'nodata';
+            let stText = 'BRAK DANYCH';
             let stColor = '#6c757d';
 
             if (kasyNaStacji.length > 0) {
                 let hasOpen = false;
                 let hasBreak = false;
+                let hasClosed = false;
+                let hasBrakKasy = false;
                 
                 kasyNaStacji.forEach(k => {
                     let s = obliczStatus(k, swieto, day);
                     if(s.type === 'open') hasOpen = true;
-                    if(s.type === 'break') hasBreak = true;
+                    else if(s.type === 'break') hasBreak = true;
+                    else if(s.type === 'closed') hasClosed = true;
+                    else if(s.type === 'brak') hasBrakKasy = true;
                 });
                 
                 if(hasOpen) {
                     stStatus = 'open'; stText = 'CZYNNA'; stColor = '#28a745';
                 } else if(hasBreak) {
                     stStatus = 'break'; stText = 'PRZERWA'; stColor = '#ffc107';
-                } else {
+                } else if(hasClosed) {
                     stStatus = 'closed'; stText = 'NIECZYNNA'; stColor = '#dc3545';
+                } else if(hasBrakKasy) {
+                    stStatus = 'brak'; stText = 'BRAK KASY'; stColor = '#6c757d';
                 }
             }
 
@@ -663,7 +673,7 @@
         const h_nd = getField(kasa, 'godziny', 'nd');
 
         if(!h_pn && !h_sob && !h_nd) {
-             return { type: 'brak', text: 'BRAK DANYCH', color: '#6c757d' };
+             return { type: 'nodata', text: 'BRAK DANYCH', color: '#6c757d' };
         }
 
         let hStr, bStr;
@@ -671,7 +681,11 @@
         else if(dayOfWeek === 6) { hStr = h_sob; bStr = getField(kasa, 'przerwy', 'sob'); } 
         else { hStr = h_pn; bStr = getField(kasa, 'przerwy', 'pn_pt'); }
 
-        if(!hStr || hStr.toLowerCase().includes('nieczynne') || hStr.toLowerCase().includes('zamknięte') || hStr.toLowerCase().includes('brak')) {
+        if(!hStr || hStr.toLowerCase().includes('brak')) {
+            return { type: 'brak', text: 'BRAK KASY', color: '#6c757d' };
+        }
+
+        if(hStr.toLowerCase().includes('nieczynne') || hStr.toLowerCase().includes('zamknięte')) {
             return { type: 'closed', text: 'NIECZYNNA', color: '#dc3545' };
         }
 
@@ -679,7 +693,6 @@
         const min = now.getHours() * 60 + now.getMinutes();
         let isOpen = false;
 
-        // POPRAWKA DLA WARSZAWY CENTRALNEJ (CAŁODOBOWO)
         if(hStr.toLowerCase().includes('całodobowo') || hStr.includes('00:00-23:59')) {
             isOpen = true;
         } else {
