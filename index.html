@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0056b3">
-    <title>Asystent Kas Biletowych v5.1</title>
+    <title>Asystent Kas Biletowych v5.2</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
@@ -135,6 +135,7 @@
         .bg-open { background: linear-gradient(135deg, #28a745, #1e7e34); }
         .bg-break { background: linear-gradient(135deg, #ffc107, #d39e00); color: #212529 !important; }
         .bg-closed { background: linear-gradient(135deg, #dc3545, #bd2130); }
+        .bg-train { background: var(--primary); }
 
         /* CARDS */
         .details-container { display: none; }
@@ -145,7 +146,7 @@
         .status-pill { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: white; text-transform: uppercase; text-align: center; }
         .notes-section { background-color: #fff3cd; color: #856404; padding: 10px 15px; font-size: 0.9rem; border-top: 1px solid #ffeb8f; font-weight: 600; }
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f1f1f1; vertical-align: top; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f1f1f1; vertical-align: middle; }
         th { color: #666; width: 35%; font-weight: normal; }
         .active-row { background-color: #e8f5e9; color: #1b5e20; }
         .active-row th { color: #1b5e20; font-weight: 700; }
@@ -224,7 +225,7 @@
             <div id="searchTrainBox" style="display:none;">
                 <label for="trainInput">Wpisz numer pociągu:</label>
                 <input type="number" id="trainInput" placeholder="Np. 12345" oninput="triggerSearch()">
-                <div class="search-notice" id="trainNotice">ℹ️ Prezentowany status to stan na obecną chwilę.</div>
+                <div class="search-notice" id="trainNotice">ℹ️ Statusy stacji aktualne na moment wyszukiwania.</div>
             </div>
         </div>
 
@@ -243,7 +244,7 @@
     <footer class="main-footer">
         <div class="footer-content">
             <p>Projekt i wdrożenie: <strong>Piotr M 🚂</strong> oraz <strong>Gemini (AI)</strong></p>
-            <p class="app-version">Wersja aplikacji: v5.1</p>
+            <p class="app-version">Wersja aplikacji: v5.2</p>
         </div>
     </footer>
 
@@ -278,8 +279,14 @@
         "Szybka Kolej Miejska w Trójmieście": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow", "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow"
     };
 
-    // ================= XSS PROTECTION =================
-    // Bezpieczne wstawianie tekstu zapobiegające XSS (Zalecenie CodeQL)
+    // ================= HELPER DANYCH & XSS =================
+    // Niezawodne pobieranie danych (obsługuje zagnieżdżone obiekty z CSV/JSON i płaskie)
+    function getField(kasa, category, field) {
+        if (kasa[category] && kasa[category][field] !== undefined) return kasa[category][field];
+        if (kasa[`${category}.${field}`] !== undefined) return kasa[`${category}.${field}`];
+        return null;
+    }
+
     function escapeHTML(str) {
         if (!str) return '';
         return String(str).replace(/[&<>'"]/g, tag => ({
@@ -288,9 +295,7 @@
     }
 
     // ================= MENU & UI =================
-    function toggleMenu() {
-        document.getElementById('menuOverlay').classList.toggle('active');
-    }
+    function toggleMenu() { document.getElementById('menuOverlay').classList.toggle('active'); }
 
     function switchMode(mode) {
         currentMode = mode;
@@ -300,7 +305,6 @@
         document.getElementById('searchTrainBox').style.display = mode === 'train' ? 'block' : 'none';
         document.getElementById('trainNotice').style.display = mode === 'train' ? 'block' : 'none';
         
-        // Ukryj wyniki przy przełączaniu
         document.getElementById('mainStatusBox').style.display = 'none';
         document.getElementById('detailsList').style.display = 'none';
     }
@@ -339,7 +343,6 @@
 
         try {
             let combinedData = [];
-            // Pobieranie wszystkich segmentów
             for (const file of API_FILES) {
                 try {
                     const res = await fetch(file, { cache: "no-store" });
@@ -347,19 +350,17 @@
                         const data = await res.json();
                         if(Array.isArray(data)) combinedData.push(...data);
                     }
-                } catch(e) { console.warn(`Pominięto plik ${file}`, e); }
+                } catch(e) { console.warn(`Pominięto plik ${file}`); }
             }
 
-            // Pobieranie pociągów
             let loadedTrains = [];
             try {
                 const resTrain = await fetch('trains.json', { cache: "no-store" });
                 if(resTrain.ok) loadedTrains = await resTrain.json();
-            } catch(e) { console.warn('Brak pliku trains.json', e); }
+            } catch(e) { console.warn('Brak pliku trains.json'); }
 
-            if(combinedData.length === 0) throw new Error("Wszystkie segmenty puste");
+            if(combinedData.length === 0) throw new Error("Puste segmenty");
 
-            // Sukces - zapisz do pamięci
             localStorage.setItem(STORAGE_KEY, JSON.stringify(combinedData));
             localStorage.setItem(TRAINS_KEY, JSON.stringify(loadedTrains));
             
@@ -375,7 +376,6 @@
             zbudujSelect();
 
         } catch (e) {
-            // Fallback Offline
             const cachedData = localStorage.getItem(STORAGE_KEY);
             const cachedTrains = localStorage.getItem(TRAINS_KEY);
             const cachedSync = localStorage.getItem(SYNC_KEY);
@@ -396,10 +396,7 @@
         }
     }
 
-    function forceSync() {
-        toggleMenu();
-        pobierzDane(true);
-    }
+    function forceSync() { toggleMenu(); pobierzDane(true); }
 
     // ================= INTERFEJS I ZEGAR =================
     function initZegar() {
@@ -423,11 +420,10 @@
         const saved = sel.value;
         sel.innerHTML = '<option value="">-- Wybierz stację --</option>';
 
-        const stacje = [...new Set(bazaDanych.map(x => x.stacja))].sort((a,b) => a.localeCompare(b));
+        const stacje = [...new Set(bazaDanych.map(x => x.stacja))].filter(Boolean).sort((a,b) => a.localeCompare(b));
         stacje.forEach(s => {
             const opt = document.createElement('option');
-            opt.value = s;
-            opt.textContent = s; // Zabezpieczenie przed XSS
+            opt.value = s; opt.textContent = s;
             sel.appendChild(opt);
         });
         if(saved && stacje.includes(saved)) {
@@ -443,9 +439,8 @@
         
         mainBox.style.display = 'none';
         listContainer.style.display = 'none';
-        loader.style.display = 'block'; // Pokazuj szkielet
+        loader.style.display = 'block';
 
-        // Opoznienie dla efektu renderowania i uspokojenia UI
         setTimeout(() => {
             loader.style.display = 'none';
             wyswietlWidok();
@@ -466,18 +461,17 @@
             const nazwa = document.getElementById('stationSelect').value;
             if(!nazwa) return;
 
-            // GTM DataLayer Push
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({'event': 'search_station', 'station_name': nazwa});
 
-            const kasy = bazaDanych.filter(k => k.stacja === nazwa);
-            generujKarty(kasy, swieto, day, dayType, listContainer, mainBox);
+            // Pobieranie stacji wg nazwy (odporne na wielkość liter)
+            const kasy = bazaDanych.filter(k => k.stacja && k.stacja.toUpperCase() === nazwa.toUpperCase());
+            generujKartyStacji(kasy, swieto, day, dayType, listContainer, mainBox);
 
         } else if (currentMode === 'train') {
             const nrPociagu = document.getElementById('trainInput').value.trim();
-            if(!nrPociagu || nrPociagu.length < 2) return; // Szukaj gdy wpisano coś sensownego
+            if(!nrPociagu || nrPociagu.length < 2) return;
 
-            // GTM DataLayer Push
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({'event': 'search_train', 'train_number': nrPociagu});
 
@@ -488,27 +482,17 @@
                 return;
             }
 
-            // Zbierz kasy dla wszystkich stacji tego pociągu
-            let kasyPociagu = [];
-            pociag.stacje.forEach(stacja => {
-                const kasyNaStacji = bazaDanych.filter(k => k.stacja === stacja);
-                if(kasyNaStacji.length > 0) {
-                    kasyPociagu.push(...kasyNaStacji);
-                } else {
-                    // Generuj atrapę jeśli stacja nie ma wpisu
-                    kasyPociagu.push({ stacja: stacja, przewoznik: "Brak danych", godziny: {pn_pt:"",sob:"",nd:""}, przerwy: {} });
-                }
-            });
-
-            generujKarty(kasyPociagu, swieto, day, dayType, listContainer, mainBox, true);
+            generujWidokTrasy(pociag, swieto, day, listContainer, mainBox);
         }
     }
 
-    function generujKarty(kasy, swieto, day, dayType, listContainer, mainBox, isTrainMode = false) {
+    // ================= GENEROWANIE WIDOKÓW =================
+    
+    // WIDOK 1: STACJA (szczegółowe okienka)
+    function generujKartyStacji(kasy, swieto, day, dayType, listContainer, mainBox) {
         let anyOpen = false;
         let anyBreak = false;
 
-        console.log(kasy)
         kasy.forEach(k => {
             const st = obliczStatus(k, swieto, day);
             if(st.type === 'open') anyOpen = true;
@@ -516,15 +500,12 @@
 
             const link = BAZA_LINKOW[k.przewoznik] || null;
             const uwagiHtml = k.uwagi ? `<div class="notes-section"><strong>UWAGI:</strong> ${escapeHTML(k.uwagi)}</div>` : '';
-            
-            // W trybie pociągu chcemy widzieć nazwę stacji w nagłówku karty
-            const headerText = isTrainMode ? `${escapeHTML(k.stacja)} - ${escapeHTML(k.przewoznik)}` : escapeHTML(k.przewoznik);
 
             const html = `
             <div class="card" style="border-left-color: ${st.color}">
                 <div class="card-header">
                     <div>
-                        <div class="carrier-title">${headerText}</div>
+                        <div class="carrier-title">${escapeHTML(k.przewoznik)}</div>
                         <div class="epa-info">EPA: ${escapeHTML(k.epa || 'Brak')}</div>
                     </div>
                     <div class="status-pill" style="background-color: ${st.color}; color: ${st.type==='break'?'#333':'white'}">
@@ -535,51 +516,119 @@
                 <table>
                     <tr class="${dayType==='pn_pt'?'active-row':''}">
                         <th>Pn - Pt</th>
-                        <td>${escapeHTML(k["godziny.pn_pt"])} <br> <small style="color:#777">Przerwa: ${escapeHTML(k["przerwy.pn_pt"]||'-')}</small></td>
+                        <td>${escapeHTML(getField(k, 'godziny', 'pn_pt'))} <br> <small style="color:#777">Przerwa: ${escapeHTML(getField(k, 'przerwy', 'pn_pt')||'-')}</small></td>
                     </tr>
                     <tr class="${dayType==='sob'?'active-row':''}">
                         <th>Sobota</th>
-                        <td>${escapeHTML(k["godziny.sob"])} <br> <small style="color:#777">Przerwa: ${escapeHTML(k["przerwy.sob"]||'-')}</small></td>
+                        <td>${escapeHTML(getField(k, 'godziny', 'sob'))} <br> <small style="color:#777">Przerwa: ${escapeHTML(getField(k, 'przerwy', 'sob')||'-')}</small></td>
                     </tr>
                     <tr class="${dayType==='nd'?'active-row':''}">
                         <th>Ndz / Św</th>
-                        <td>${escapeHTML(k["przerwy.nd"])} <br> <small style="color:#777">Przerwa: ${escapeHTML(k["przerwy.nd"]||'-')}</small></td>
+                        <td>${escapeHTML(getField(k, 'godziny', 'nd'))} <br> <small style="color:#777">Przerwa: ${escapeHTML(getField(k, 'przerwy', 'nd')||'-')}</small></td>
                     </tr>
                 </table>
                 ${link ? `<a href="${link}" target="_blank" class="btn-link">Wykaz kas: ${escapeHTML(k.przewoznik)} &raquo;</a>` : ''}
-                <div class="meta-footer">Dane: ${escapeHTML(k['meta.data'] || '-')} | ${escapeHTML(k['meta.kto'] || '-')}</div>
+                <div class="meta-footer">Dane: ${escapeHTML(getField(k, 'meta', 'data') || '-')} | ${escapeHTML(getField(k, 'meta', 'kto') || '-')}</div>
             </div>`;
-            listContainer.innerHTML += html; // Wstrzykujemy bezpiecznie sformatowany HTML
+            listContainer.innerHTML += html;
         });
 
         mainBox.style.display = 'block';
         mainBox.className = ''; 
         if(anyOpen) {
-            mainBox.innerText = isTrainMode ? "TRASA: KASY CZYNNE" : "KASA CZYNNA";
-            mainBox.classList.add('bg-open');
+            mainBox.innerText = "KASA CZYNNA"; mainBox.classList.add('bg-open');
         } else if(anyBreak) {
-            mainBox.innerText = isTrainMode ? "TRASA: PRZERWY" : "PRZERWA";
-            mainBox.classList.add('bg-break');
+            mainBox.innerText = "PRZERWA"; mainBox.classList.add('bg-break');
         } else {
-            mainBox.innerText = isTrainMode ? "TRASA: NIECZYNNE" : "NIECZYNNE";
-            mainBox.classList.add('bg-closed');
+            mainBox.innerText = "NIECZYNNE"; mainBox.classList.add('bg-closed');
         }
+        listContainer.style.display = 'block';
+    }
+
+    // WIDOK 2: POCIĄG (Lista stacji i zbiorczy status dla każdej)
+    function generujWidokTrasy(pociag, swieto, day, listContainer, mainBox) {
+        let nazwaPociagu = pociag.nazwa ? ` (${escapeHTML(pociag.nazwa)})` : '';
+        let html = `
+        <div class="card" style="border-left-color: var(--primary)">
+            <div class="card-header" style="background: var(--primary); color: white;">
+                <div class="carrier-title" style="color: white; font-size: 1.2rem;">Trasa: ${escapeHTML(pociag.numer)}${nazwaPociagu}</div>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 5px;">`;
+
+        pociag.stacje.forEach(stacjaReq => {
+            // Szukamy stacji ignorując wielkość liter (w JSONie pociągowym stacje mają CapsLock)
+            const kasyNaStacji = bazaDanych.filter(k => k.stacja && k.stacja.toUpperCase() === stacjaReq.toUpperCase());
+            
+            let stStatus = 'brak';
+            let stText = 'BRAK';
+            let stColor = '#6c757d'; // Szary
+
+            if (kasyNaStacji.length > 0) {
+                let hasOpen = false;
+                let hasBreak = false;
+                
+                kasyNaStacji.forEach(k => {
+                    let s = obliczStatus(k, swieto, day);
+                    if(s.type === 'open') hasOpen = true;
+                    if(s.type === 'break') hasBreak = true;
+                });
+                
+                if(hasOpen) {
+                    stStatus = 'open'; stText = 'CZYNNA'; stColor = '#28a745';
+                } else if(hasBreak) {
+                    stStatus = 'break'; stText = 'PRZERWA'; stColor = '#ffc107';
+                } else {
+                    stStatus = 'closed'; stText = 'NIECZYNNA'; stColor = '#dc3545';
+                }
+            }
+
+            html += `
+            <tr>
+                <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">
+                    <strong>${escapeHTML(stacjaReq)}</strong>
+                </td>
+                <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: right;">
+                    <span class="status-pill" style="background-color: ${stColor}; color: ${stStatus === 'break' ? '#333' : 'white'}">${stText}</span>
+                </td>
+            </tr>`;
+        });
+
+        html += `</table></div>`;
+        listContainer.innerHTML = html;
+
+        mainBox.style.display = 'block';
+        mainBox.className = 'bg-train'; 
+        mainBox.innerText = `POCIĄG ${escapeHTML(pociag.numer)}`;
         listContainer.style.display = 'block';
     }
 
     // ================= KALKULATOR =================
     function obliczStatus(kasa, swieto, dayOfWeek) {
-        if(!kasa['godziny.pn_pt'] && !kasa['godziny.sob'] && !kasa['godziny.nd']) {
-             return { type: 'closed', text: 'BRAK DANYCH', color: '#6c757d' };
+        const h_pn = getField(kasa, 'godziny', 'pn_pt');
+        const h_sob = getField(kasa, 'godziny', 'sob');
+        const h_nd = getField(kasa, 'godziny', 'nd');
+
+        if(!h_pn && !h_sob && !h_nd) {
+             return { type: 'brak', text: 'BRAK DANYCH', color: '#6c757d' };
         }
 
         let hStr, bStr;
-        if(swieto || dayOfWeek === 0) { hStr = kasa['godziny.nd']; bStr = kasa['przerwy.nd']; } 
-        else if(dayOfWeek === 6) { hStr = kasa['godziny.sob']; bStr = kasa['przerwy.sob']; } 
-        else { hStr = kasa['godziny.pn_pt']; bStr = kasa['przerwy.pn_pt']; }
+        if(swieto || dayOfWeek === 0) { 
+            hStr = h_nd; 
+            bStr = getField(kasa, 'przerwy', 'nd'); 
+        } 
+        else if(dayOfWeek === 6) { 
+            hStr = h_sob; 
+            bStr = getField(kasa, 'przerwy', 'sob'); 
+        } 
+        else { 
+            hStr = h_pn; 
+            bStr = getField(kasa, 'przerwy', 'pn_pt'); 
+        }
 
-        if(!hStr || hStr.toLowerCase().includes('nieczynne') || hStr.toLowerCase().includes('zamknięte')) {
-            return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
+        // Poprawka dla braku kasy (wykrywanie wpisów typu "Brak", "Nieczynne")
+        if(!hStr || hStr.toLowerCase().includes('nieczynne') || hStr.toLowerCase().includes('zamknięte') || hStr.toLowerCase().includes('brak')) {
+            return { type: 'closed', text: 'NIECZYNNA', color: '#dc3545' };
         }
 
         const now = new Date();
@@ -587,10 +636,13 @@
         const [open, close] = parseRange(hStr);
 
         let isOpen = false;
-        if(open <= close) { if(min >= open && min < close) isOpen = true; } 
-        else { if(min >= open || min < close) isOpen = true; }
+        if(open <= close) { 
+            if(min >= open && min < close) isOpen = true; 
+        } else { 
+            if(min >= open || min < close) isOpen = true; 
+        }
 
-        if(!isOpen) return { type: 'closed', text: 'ZAMKNIĘTA', color: '#dc3545' };
+        if(!isOpen) return { type: 'closed', text: 'NIECZYNNA', color: '#dc3545' };
 
         if(bStr && bStr.length > 3 && !bStr.toLowerCase().includes('brak')) {
             const breaks = bStr.split(';');
@@ -599,7 +651,7 @@
                 if(min >= bStart && min < bEnd) return { type: 'break', text: 'PRZERWA', color: '#ffc107' };
             }
         }
-        return { type: 'open', text: 'OTWARTA', color: '#28a745' };
+        return { type: 'open', text: 'CZYNNA', color: '#28a745' };
     }
 
     function parseTime(t) {
