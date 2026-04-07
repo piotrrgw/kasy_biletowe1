@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0056b3">
-    <title>Asystent Kas Biletowych v5.5</title>
+    <title>Asystent Kas Biletowych v5.6</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
@@ -251,12 +251,12 @@
     <footer class="main-footer">
         <div class="footer-content">
             <p>Projekt i wdrożenie: <strong>Piotr M 🚂</strong> oraz <strong>Gemini (AI)</strong></p>
-            <p class="app-version">Wersja aplikacji: v5.5</p>
+            <p class="app-version">Wersja aplikacji: v5.6</p>
         </div>
     </footer>
 
 <script>
-    // ================= KONFIGURACJA v5.5 =================
+    // ================= KONFIGURACJA v5.6 =================
     const STORAGE_KEY = 'kasy_biletowe_v5_data';
     const SYNC_KEY = 'kasy_biletowe_v5_sync';
     const TRAINS_KEY = 'kasy_biletowe_v5_trains';
@@ -666,13 +666,20 @@
         listContainer.style.display = 'block';
     }
 
-    // ================= NOWY SILNIK KALKULATORA CZASU (Regex) =================
+    // ================= NOWY SILNIK KALKULATORA CZASU (Regex + Złota Reguła) =================
     function obliczStatus(kasa, swieto, dayOfWeek) {
+        
+        // ZŁOTA REGUŁA (Override): Jeśli wpisano, że przewoźnikiem jest "BRAK"
+        const przewoznik = getField(kasa, 'przewoznik');
+        if (przewoznik && przewoznik.toUpperCase().trim() === 'BRAK') {
+            return { type: 'brak', text: 'BRAK KASY', color: '#6c757d' };
+        }
+
         const h_pn = getField(kasa, 'godziny', 'pn_pt');
         const h_sob = getField(kasa, 'godziny', 'sob');
         const h_nd = getField(kasa, 'godziny', 'nd');
 
-        // Brak wpisów w ogóle
+        // Brak wpisów w ogóle w godzinach
         if(!h_pn && !h_sob && !h_nd) {
              return { type: 'nodata', text: 'BRAK DANYCH', color: '#6c757d' };
         }
@@ -682,12 +689,12 @@
         else if(dayOfWeek === 6) { hStr = h_sob; bStr = getField(kasa, 'przerwy', 'sob'); } 
         else { hStr = h_pn; bStr = getField(kasa, 'przerwy', 'pn_pt'); }
 
-        // Puste pole
+        // Puste pole na dany dzień
         if(!hStr) return { type: 'brak', text: 'BRAK KASY', color: '#6c757d' };
 
         const strLower = hStr.toLowerCase().trim();
 
-        // 1. Sprawdzanie fizycznego braku kasy (wyłapuje myślnik, "brak", etc.)
+        // 1. Sprawdzanie fizycznego braku kasy zadeklarowanego w oknie godzin
         if(strLower === '-' || strLower === '' || strLower.includes('brak')) {
             return { type: 'brak', text: 'BRAK KASY', color: '#6c757d' };
         }
@@ -705,7 +712,7 @@
         if(strLower.includes('całodobowo') || strLower.includes('calodobowo') || strLower.includes('00:00-23:59') || strLower.includes('00:00-24:00')) {
             isOpen = true;
         } else {
-            // 4. Zaawansowane szukanie godzin (Regex łapie np. 06.00-18.00, 6:00 do 18:00, 06:00-10:00 i 14:00-18:00)
+            // 4. Zaawansowane szukanie godzin
             const regex = /(\d{1,2})[:.](\d{2})\s*(?:-|do)\s*(\d{1,2})[:.](\d{2})/g;
             let match;
             
