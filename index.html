@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0056b3">
-    <title>Asystent Kas Biletowych v5.2</title>
+    <title>Asystent Kas Biletowych v5.3</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
@@ -69,7 +69,7 @@
         .menu-section p { font-size: 0.9rem; line-height: 1.5; color: #555; }
         .btn-sync {
             width: 100%; padding: 12px; background: var(--primary); color: #fff;
-            border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px;
         }
 
         /* INFO BARS */
@@ -109,8 +109,7 @@
         /* SKELETON LOADER */
         .skeleton-wrapper { display: none; }
         .skeleton-card {
-            background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 15px;
-            box-shadow: var(--shadow);
+            background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: var(--shadow);
         }
         .skeleton-line {
             height: 15px; background: #e0e0e0; border-radius: 4px; margin-bottom: 10px;
@@ -153,6 +152,9 @@
         .btn-link { display: block; text-align: center; margin: 15px; color: var(--primary); text-decoration: none; font-weight: 600; border: 2px solid #e9ecef; background: #f8f9fa; padding: 12px; border-radius: 8px; }
         .meta-footer { font-size: 0.7rem; color: #95a5a6; text-align: right; padding: 8px 15px; background: #fff; }
 
+        .station-clickable { color: var(--primary); text-decoration: underline; cursor: pointer; font-weight: bold; }
+        .station-clickable:hover { color: #003d82; }
+
         /* FOOTER & UPDATE BANNER */
         .main-footer {
             margin-top: auto; padding: 20px 0 10px 0; text-align: center; border-top: 1px solid #ddd;
@@ -172,21 +174,23 @@
 <body>
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    
     <div id="menuOverlay" class="menu-overlay">
         <div class="menu-content">
             <div class="menu-close" onclick="toggleMenu()">✕</div>
             
             <div class="menu-section">
-                <h3>Opcje</h3>
-                <button class="btn-sync" onclick="forceSync()">🔄 Wymuś odświeżenie bazy</button>
+                <h3>Opcje Systemowe</h3>
+                <button class="btn-sync" onclick="forceSync()">🔄 Odśwież bazę (Miękkie)</button>
+                <button class="btn-sync" style="background: var(--closed);" onclick="hardReinstall()">⚙️ Twardy Reinstall (Naprawa)</button>
             </div>
 
             <div class="menu-section">
                 <h3>Instrukcja obsługi</h3>
-                <p><strong>1. Wybór trybu:</strong> Użyj przełącznika, aby szukać po nazwie stacji lub wpisać numer pociągu.</p>
-                <p><strong>2. Praca Offline:</strong> Aplikacja działa bez internetu po pierwszym załadowaniu. Data ostatniej synchronizacji widoczna jest na ekranie głównym.</p>
-                <p><strong>3. Statusy:</strong> Zielony (Otwarta), Żółty (Przerwa), Czerwony (Zamknięta/Awaria).</p>
-                <p><strong>4. Pociągi:</strong> Wyświetla status kas na stacjach po drodze pociągu (stan na chwilę wyszukiwania).</p>
+                <p><strong>Wybór trybu:</strong> Użyj przycisków na górze, aby przełączyć się między wyszukiwaniem po "Stacji", a po "Numerze Pociągu".</p>
+                <p><strong>Pociągi:</strong> Wpisz numer pociągu (system podpowie Ci wyniki z bazy). Zobaczysz zbiorczy status dla stacji na całej trasie. Kliknij w stację, aby zobaczyć szczegóły (okienka kasowe).</p>
+                <p><strong>Praca Offline:</strong> Gdy nie masz zasięgu, na górze ekranu zapali się "Sieć: Offline", a aplikacja użyje danych pobranych ostatnio. Zawsze masz dostęp do bazy!</p>
+                <p><strong>Awaria aplikacji?</strong> Jeśli coś nie działa lub widzisz stare dane, rozwiń to menu i kliknij czerwony przycisk "Twardy Reinstall".</p>
             </div>
         </div>
     </div>
@@ -224,8 +228,9 @@
 
             <div id="searchTrainBox" style="display:none;">
                 <label for="trainInput">Wpisz numer pociągu:</label>
-                <input type="number" id="trainInput" placeholder="Np. 12345" oninput="triggerSearch()">
-                <div class="search-notice" id="trainNotice">ℹ️ Statusy stacji aktualne na moment wyszukiwania.</div>
+                <input type="text" inputmode="numeric" id="trainInput" list="trainsDictionary" placeholder="Zacznij wpisywać numer..." oninput="triggerSearch()">
+                <datalist id="trainsDictionary"></datalist>
+                <div class="search-notice" id="trainNotice">ℹ️ Statusy stacji aktualne na moment wyszukiwania. Możesz kliknąć w stację.</div>
             </div>
         </div>
 
@@ -244,12 +249,12 @@
     <footer class="main-footer">
         <div class="footer-content">
             <p>Projekt i wdrożenie: <strong>Piotr M 🚂</strong> oraz <strong>Gemini (AI)</strong></p>
-            <p class="app-version">Wersja aplikacji: v5.2</p>
+            <p class="app-version">Wersja aplikacji: v5.3</p>
         </div>
     </footer>
 
 <script>
-    // ================= KONFIGURACJA =================
+    // ================= KONFIGURACJA v5.3 =================
     const STORAGE_KEY = 'kasy_biletowe_v5_data';
     const SYNC_KEY = 'kasy_biletowe_v5_sync';
     const TRAINS_KEY = 'kasy_biletowe_v5_trains';
@@ -279,8 +284,8 @@
         "Szybka Kolej Miejska w Trójmieście": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow", "PKP SKM": "https://www.skm.pkp.pl/dla-pasazera/taryfy-i-przepisy/wykaz-kas-i-automatow"
     };
 
-    // ================= HELPER DANYCH & XSS =================
-    // Niezawodne pobieranie danych (obsługuje zagnieżdżone obiekty z CSV/JSON i płaskie)
+    // ================= HELPERY DANYCH & XSS =================
+    // Niezawodne pobieranie danych
     function getField(kasa, category, field) {
         if (kasa[category] && kasa[category][field] !== undefined) return kasa[category][field];
         if (kasa[`${category}.${field}`] !== undefined) return kasa[`${category}.${field}`];
@@ -294,8 +299,32 @@
         }[tag] || tag));
     }
 
-    // ================= MENU & UI =================
+    // Bezpieczne pobieranie linku pomimo wielkości liter (np. pkp intercity == PKP INTERCITY)
+    function getCarrierLink(carrierName) {
+        if (!carrierName) return null;
+        const upperName = carrierName.toUpperCase();
+        for (let key in BAZA_LINKOW) {
+            if (key.toUpperCase() === upperName) return BAZA_LINKOW[key];
+        }
+        return null;
+    }
+
+    // ================= MENU & NARZĘDZIA =================
     function toggleMenu() { document.getElementById('menuOverlay').classList.toggle('active'); }
+
+    function hardReinstall() {
+        if(confirm("Czy na pewno chcesz usunąć z urządzenia wszystkie zapisane dane i przeładować aplikację?\nUWAGA: Wymaga połączenia z internetem!")) {
+            localStorage.clear();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+            window.location.reload(true);
+        }
+    }
 
     function switchMode(mode) {
         currentMode = mode;
@@ -309,6 +338,19 @@
         document.getElementById('detailsList').style.display = 'none';
     }
 
+    // Funkcja do "przeskakiwania" z widoku pociągu na konkretną stację
+    function jumpToStation(stationName) {
+        const sel = document.getElementById('stationSelect');
+        Array.from(sel.options).forEach(opt => {
+            if (opt.value.toUpperCase() === stationName.toUpperCase()) {
+                sel.value = opt.value;
+            }
+        });
+        switchMode('station');
+        triggerSearch();
+        window.scrollTo(0, 0); // Przewiń do góry
+    }
+
     // ================= KALENDARZ ŚWIĄT =================
     const SWIETA_STALE = {
         '01-01': 'Nowy Rok', '01-06': 'Trzech Króli', '05-01': 'Święto Pracy',
@@ -318,10 +360,7 @@
     const SWIETA_RUCHOME = {
         '2025-04-20': 'Wielkanoc', '2025-04-21': 'Pon. Wielkanocny', '2025-06-08': 'Zielone Świątki', '2025-06-19': 'Boże Ciało',
         '2026-04-05': 'Wielkanoc', '2026-04-06': 'Pon. Wielkanocny', '2026-05-24': 'Zielone Świątki', '2026-06-04': 'Boże Ciało',
-        '2027-03-28': 'Wielkanoc', '2027-03-29': 'Pon. Wielkanocny', '2027-05-16': 'Zielone Świątki', '2027-05-27': 'Boże Ciało',
-        '2028-04-16': 'Wielkanoc', '2028-04-17': 'Pon. Wielkanocny', '2028-06-04': 'Zielone Świątki', '2028-06-15': 'Boże Ciało',
-        '2029-04-01': 'Wielkanoc', '2029-04-02': 'Pon. Wielkanocny', '2029-05-20': 'Zielone Świątki', '2029-05-31': 'Boże Ciało',
-        '2030-04-21': 'Wielkanoc', '2030-04-22': 'Pon. Wielkanocny', '2030-06-09': 'Zielone Świątki', '2030-06-20': 'Boże Ciało'
+        '2027-03-28': 'Wielkanoc', '2027-03-29': 'Pon. Wielkanocny', '2027-05-16': 'Zielone Świątki', '2027-05-27': 'Boże Ciało'
     };
 
     function sprawdzSwieto() {
@@ -373,7 +412,9 @@
             netMsg.innerHTML = "✅ Sieć: Online";
             syncMsg.innerHTML = `Baza z: ${now}`;
             if(force) alert("Pomyślnie zsynchronizowano bazy z serwerem!");
+            
             zbudujSelect();
+            zbudujListePociagow();
 
         } catch (e) {
             const cachedData = localStorage.getItem(STORAGE_KEY);
@@ -389,6 +430,7 @@
                 syncMsg.innerHTML = `Baza z: ${cachedSync || 'Brak daty'}`;
                 if(force) alert("Brak połączenia. Używam danych z pamięci urządzenia.");
                 zbudujSelect();
+                zbudujListePociagow();
             } else {
                 syncMsg.innerHTML = "Brak bazy w pamięci!";
                 if(force) alert("Błąd krytyczny: Brak internetu i brak danych w pamięci.");
@@ -432,6 +474,18 @@
         }
     }
 
+    function zbudujListePociagow() {
+        const dl = document.getElementById('trainsDictionary');
+        dl.innerHTML = '';
+        bazaPociagow.forEach(p => {
+            const opt = document.createElement('option');
+            // Podpowiadamy numer z nazwą
+            opt.value = p.numer;
+            opt.textContent = p.nazwa ? `${p.numer} (${p.nazwa})` : p.numer;
+            dl.appendChild(opt);
+        });
+    }
+
     function triggerSearch() {
         const mainBox = document.getElementById('mainStatusBox');
         const listContainer = document.getElementById('detailsList');
@@ -464,7 +518,6 @@
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({'event': 'search_station', 'station_name': nazwa});
 
-            // Pobieranie stacji wg nazwy (odporne na wielkość liter)
             const kasy = bazaDanych.filter(k => k.stacja && k.stacja.toUpperCase() === nazwa.toUpperCase());
             generujKartyStacji(kasy, swieto, day, dayType, listContainer, mainBox);
 
@@ -477,7 +530,7 @@
 
             const pociag = bazaPociagow.find(p => p.numer === nrPociagu);
             if(!pociag) {
-                listContainer.innerHTML = `<p style="text-align:center; color:#666;">Brak pociągu o numerze ${escapeHTML(nrPociagu)} w bazie (trains.json).</p>`;
+                listContainer.innerHTML = `<p style="text-align:center; color:#666;">Brak pociągu o numerze ${escapeHTML(nrPociagu)} w bazie.</p>`;
                 listContainer.style.display = 'block';
                 return;
             }
@@ -488,7 +541,7 @@
 
     // ================= GENEROWANIE WIDOKÓW =================
     
-    // WIDOK 1: STACJA (szczegółowe okienka)
+    // WIDOK 1: STACJA
     function generujKartyStacji(kasy, swieto, day, dayType, listContainer, mainBox) {
         let anyOpen = false;
         let anyBreak = false;
@@ -498,7 +551,7 @@
             if(st.type === 'open') anyOpen = true;
             if(st.type === 'break') anyBreak = true;
 
-            const link = BAZA_LINKOW[k.przewoznik] || null;
+            const link = getCarrierLink(k.przewoznik); // Użycie bezpiecznej funkcji (Case Insensitive)
             const uwagiHtml = k.uwagi ? `<div class="notes-section"><strong>UWAGI:</strong> ${escapeHTML(k.uwagi)}</div>` : '';
 
             const html = `
@@ -545,7 +598,7 @@
         listContainer.style.display = 'block';
     }
 
-    // WIDOK 2: POCIĄG (Lista stacji i zbiorczy status dla każdej)
+    // WIDOK 2: POCIĄG
     function generujWidokTrasy(pociag, swieto, day, listContainer, mainBox) {
         let nazwaPociagu = pociag.nazwa ? ` (${escapeHTML(pociag.nazwa)})` : '';
         let html = `
@@ -556,12 +609,11 @@
             <table style="width: 100%; border-collapse: collapse; margin-top: 5px;">`;
 
         pociag.stacje.forEach(stacjaReq => {
-            // Szukamy stacji ignorując wielkość liter (w JSONie pociągowym stacje mają CapsLock)
             const kasyNaStacji = bazaDanych.filter(k => k.stacja && k.stacja.toUpperCase() === stacjaReq.toUpperCase());
             
             let stStatus = 'brak';
             let stText = 'BRAK';
-            let stColor = '#6c757d'; // Szary
+            let stColor = '#6c757d';
 
             if (kasyNaStacji.length > 0) {
                 let hasOpen = false;
@@ -585,7 +637,9 @@
             html += `
             <tr>
                 <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">
-                    <strong>${escapeHTML(stacjaReq)}</strong>
+                    <a class="station-clickable" onclick="jumpToStation('${escapeHTML(stacjaReq)}')">
+                        ${escapeHTML(stacjaReq)}
+                    </a>
                 </td>
                 <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: right;">
                     <span class="status-pill" style="background-color: ${stColor}; color: ${stStatus === 'break' ? '#333' : 'white'}">${stText}</span>
@@ -613,33 +667,28 @@
         }
 
         let hStr, bStr;
-        if(swieto || dayOfWeek === 0) { 
-            hStr = h_nd; 
-            bStr = getField(kasa, 'przerwy', 'nd'); 
-        } 
-        else if(dayOfWeek === 6) { 
-            hStr = h_sob; 
-            bStr = getField(kasa, 'przerwy', 'sob'); 
-        } 
-        else { 
-            hStr = h_pn; 
-            bStr = getField(kasa, 'przerwy', 'pn_pt'); 
-        }
+        if(swieto || dayOfWeek === 0) { hStr = h_nd; bStr = getField(kasa, 'przerwy', 'nd'); } 
+        else if(dayOfWeek === 6) { hStr = h_sob; bStr = getField(kasa, 'przerwy', 'sob'); } 
+        else { hStr = h_pn; bStr = getField(kasa, 'przerwy', 'pn_pt'); }
 
-        // Poprawka dla braku kasy (wykrywanie wpisów typu "Brak", "Nieczynne")
         if(!hStr || hStr.toLowerCase().includes('nieczynne') || hStr.toLowerCase().includes('zamknięte') || hStr.toLowerCase().includes('brak')) {
             return { type: 'closed', text: 'NIECZYNNA', color: '#dc3545' };
         }
 
         const now = new Date();
         const min = now.getHours() * 60 + now.getMinutes();
-        const [open, close] = parseRange(hStr);
-
         let isOpen = false;
-        if(open <= close) { 
-            if(min >= open && min < close) isOpen = true; 
-        } else { 
-            if(min >= open || min < close) isOpen = true; 
+
+        // POPRAWKA DLA WARSZAWY CENTRALNEJ (CAŁODOBOWO)
+        if(hStr.toLowerCase().includes('całodobowo') || hStr.includes('00:00-23:59')) {
+            isOpen = true;
+        } else {
+            const [open, close] = parseRange(hStr);
+            if(open <= close) { 
+                if(min >= open && min < close) isOpen = true; 
+            } else { 
+                if(min >= open || min < close) isOpen = true; 
+            }
         }
 
         if(!isOpen) return { type: 'closed', text: 'NIECZYNNA', color: '#dc3545' };
