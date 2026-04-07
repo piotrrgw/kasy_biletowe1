@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0056b3">
-    <title>Asystent Kas Biletowych v5.6</title>
+    <title>Asystent Kas Biletowych v5.7</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     
@@ -251,12 +251,12 @@
     <footer class="main-footer">
         <div class="footer-content">
             <p>Projekt i wdrożenie: <strong>Piotr M 🚂</strong> oraz <strong>Gemini (AI)</strong></p>
-            <p class="app-version">Wersja aplikacji: v5.6</p>
+            <p class="app-version">Wersja aplikacji: v5.7</p>
         </div>
     </footer>
 
 <script>
-    // ================= KONFIGURACJA v5.6 =================
+    // ================= KONFIGURACJA v5.7 =================
     const STORAGE_KEY = 'kasy_biletowe_v5_data';
     const SYNC_KEY = 'kasy_biletowe_v5_sync';
     const TRAINS_KEY = 'kasy_biletowe_v5_trains';
@@ -287,6 +287,7 @@
     };
 
     // ================= HELPERY DANYCH & XSS =================
+    // Funkcja do pobierania godzin i przerw (zagnieżdżone w obiekcie)
     function getField(kasa, category, field) {
         if (kasa[category] && kasa[category][field] !== undefined) return kasa[category][field];
         if (kasa[`${category}.${field}`] !== undefined) return kasa[`${category}.${field}`];
@@ -669,8 +670,8 @@
     // ================= NOWY SILNIK KALKULATORA CZASU (Regex + Złota Reguła) =================
     function obliczStatus(kasa, swieto, dayOfWeek) {
         
-        // ZŁOTA REGUŁA (Override): Jeśli wpisano, że przewoźnikiem jest "BRAK"
-        const przewoznik = getField(kasa, 'przewoznik');
+        // ZŁOTA REGUŁA (Override) - pobierane bezpośrednio, a nie przez funkcję pomocniczą
+        const przewoznik = kasa.przewoznik || kasa['przewoznik'];
         if (przewoznik && przewoznik.toUpperCase().trim() === 'BRAK') {
             return { type: 'brak', text: 'BRAK KASY', color: '#6c757d' };
         }
