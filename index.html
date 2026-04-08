@@ -609,7 +609,7 @@
         let html = `
         <div class="card" style="border-left-color: var(--primary)">
             <div class="card-header" style="background: var(--primary); color: white;">
-                <div class="carrier-title" style="color: white; font-size: 1.2rem;">Trasa: ${escapeHTML(pociag.numer)}${nazwaPociagu}</div>
+                <div class="carrier-title" style="color: white; font-size: 1.2rem;">Trasa:</div>
             </div>
             <table style="width: 100%; border-collapse: collapse; margin-top: 5px;">`;
 
@@ -663,7 +663,7 @@
 
         mainBox.style.display = 'block';
         mainBox.className = 'bg-train'; 
-        mainBox.innerText = `POCIĄG ${escapeHTML(pociag.numer)}`;
+        mainBox.innerText = `POCIĄG - ${escapeHTML(pociag.nazwa)} (${escapeHTML(pociag.numer)})`;
         listContainer.style.display = 'block';
     }
 
