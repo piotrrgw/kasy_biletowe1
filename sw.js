@@ -1,6 +1,6 @@
 // Wersja aplikacji: v5.6
-const CACHE_NAME = 'kasy-app-cache-v5.6';
-const DATA_CACHE_NAME = 'kasy-data-cache-v5.6';
+const CACHE_NAME = 'kasy-app-cache-v5.6.1';
+const DATA_CACHE_NAME = 'kasy-data-cache-v5.6.1';
 const REFRESH_INTERVAL = 24 * 60 * 60 * 1000; // 24 godziny
 
 const STATIC_ASSETS = [
