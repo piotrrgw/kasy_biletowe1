@@ -39,7 +39,8 @@ Projekt składa się z trzech głównych elementów:
 
 * **Piotr M 🚂** – Koncepcja, Dane wejściowe, Wizja, Edytor danych.
 * **Gemini (AI)** – Implementacja kodu, logika aplikacji, optymalizacje.
-* **Edytorzy Danych:** Piotr M. 🚂, Anna S., Piotr S.
+* **Edytorzy Danych:** Piotr M. 🚂, Anna S., Piotr S., Mateusz K.
+* **Pomoc Merytoryczna:** Thundo
 
 ---
 
